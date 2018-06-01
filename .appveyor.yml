@@ -1,14 +1,17 @@
 image:
-- Visual Studio 2017
+  - Visual Studio 2017
 configuration:
-- Release
-- Debug
+  - Release
+  - Debug
+install:
+  - set QTDIR=C:\Qt\5.10.1\msvc2017_64
+  - set PATH=%PATH%;%QTDIR%\bin
 before_build:
-- cmd: |
-    mkdir build
-    cd build
-    cmake --version
-    cmake .. -G "Visual Studio 15 2017 Win64"
+  - cmd: |
+      mkdir build
+      cd build
+      cmake --version
+      cmake .. -G "Visual Studio 15 2017 Win64"
 build:
   project: build\SnailSnap.sln
   verbosity: minimal
