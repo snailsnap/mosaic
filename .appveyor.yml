@@ -8,7 +8,7 @@ before_build:
     mkdir build
     cd build
     cmake --version
-    cmake .. -G %generator%
+    cmake .. -G "Visual Studio 15 2017 Win64"
 build:
   project: build\SnailSnap.sln
   verbosity: minimal
