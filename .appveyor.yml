@@ -1,0 +1,15 @@
+image:
+- Visual Studio 2017
+configuration:
+- Release
+- Debug
+before_build:
+- cmd: |
+    mkdir build
+    cd build
+    cmake --version
+    cmake .. -G %generator%
+build:
+  project: build\SnailSnap.sln
+  verbosity: minimal
+  parallel: true
