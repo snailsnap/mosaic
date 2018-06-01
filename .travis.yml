@@ -2,11 +2,6 @@ sudo: false
 dist: trusty
 language: generic
 
-addons:
-  apt:
-    packages:
-      - qtbase5-dev
-
 matrix:
   include:
     - os: linux
@@ -15,6 +10,7 @@ matrix:
         apt:
           packages:
             - g++-5
+            - qtbase5-dev
           sources: &sources
             - llvm-toolchain-precise-3.8
             - ubuntu-toolchain-r-test
@@ -24,6 +20,7 @@ matrix:
         apt:
           packages:
             - clang-3.8
+            - qtbase5-dev
           sources: *sources
 
 script:
