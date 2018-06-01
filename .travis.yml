@@ -1,6 +1,6 @@
 sudo: false 
 dist: trusty
-language: cpp
+language: generic
 
 os: linux
 env: COMPILER_NAME=gcc CXX=g++-5 CC=gcc-5
