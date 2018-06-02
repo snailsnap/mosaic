@@ -21,6 +21,8 @@ set(sources
     ${source_dir}/main.cpp
 	${source_dir}/mosaic.cpp
 	${source_dir}/mosaic.hpp
+	${source_dir}/mollusc.cpp
+	${source_dir}/mollusc.hpp
 )
 
 add_executable(${target} ${sources})
