@@ -2,6 +2,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QMoveEvent>
 
 class MainWindow : public QMainWindow {
 public:

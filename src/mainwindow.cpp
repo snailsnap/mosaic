@@ -44,6 +44,13 @@ void MainWindow::showSidebar()
 	QLabel *continentLabel = new QLabel("Kontinent: ");
 
 	QGridLayout *layout = new QGridLayout();
+
+	QScrollArea *scrollArea = new QScrollArea();
+	QWidget *infoWidget = new QWidget();
+	infoWidget->setLayout(layout);
+	scrollArea->setWidgetResizable(true);
+	scrollArea->setWidget(infoWidget);
+
 	layout->addWidget(classLabel);
 	layout->addWidget(familyLabel);
 	layout->addWidget(genusLabel);
@@ -57,12 +64,10 @@ void MainWindow::showSidebar()
 	layout->addWidget(subContinentLabel);
 	layout->addWidget(continentLabel);
 
-	QWidget *infoWidget = new QWidget;
-	infoWidget->setLayout(layout);
-
-	QDockWidget *dwidget = new QDockWidget;
+	QDockWidget *dwidget = new QDockWidget(this);
 	dwidget->setWindowTitle("Informationen");
-	dwidget->setWidget(infoWidget);
+	dwidget->setWidget(scrollArea);
+	dwidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
 }
 
