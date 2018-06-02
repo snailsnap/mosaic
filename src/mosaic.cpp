@@ -52,13 +52,13 @@ QImage* createMosaic(const QImage& input)
     {
         for (auto x = 0; x < result.width(); ++x)
         {
-            auto oldColor = result.pixelColor(x, y);
+            auto oldColor = QColor(result.pixel(x, y));
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
             const QColor& newColor = getClosestColor(availableColors, oldVector);
             auto newVector = toVec3(newColor);
 
-            result.setPixelColor(x, y, newColor);
+            result.setPixel(x, y, newColor.rgb());
             auto error = oldVector - newVector;
 
             errorStorage[x + 2 + y * width] = error * 7 / 16;
