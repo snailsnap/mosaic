@@ -2,4 +2,4 @@
 
 #include <QImage>
 
-QImage& createMosaic(const QImage& input);
+QImage* createMosaic(const QImage& input);

@@ -49,7 +49,9 @@ int main(int argc, char *argv[])
 
     QImage image(input);
 
-    QImage& result = createMosaic(image);
+    QImage* result = createMosaic(image);
 
-    result.save(output);
+    result->save(output);
+
+    delete result;
 }
