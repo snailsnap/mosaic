@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QImage>
+#include <QDir>
+#include <QString>
 
 #include "mosaic.hpp"
 
@@ -18,6 +20,8 @@ int main(int argc, char *argv[])
     parser.addOption(inputImageOption);
     QCommandLineOption outputImageOption({ "o", "output" }, "Store the output image to this file.", "output image");
     parser.addOption(outputImageOption);
+    QCommandLineOption dataDirOption({ "d", "data" }, "Location of the data files.", "data dir", "data");
+    parser.addOption(dataDirOption);
 
     parser.process(app);
 
@@ -44,6 +48,20 @@ int main(int argc, char *argv[])
     else
     {
         std::cout << "No output image specified." << std::endl;
+        exit(-1);
+    }
+
+    QString data("data");
+
+    if (parser.isSet(dataDirOption))
+    {
+        data = parser.value(dataDirOption);
+        std::cout << "Data directory: " << data.toStdString() << std::endl;
+    }
+
+    if (!QDir(data).exists())
+    {
+        std::cout << "Data directory is missing: " << data.toStdString() << std::endl;
         exit(-1);
     }
 
