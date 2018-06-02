@@ -33,10 +33,8 @@ const Mollusc& getClosestColor(const std::vector<Mollusc>& molluscs, const QVect
     return molluscs[closestIndex];
 }
 
-QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs)
+QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs, int scale)
 {
-    auto scale = 64;
-
     auto scaled = input.scaledToWidth(input.width() / scale, Qt::SmoothTransformation);
 
     auto width = scaled.width();

@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
     parser.addOption(outputImageOption);
     QCommandLineOption dataDirOption({ "d", "data" }, "Location of the data files.", "data dir", "data");
     parser.addOption(dataDirOption);
+    QCommandLineOption scaleOption({ "s", "scale" }, "Scale for mosaic creation.", "scale", "32");
+    parser.addOption(scaleOption);
 
     parser.process(app);
 
@@ -65,6 +67,13 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
+    auto scale = 32;
+    if (parser.isSet(scaleOption))
+    {
+        scale = parser.value(scaleOption).toInt();
+        std::cout << "Scale: " << scale << std::endl;
+    }
+
     // read input image
     QImage image(input);
 
@@ -87,7 +96,7 @@ int main(int argc, char *argv[])
     // white mollusc for background
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
-    QImage* result = createMosaic(image, molluscs);
+    QImage* result = createMosaic(image, molluscs, scale);
 
     result->save(output);
 
