@@ -3,12 +3,15 @@
 #include <string>
 
 #include <QColor>
+#include <QImage>
+#include <QString>
 
 struct Mollusc
 {
-    Mollusc(const std::string& data);
+    Mollusc(const std::string& data, const QString& dir);
 
-    std::string m_image;
+    std::string m_imageName;
+    QImage m_image;
     QColor m_color;
     float m_rotation;
     float m_ratio;

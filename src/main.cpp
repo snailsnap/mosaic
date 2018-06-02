@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     std::vector<Mollusc> molluscs;
     for (auto i = 1u; i < strings.size(); ++i)
     {
-        molluscs.push_back(Mollusc(strings[i]));
+        molluscs.push_back(Mollusc(strings[i], data));
     }
 
     QImage* result = createMosaic(image, molluscs);

@@ -3,10 +3,12 @@
 #include <vector>
 
 #include <QColor>
+#include <QImage>
+#include <QString>
 
 #include "mollusc.hpp"
 
-Mollusc::Mollusc(const std::string& data)
+Mollusc::Mollusc(const std::string& data, const QString& dir)
 {
     std::stringstream stream(data);
     std::vector<std::string> strings;
@@ -17,7 +19,7 @@ Mollusc::Mollusc(const std::string& data)
     }
 
     auto i = 0u;
-    m_image = strings[i++];
+    m_imageName = strings[i++];
     m_color = QColor(strings[i++].c_str());
     m_rotation = stof(strings[i++]);
     m_ratio = stof(strings[i++]);
@@ -35,4 +37,6 @@ Mollusc::Mollusc(const std::string& data)
     m_country = strings[i++];
     m_subContinent = strings[i++];
     m_continent = strings[i++];
+
+    m_image = QImage(dir + "/" + m_imageName.c_str());
 }
