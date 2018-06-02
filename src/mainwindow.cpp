@@ -13,26 +13,7 @@ MainWindow::MainWindow(QWidget *parent, QImage& image)
 	view->setScene(scene);
 
 	this->setCentralWidget(view);
-
-	QLabel *classLabel = new QLabel("Class: ");
-	QLabel *familyLabel = new QLabel("Family: ");
-	QLabel *genusLabel = new QLabel("Genus: ");
-	QLabel *speciesLabel = new QLabel("Species: ");
-	QLabel *scientificLabel = new QLabel("Scientific: ");
-
-	QHBoxLayout *layout = new QHBoxLayout();
-	layout->addWidget(classLabel);
-	layout->addWidget(familyLabel);
-	layout->addWidget(genusLabel);
-	layout->addWidget(speciesLabel);
-	layout->addWidget(scientificLabel);
-
-	QWidget *infoWidget = new QWidget;
-	infoWidget->setWindowTitle("Informationen");
-	infoWidget->setLayout(layout);
-	QDockWidget *dwidget = new QDockWidget;
-	dwidget->setWidget(infoWidget);
-	this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
+	this->showSidebar();
 }
 
 MainWindow::~MainWindow() {}
@@ -45,5 +26,43 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Escape) {
 		this->showMaximized();
 	}
+}
+
+void MainWindow::showSidebar()
+{
+	QLabel *classLabel = new QLabel("Klasse: ");
+	QLabel *familyLabel = new QLabel("Familie: ");
+	QLabel *genusLabel = new QLabel("Geschlecht: ");
+	QLabel *speciesLabel = new QLabel("Spezies: ");
+	QLabel *scientificNameLabel = new QLabel("Wissenschatfliche Begriff: ");
+	QLabel *localityLabel = new QLabel("Fundort: ");
+	QLabel *dateLabel = new QLabel("Datum: ");
+	QLabel *areaLabel = new QLabel("Gebiet: ");
+	QLabel *provinceLabel = new QLabel("Provinz: ");
+	QLabel *countryLabel = new QLabel("Land: ");
+	QLabel *subContinentLabel = new QLabel("Teilkontinent: ");
+	QLabel *continentLabel = new QLabel("Kontinent: ");
+
+	QGridLayout *layout = new QGridLayout();
+	layout->addWidget(classLabel);
+	layout->addWidget(familyLabel);
+	layout->addWidget(genusLabel);
+	layout->addWidget(speciesLabel);
+	layout->addWidget(scientificNameLabel);
+	layout->addWidget(localityLabel);
+	layout->addWidget(dateLabel);
+	layout->addWidget(areaLabel);
+	layout->addWidget(provinceLabel);
+	layout->addWidget(countryLabel);
+	layout->addWidget(subContinentLabel);
+	layout->addWidget(continentLabel);
+
+	QWidget *infoWidget = new QWidget;
+	infoWidget->setLayout(layout);
+
+	QDockWidget *dwidget = new QDockWidget;
+	dwidget->setWindowTitle("Informationen");
+	dwidget->setWidget(infoWidget);
+	this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
 }
 

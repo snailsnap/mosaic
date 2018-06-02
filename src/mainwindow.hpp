@@ -9,6 +9,7 @@ public:
 	~MainWindow();
 
 	void keyPressEvent(QKeyEvent* event);
+	void showSidebar();
 
 private:
 };
