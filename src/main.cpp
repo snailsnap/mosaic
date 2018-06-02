@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("SnailSnap");
+    QApplication app(argc, argv);
+    QApplication::setApplicationName("SnailSnap");
 
     QCommandLineParser parser;
     parser.addHelpOption();

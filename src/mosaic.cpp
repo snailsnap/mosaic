@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QVector3D>
 #include <QColor>
+#include <QPainter>
 
 #include "mosaic.hpp"
 #include "mollusc.hpp"
@@ -34,24 +35,32 @@ const Mollusc& getClosestColor(const std::vector<Mollusc>& molluscs, const QVect
 
 QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs)
 {
-    auto result = input.scaledToWidth(input.width() / 10, Qt::SmoothTransformation);
+    auto scale = 64;
 
-    auto width = result.width();
-    auto height = result.height();
+    auto scaled = input.scaledToWidth(input.width() / scale, Qt::SmoothTransformation);
+
+    auto width = scaled.width();
+    auto height = scaled.height();
 
     std::vector<QVector3D> errorStorage((width + 2) * (height + 1), QVector3D());
 
-    for (auto y = 0; y < result.height(); ++y)
+    auto result = new QImage(width * scale, height * scale, input.format());
+    result->fill(Qt::GlobalColor::white);
+    QPainter painter(result);
+
+    for (auto y = 0; y < scaled.height(); ++y)
     {
-        for (auto x = 0; x < result.width(); ++x)
+        for (auto x = 0; x < scaled.width(); ++x)
         {
-            auto oldColor = QColor(result.pixel(x, y));
+            auto oldColor = QColor(scaled.pixel(x, y));
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
-            const QColor& newColor = getClosestColor(molluscs, oldVector).m_color;
-            auto newVector = toVec3(newColor);
+            const Mollusc& mollusc = getClosestColor(molluscs, oldVector);
+            auto newVector = toVec3(mollusc.m_color);
 
-            result.setPixel(x, y, newColor.rgb());
+            if (mollusc.m_imageName.compare("NONE") != 0)
+                painter.drawPixmap(x * scale, y * scale, scale, scale, mollusc.m_image);
+
             auto error = oldVector - newVector;
 
             errorStorage[x + 2 + y * width] = error * 7 / 16;
@@ -61,5 +70,5 @@ QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs)
         }
     }
 
-    return new QImage(result.scaledToWidth(width * 10));
+    return result;
 }
