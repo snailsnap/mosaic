@@ -68,6 +68,7 @@ void MainWindow::showSidebar()
 	dwidget->setWindowTitle("Informationen");
 	dwidget->setWidget(scrollArea);
 	dwidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+	dwidget->setFeatures(QDockWidget::DockWidgetClosable);
 	this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
 }
 
