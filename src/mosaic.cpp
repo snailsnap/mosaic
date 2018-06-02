@@ -4,6 +4,7 @@
 
 #include <QImage>
 #include <QVector3D>
+#include <QColor>
 
 #include "mosaic.hpp"
 
