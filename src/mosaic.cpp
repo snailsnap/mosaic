@@ -7,20 +7,21 @@
 #include <QColor>
 
 #include "mosaic.hpp"
+#include "mollusc.hpp"
 
 QVector3D toVec3(const QColor& color)
 {
     return QVector3D(color.redF(), color.greenF(), color.blueF());
 }
 
-const QColor& getClosestColor(const std::vector<QColor>& availableColors, const QVector3D& color)
+const Mollusc& getClosestColor(const std::vector<Mollusc>& molluscs, const QVector3D& color)
 {
     auto closestIndex = 0;
     auto minDist = std::numeric_limits<float>::max();
 
-    for (auto i = 0u; i < availableColors.size(); ++i)
+    for (auto i = 0u; i < molluscs.size(); ++i)
     {
-        auto dist = (color - toVec3(availableColors[i])).length();
+        auto dist = (color - toVec3(molluscs[i].m_color)).length();
         if (dist < minDist)
         {
             minDist = dist;
@@ -28,23 +29,15 @@ const QColor& getClosestColor(const std::vector<QColor>& availableColors, const 
         }
     }
 
-    return availableColors[closestIndex];
+    return molluscs[closestIndex];
 }
 
-QImage* createMosaic(const QImage& input)
+QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs)
 {
     auto result = input.scaledToWidth(input.width() / 10, Qt::SmoothTransformation);
 
     auto width = result.width();
     auto height = result.height();
-
-    std::vector<std::string> availableColorNames{"#000", "#F00", "#0F0", "#00F", "#FF0", "#F0F", "#0FF", "#FFF"};
-    std::vector<QColor> availableColors;
-
-    for (auto colorName : availableColorNames)
-    {
-        availableColors.push_back(QColor(colorName.c_str()));
-    }
 
     std::vector<QVector3D> errorStorage((width + 2) * (height + 1), QVector3D());
 
@@ -55,7 +48,7 @@ QImage* createMosaic(const QImage& input)
             auto oldColor = QColor(result.pixel(x, y));
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
-            const QColor& newColor = getClosestColor(availableColors, oldVector);
+            const QColor& newColor = getClosestColor(molluscs, oldVector).m_color;
             auto newVector = toVec3(newColor);
 
             result.setPixel(x, y, newColor.rgb());

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -7,6 +8,7 @@
 #include <QString>
 
 #include "mosaic.hpp"
+#include "mollusc.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -67,7 +69,21 @@ int main(int argc, char *argv[])
 
     QImage image(input);
 
-    QImage* result = createMosaic(image);
+    std::ifstream stream(data.toStdString() + "/meta_file.csv");
+    std::vector<std::string> strings;
+    std::string string;
+    while (std::getline(stream, string))
+    {
+        strings.push_back(string);
+    }
+
+    std::vector<Mollusc> molluscs;
+    for (auto i = 1u; i < strings.size(); ++i)
+    {
+        molluscs.push_back(Mollusc(strings[i]));
+    }
+
+    QImage* result = createMosaic(image, molluscs);
 
     result->save(output);
 
