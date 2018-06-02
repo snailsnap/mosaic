@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
 	QWidget *widget = new QWidget;
 	MainWindow mainWin(widget, image);
-	mainWin.show();
+	mainWin.showMaximized();
 
 	return app.exec();
 }

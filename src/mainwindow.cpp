@@ -16,3 +16,13 @@ MainWindow::MainWindow(QWidget *parent, QImage& image)
 
 MainWindow::~MainWindow() {}
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+	if (event->key() == Qt::Key_F11) {
+		this->showFullScreen();
+	}
+	if (event->key() == Qt::Key_Escape) {
+		this->showMaximized();
+	}
+}
+
