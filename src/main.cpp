@@ -3,13 +3,16 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QImage>
+#include <QPixmap>
 
+#include "mainwindow.hpp"
 #include "mosaic.hpp"
+
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("SnailSnap");
+    QApplication app(argc, argv);
+    QApplication::setApplicationName("SnailSnap");
 
     QCommandLineParser parser;
     parser.addHelpOption();
@@ -49,7 +52,9 @@ int main(int argc, char *argv[])
 
     QImage image(input);
 
-    QImage& result = createMosaic(image);
+	QWidget *widget = new QWidget;
+	MainWindow mainWin(widget, image);
+	mainWin.show();
 
-    result.save(output);
+	return app.exec();
 }

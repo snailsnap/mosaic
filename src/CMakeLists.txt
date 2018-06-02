@@ -4,6 +4,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${output_dir})
 
 set(sources
 	main.cpp
+	mainwindow.cpp
+	mainwindow.hpp
 	mosaic.cpp
 	mosaic.hpp
 )
