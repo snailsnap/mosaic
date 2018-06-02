@@ -3,12 +3,12 @@
 #include <vector>
 
 #include <QColor>
-#include <QImage>
+#include <QPixmap>
 #include <QString>
 
 #include "mollusc.hpp"
 
-Mollusc::Mollusc(const std::string& data, const QString& dir)
+Mollusc::Mollusc(const std::string& data)
 {
     std::stringstream stream(data);
     std::vector<std::string> strings;
@@ -37,6 +37,9 @@ Mollusc::Mollusc(const std::string& data, const QString& dir)
     m_country = strings[i++];
     m_subContinent = strings[i++];
     m_continent = strings[i++];
+}
 
-    m_image = QImage(dir + "/" + m_imageName.c_str());
+Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)
+{
+    m_image = QPixmap(dir + "/" + m_imageName.c_str());
 }
