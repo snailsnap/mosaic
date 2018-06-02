@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 
 #include <QtWidgets>
+#include <QtGui>
 
 MainWindow::MainWindow(QWidget *parent, QImage& image)
 	: QMainWindow(parent)
@@ -12,6 +13,26 @@ MainWindow::MainWindow(QWidget *parent, QImage& image)
 	view->setScene(scene);
 
 	this->setCentralWidget(view);
+
+	QLabel *classLabel = new QLabel("Class: ");
+	QLabel *familyLabel = new QLabel("Family: ");
+	QLabel *genusLabel = new QLabel("Genus: ");
+	QLabel *speciesLabel = new QLabel("Species: ");
+	QLabel *scientificLabel = new QLabel("Scientific: ");
+
+	QHBoxLayout *layout = new QHBoxLayout();
+	layout->addWidget(classLabel);
+	layout->addWidget(familyLabel);
+	layout->addWidget(genusLabel);
+	layout->addWidget(speciesLabel);
+	layout->addWidget(scientificLabel);
+
+	QWidget *infoWidget = new QWidget;
+	infoWidget->setWindowTitle("Informationen");
+	infoWidget->setLayout(layout);
+	QDockWidget *dwidget = new QDockWidget;
+	dwidget->setWidget(infoWidget);
+	this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
 }
 
 MainWindow::~MainWindow() {}
