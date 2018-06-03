@@ -28,6 +28,8 @@ set(sources
 	${source_dir}/mosaic.hpp
 	${source_dir}/algorithms/floyd-steinberg.cpp
 	${source_dir}/algorithms/floyd-steinberg.hpp
+	${source_dir}/algorithms/voronoi.cpp
+	${source_dir}/algorithms/voronoi.hpp
 	${source_dir}/mollusc.cpp
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.cpp
