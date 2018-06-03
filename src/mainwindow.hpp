@@ -35,6 +35,12 @@ public:
 
 private:
     std::vector<Mollusc>* m_molluscs;
+    int m_selectedMolluscIndex;
+
+    QGridLayout *m_layout;
+    QScrollArea *m_scrollArea;
+    QWidget *m_infoWidget;
+    QDockWidget *m_dWidget;
 
     QLabel *m_classLabel;
     QLabel *m_familyLabel;

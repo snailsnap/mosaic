@@ -3,6 +3,11 @@
 MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs)
     : QMainWindow(parent)
     , m_molluscs(molluscs)
+    , m_selectedMolluscIndex(0)
+    , m_layout(new QGridLayout())
+    , m_scrollArea(new QScrollArea())
+    , m_infoWidget(new QWidget())
+    , m_dWidget(new QDockWidget(this))
     , m_classLabel(new QLabel())
     , m_familyLabel(new QLabel())
     , m_genusLabel(new QLabel())
@@ -36,11 +41,14 @@ MainWindow::~MainWindow() {}
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_F11) {
-        this->showFullScreen();
+        if (!this->isFullScreen()) {
+            this->showFullScreen();
+        }
+        else {
+            this->showMaximized();
+        }
     }
-    if (event->key() == Qt::Key_Escape) {
-        this->showMaximized();
-    }
+
     if (event->key() == Qt::Key_I) {
         //TODO: Later move it to mouse click on a snail in image
         this->showSnailInfo();
@@ -49,43 +57,26 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    int selectedMolluscIndex = 0;
-    Mollusc selectedMollusc = m_molluscs->at(selectedMolluscIndex);
+    //TODO: Later change with selected snail index and not incremented index
+    Mollusc selectedMollusc = m_molluscs->at(++m_selectedMolluscIndex);
     
-    //TODO: Later change with specific data of highlighted snail
-    QSize imageSize = QSize(100, 100);
-    QImage image1 = QImage("./../data/ZMB_Mol_100073_1.png").scaled(imageSize, Qt::KeepAspectRatio);
-    QImage image2 = QImage("./../data/ZMB_Mol_100073_2.png").scaled(imageSize, Qt::KeepAspectRatio);
-    QImage image3 = QImage("./../data/ZMB_Mol_100073_3.png").scaled(imageSize, Qt::KeepAspectRatio);
-
-    const QString classContent = QString::fromStdString(selectedMollusc.m_class);
-    const QString familyContent = QString::fromStdString(selectedMollusc.m_family);
-    const QString genusContent = QString::fromStdString(selectedMollusc.m_genus);
-    const QString speciesContent = QString::fromStdString(selectedMollusc.m_species);
-    const QString scientificNameContent = QString::fromStdString(selectedMollusc.m_scientificName);
-    const QString localityContent = QString::fromStdString(selectedMollusc.m_locality);
-    const QString dateContent = QString::fromStdString(selectedMollusc.m_date);
-    const QString areaContent = QString::fromStdString(selectedMollusc.m_area);
-    const QString provinceContent = QString::fromStdString(selectedMollusc.m_province);
-    const QString countryContent = QString::fromStdString(selectedMollusc.m_country);
-    const QString subContinentContent = QString::fromStdString(selectedMollusc.m_subContinent);
-    const QString continentContent = QString::fromStdString(selectedMollusc.m_continent);
+    //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
-        classContent,
-        familyContent,
-        genusContent,
-        speciesContent,
-        scientificNameContent,
-        localityContent,
-        dateContent,
-        areaContent,
-        provinceContent,
-        countryContent,
-        subContinentContent,
-        continentContent,
-        image1,
-        image2,
-        image3);
+        QString::fromStdString(selectedMollusc.m_class),
+        QString::fromStdString(selectedMollusc.m_family),
+        QString::fromStdString(selectedMollusc.m_genus),
+        QString::fromStdString(selectedMollusc.m_species),
+        QString::fromStdString(selectedMollusc.m_scientificName),
+        QString::fromStdString(selectedMollusc.m_locality),
+        QString::fromStdString(selectedMollusc.m_date),
+        QString::fromStdString(selectedMollusc.m_area),
+        QString::fromStdString(selectedMollusc.m_province),
+        QString::fromStdString(selectedMollusc.m_country),
+        QString::fromStdString(selectedMollusc.m_subContinent),
+        QString::fromStdString(selectedMollusc.m_continent),
+        QImage("./../data/ZMB_Mol_100073_1.png").scaledToHeight(100),
+        QImage("./../data/ZMB_Mol_100073_2.png").scaledToHeight(100),
+        QImage("./../data/ZMB_Mol_100073_3.png").scaledToHeight(100));
 }
 
 void MainWindow::showSidebar(
@@ -122,37 +113,33 @@ void MainWindow::showSidebar(
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
     m_image3Label->setPixmap(QPixmap::fromImage(image3));
 
-    QGridLayout *layout = new QGridLayout();
 
-    QScrollArea *scrollArea = new QScrollArea();
-    QWidget *infoWidget = new QWidget();
-    infoWidget->setLayout(layout);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setWidget(infoWidget);
+    m_infoWidget->setLayout(m_layout);
+    m_scrollArea->setWidgetResizable(true);
+    m_scrollArea->setWidget(m_infoWidget);
 
-    layout->addWidget(m_classLabel);
-    layout->addWidget(m_familyLabel);
-    layout->addWidget(m_genusLabel);
-    layout->addWidget(m_speciesLabel);
-    layout->addWidget(m_scientificNameLabel);
-    layout->addWidget(m_localityLabel);
-    layout->addWidget(m_dateLabel);
-    layout->addWidget(m_areaLabel);
-    layout->addWidget(m_provinceLabel);
-    layout->addWidget(m_countryLabel);
-    layout->addWidget(m_subContinentLabel);
-    layout->addWidget(m_continentLabel);
+    m_layout->addWidget(m_classLabel);
+    m_layout->addWidget(m_familyLabel);
+    m_layout->addWidget(m_genusLabel);
+    m_layout->addWidget(m_speciesLabel);
+    m_layout->addWidget(m_scientificNameLabel);
+    m_layout->addWidget(m_localityLabel);
+    m_layout->addWidget(m_dateLabel);
+    m_layout->addWidget(m_areaLabel);
+    m_layout->addWidget(m_provinceLabel);
+    m_layout->addWidget(m_countryLabel);
+    m_layout->addWidget(m_subContinentLabel);
+    m_layout->addWidget(m_continentLabel);
 
-    layout->addWidget(m_image1Label);
-    layout->addWidget(m_image2Label);
-    layout->addWidget(m_image3Label);
+    m_layout->addWidget(m_image1Label);
+    m_layout->addWidget(m_image2Label);
+    m_layout->addWidget(m_image3Label);
 
-    QDockWidget *dwidget = new QDockWidget(this);
-    dwidget->setWindowTitle("Informationen");
-    dwidget->setWidget(scrollArea);
-    dwidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    dwidget->setFeatures(QDockWidget::DockWidgetClosable);
-    dwidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
-    this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
+    m_dWidget->setWindowTitle("Informationen");
+    m_dWidget->setWidget(m_scrollArea);
+    m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
+    m_dWidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
+    this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
 }
 
