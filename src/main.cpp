@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     result->save(output);
 
     QWidget *widget = new QWidget;
-    MainWindow mainWin(widget, result);
+    MainWindow mainWin(widget, result, &molluscs);
     mainWin.showMaximized();
 
     return app.exec();
