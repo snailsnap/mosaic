@@ -4,13 +4,16 @@
 #include <QtGui>
 #include <QPixmap>
 
-MainWindow::MainWindow(QWidget *parent, QImage& image)
+MainWindow::MainWindow(QWidget *parent, QImage* image)
 	: QMainWindow(parent)
 {
 	QGraphicsView *view = new QGraphicsView;
-	QGraphicsScene *scene = new QGraphicsScene(0, 0, view->size().width(), view->size().height(), this);
+	view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	QSize imageSize = image->size();
+	QGraphicsScene *scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
 
-	scene->addPixmap(QPixmap::fromImage(image));
+	scene->addPixmap(QPixmap::fromImage(*image));
 	view->setScene(scene);
 
 	this->setCentralWidget(view);
@@ -36,9 +39,9 @@ void MainWindow::showSnailInfo()
 {
 	//TODO: Later change with specific data of highlighted snail
 	QSize imageSize = QSize(100, 100);
-	QImage image1 = QImage("./../../data/ZMB_Mol_100073_1.png").scaled(imageSize, Qt::KeepAspectRatio);
-	QImage image2 = QImage("./../../data/ZMB_Mol_100073_2.png").scaled(imageSize, Qt::KeepAspectRatio);
-	QImage image3 = QImage("./../../data/ZMB_Mol_100073_3.png").scaled(imageSize, Qt::KeepAspectRatio);
+	QImage image1 = QImage("./../data/ZMB_Mol_100073_1.png").scaled(imageSize, Qt::KeepAspectRatio);
+	QImage image2 = QImage("./../data/ZMB_Mol_100073_2.png").scaled(imageSize, Qt::KeepAspectRatio);
+	QImage image3 = QImage("./../data/ZMB_Mol_100073_3.png").scaled(imageSize, Qt::KeepAspectRatio);
 
 	const QString classContent = QStringLiteral("Gastropoda");
 	const QString familyContent = QStringLiteral("Ariophantidae");

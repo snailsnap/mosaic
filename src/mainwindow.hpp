@@ -6,7 +6,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-	MainWindow(QWidget *parent, QImage& image);
+	MainWindow(QWidget *parent, QImage* image);
 	~MainWindow();
 
 	void keyPressEvent(QKeyEvent* event);
