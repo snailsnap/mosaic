@@ -3,5 +3,12 @@
 #include <vector>
 #include <QImage>
 #include "../mollusc.hpp"
+#include "../mosaic.hpp"
 
-QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs, int scale);
+class FloydSteinberg : MosaicGenerator
+{
+public:
+    FloydSteinberg(const std::vector<Mollusc>& molluscs) : MosaicGenerator(molluscs) { };
+
+    QImage * createMosaic(const QImage& input, int scale);
+};

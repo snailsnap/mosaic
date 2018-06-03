@@ -102,7 +102,8 @@ int main(int argc, char *argv[])
     // white mollusc for background
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
-    QImage* result = createMosaic(image, molluscs, scale);
+    auto mosaic = FloydSteinberg(molluscs);
+    auto result = mosaic.createMosaic(image, scale);
 
     result->save(output);
 

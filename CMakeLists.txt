@@ -24,6 +24,7 @@ set(source_dir src)
 
 set(sources
     ${source_dir}/main.cpp
+	${source_dir}/mosaic.hpp
 	${source_dir}/algorithms/floyd-steinberg.cpp
 	${source_dir}/algorithms/floyd-steinberg.hpp
 	${source_dir}/mollusc.cpp

@@ -33,7 +33,7 @@ const Mollusc& getClosestColor(const std::vector<Mollusc>& molluscs, const QVect
     return molluscs[closestIndex];
 }
 
-QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs, int scale)
+QImage* FloydSteinberg::createMosaic(const QImage& input, int scale)
 {
     auto scaled = input.scaledToWidth(input.width() / scale, Qt::SmoothTransformation);
 
@@ -53,7 +53,7 @@ QImage* createMosaic(const QImage& input, const std::vector<Mollusc>& molluscs, 
             auto oldColor = QColor(scaled.pixel(x, y));
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
-            const Mollusc& mollusc = getClosestColor(molluscs, oldVector);
+            const Mollusc& mollusc = getClosestColor(m_molluscs, oldVector);
             auto newVector = toVec3(mollusc.m_color);
 
             if (mollusc.m_imageName.compare("NONE") != 0)
