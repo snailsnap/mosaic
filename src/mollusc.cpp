@@ -36,7 +36,7 @@ Mollusc::Mollusc(const std::string& data)
     m_province = strings[i++];
     m_country = strings[i++];
     m_subContinent = strings[i++];
-    m_continent = (strings.size() < 18)?"":strings[i++];
+    m_continent = (strings.size() > i) ? strings[i++] : "";
 }
 
 Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)
