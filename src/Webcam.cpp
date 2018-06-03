@@ -6,18 +6,35 @@
 
 #include <QFile>
 #include <iostream>
+#include <QCameraInfo>
 
-const QString Webcam::path = QString("./.temp.jpg");
+Webcam::Webcam() : path("./.temp.jpg") {
 
-Webcam::Webcam(QCamera* cam) : imageCapture(cam, nullptr) {}
+    if(QCameraInfo::availableCameras().count() > 0) {
+        cam = new QCamera(QCameraInfo::availableCameras()[0]);
+        cam->setCaptureMode(QCamera::CaptureStillImage);
+        cam->start();
 
-QImage *Webcam::capture() {
-    imageCapture.capture(path);
-    QImage *image = new QImage(path);// maybe think about returning a smarter pointer
-
-    if (!QFile::remove(path)) {
-        std::cerr << "Warning: Failed to remove temporary image" << std::endl;
+        imgCapture = new QCameraImageCapture(cam);
     }
+    else {
+        cam = nullptr;
+    }
+}
 
-    return image;
+Webcam::~Webcam() {
+    cam->stop();
+    delete imgCapture;
+    delete cam;
+}
+
+
+void Webcam::captureImage() {
+    cam->searchAndLock();
+    imgCapture->capture(path);
+    cam->unlock();
+    std::cout << "sdufhkjsd\n";
+}
+
+void Webcam::imageReady(std::shared_ptr<QImage> img) {
 }
