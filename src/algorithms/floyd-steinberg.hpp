@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+
 #include <QImage>
+
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 
