@@ -3,7 +3,6 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QImage>
-#include <QPixmap>
 
 #include "mainwindow.hpp"
 #include "mosaic.hpp"

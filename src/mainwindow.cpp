@@ -2,7 +2,7 @@
 
 #include <QtWidgets>
 #include <QtGui>
-#include <QStyleFactory>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent, QImage& image)
 	: QMainWindow(parent)
@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent, QImage& image)
 	view->setScene(scene);
 
 	this->setCentralWidget(view);
-	this->showSidebar();
 }
 
 MainWindow::~MainWindow() {}
@@ -27,22 +26,68 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Escape) {
 		this->showMaximized();
 	}
+	if (event->key() == Qt::Key_I) {
+		//TODO: Later move it to mouse click on a snail in image
+		this->showSnailInfo();
+	}
 }
 
-void MainWindow::showSidebar()
+void MainWindow::showSnailInfo()
 {
-	QLabel *classLabel = new QLabel("Klasse: ");
-	QLabel *familyLabel = new QLabel("Familie: ");
-	QLabel *genusLabel = new QLabel("Geschlecht: ");
-	QLabel *speciesLabel = new QLabel("Spezies: ");
-	QLabel *scientificNameLabel = new QLabel("Wissenschatfliche Begriff: ");
-	QLabel *localityLabel = new QLabel("Fundort: ");
-	QLabel *dateLabel = new QLabel("Datum: ");
-	QLabel *areaLabel = new QLabel("Gebiet: ");
-	QLabel *provinceLabel = new QLabel("Provinz: ");
-	QLabel *countryLabel = new QLabel("Land: ");
-	QLabel *subContinentLabel = new QLabel("Teilkontinent: ");
-	QLabel *continentLabel = new QLabel("Kontinent: ");
+	//TODO: Later change with specific data of highlighted snail
+	const QString classContent = QStringLiteral("Gastropoda");
+	const QString familyContent = QStringLiteral("Ariophantidae");
+	const QString genusContent = QStringLiteral("Asperitas");
+	const QString speciesContent = QStringLiteral("trochus polymorpha");
+	const QString scientificNameContent = QStringLiteral("Asperitas trochus polymorpha");
+	const QString localityContent = QStringLiteral("Rana Mesé");
+	const QString dateContent = QStringLiteral("19-29.06.1927");
+	const QString areaContent = QStringLiteral("Flores");
+	const QString provinceContent = QStringLiteral("East Nusa Tenggara");
+	const QString countryContent = QStringLiteral("Indonesia");
+	const QString subContinentContent = QStringLiteral(" ");
+	const QString continentContent = QStringLiteral("Asia");
+	this->showSidebar(
+		classContent,
+		familyContent,
+		genusContent,
+		speciesContent,
+		scientificNameContent,
+		localityContent,
+		dateContent,
+		areaContent,
+		provinceContent,
+		countryContent,
+		subContinentContent,
+		continentContent);
+}
+
+void MainWindow::showSidebar(
+	const QString &classContent, 
+	const QString &familyContent, 
+	const QString &genusContent, 
+	const QString &speciesContent, 
+	const QString &scientificNameContent,
+	const QString &localityContent,
+	const QString &dateContent,
+	const QString &areaContent,
+	const QString &provinceContent,
+	const QString &countryContent,
+	const QString &subContinentContent,
+	const QString &continentContent)
+{
+	QLabel *classLabel = new QLabel("Klasse: " + classContent);
+	QLabel *familyLabel = new QLabel("Familie: " + familyContent);
+	QLabel *genusLabel = new QLabel("Geschlecht: " + genusContent);
+	QLabel *speciesLabel = new QLabel("Spezies: " + speciesContent);
+	QLabel *scientificNameLabel = new QLabel("Wissenschatflicher Begriff: " + scientificNameContent);
+	QLabel *localityLabel = new QLabel("Fundort: " + localityContent);
+	QLabel *dateLabel = new QLabel("Datum: " + dateContent);
+	QLabel *areaLabel = new QLabel("Gebiet: " + areaContent);
+	QLabel *provinceLabel = new QLabel("Provinz: " + provinceContent);
+	QLabel *countryLabel = new QLabel("Land: " + countryContent);
+	QLabel *subContinentLabel = new QLabel("Teilkontinent: " + subContinentContent);
+	QLabel *continentLabel = new QLabel("Kontinent: " + continentContent);
 
 	QGridLayout *layout = new QGridLayout();
 

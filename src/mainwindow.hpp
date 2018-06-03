@@ -10,7 +10,20 @@ public:
 	~MainWindow();
 
 	void keyPressEvent(QKeyEvent* event);
-	void showSidebar();
+	void showSnailInfo();
+	void showSidebar(
+		const QString &classContent,
+		const QString &familyContent,
+		const QString &genusContent,
+		const QString &speciesContent,
+		const QString &scientificNameContent,
+		const QString &localityContent,
+		const QString &dateContent,
+		const QString &areaContent,
+		const QString &provinceContent,
+		const QString &countryContent,
+		const QString &subContinentContent,
+		const QString &continentContent);
 
 private:
 };
