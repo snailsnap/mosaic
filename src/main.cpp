@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("SnailSnap");
+	app.setStyleSheet("*{text-align: left; border: none; background: white}");
 
     QCommandLineParser parser;
     parser.addHelpOption();

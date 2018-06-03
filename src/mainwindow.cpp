@@ -2,6 +2,7 @@
 
 #include <QtWidgets>
 #include <QtGui>
+#include <QStyleFactory>
 
 MainWindow::MainWindow(QWidget *parent, QImage& image)
 	: QMainWindow(parent)
@@ -69,6 +70,7 @@ void MainWindow::showSidebar()
 	dwidget->setWidget(scrollArea);
 	dwidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	dwidget->setFeatures(QDockWidget::DockWidgetClosable);
+	dwidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
 	this->addDockWidget(Qt::RightDockWidgetArea, dwidget);
 }
 
