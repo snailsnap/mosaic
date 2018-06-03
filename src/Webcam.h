@@ -11,6 +11,10 @@
 #include <memory>
 
 class Webcam : public QObject {
+    // Wraps QCamera and QCameraImageCapture so you don't have to bother with them
+    // Use captureImage() to ... capture an image. This operation is probably asynchronous. YMMW
+    // Once the image was taken, the imageReady(...) signal will fire
+
     Q_OBJECT
 
 public:
