@@ -35,6 +35,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 void MainWindow::showSnailInfo()
 {
 	//TODO: Later change with specific data of highlighted snail
+	QSize imageSize = QSize(100, 100);
+	QImage image1 = QImage("./../../data/ZMB_Mol_100073_1.png").scaled(imageSize, Qt::KeepAspectRatio);
+	QImage image2 = QImage("./../../data/ZMB_Mol_100073_2.png").scaled(imageSize, Qt::KeepAspectRatio);
+	QImage image3 = QImage("./../../data/ZMB_Mol_100073_3.png").scaled(imageSize, Qt::KeepAspectRatio);
+
 	const QString classContent = QStringLiteral("Gastropoda");
 	const QString familyContent = QStringLiteral("Ariophantidae");
 	const QString genusContent = QStringLiteral("Asperitas");
@@ -59,7 +64,10 @@ void MainWindow::showSnailInfo()
 		provinceContent,
 		countryContent,
 		subContinentContent,
-		continentContent);
+		continentContent,
+		image1,
+		image2,
+		image3);
 }
 
 void MainWindow::showSidebar(
@@ -74,7 +82,10 @@ void MainWindow::showSidebar(
 	const QString &provinceContent,
 	const QString &countryContent,
 	const QString &subContinentContent,
-	const QString &continentContent)
+	const QString &continentContent,
+	const QImage &image1,
+	const QImage &image2,
+	const QImage &image3)
 {
 	QLabel *classLabel = new QLabel("Klasse: " + classContent);
 	QLabel *familyLabel = new QLabel("Familie: " + familyContent);
@@ -88,6 +99,13 @@ void MainWindow::showSidebar(
 	QLabel *countryLabel = new QLabel("Land: " + countryContent);
 	QLabel *subContinentLabel = new QLabel("Teilkontinent: " + subContinentContent);
 	QLabel *continentLabel = new QLabel("Kontinent: " + continentContent);
+
+	QLabel *image1Label = new QLabel("image1Label");
+	image1Label->setPixmap(QPixmap::fromImage(image1));
+	QLabel *image2Label = new QLabel("image2Label");
+	image2Label->setPixmap(QPixmap::fromImage(image2));
+	QLabel *image3Label = new QLabel("image3Label");
+	image3Label->setPixmap(QPixmap::fromImage(image3));
 
 	QGridLayout *layout = new QGridLayout();
 
@@ -109,6 +127,10 @@ void MainWindow::showSidebar(
 	layout->addWidget(countryLabel);
 	layout->addWidget(subContinentLabel);
 	layout->addWidget(continentLabel);
+
+	layout->addWidget(image1Label);
+	layout->addWidget(image2Label);
+	layout->addWidget(image3Label);
 
 	QDockWidget *dwidget = new QDockWidget(this);
 	dwidget->setWindowTitle("Informationen");

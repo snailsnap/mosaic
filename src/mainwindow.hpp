@@ -23,7 +23,10 @@ public:
 		const QString &provinceContent,
 		const QString &countryContent,
 		const QString &subContinentContent,
-		const QString &continentContent);
+		const QString &continentContent,
+		const QImage &image1,
+		const QImage &image2,
+		const QImage &image3);
 
 private:
 };
