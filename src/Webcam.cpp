@@ -6,7 +6,7 @@
 
 #include <QFile>
 #include <iostream>
-#include <QCameraInfo>
+#include <QtMultimedia/QCameraInfo>
 
 Webcam::Webcam() : path("./.temp.jpg") {
 
