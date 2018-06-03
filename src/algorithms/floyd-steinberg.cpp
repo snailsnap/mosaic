@@ -7,8 +7,8 @@
 #include <QColor>
 #include <QPainter>
 
-#include "mosaic.hpp"
-#include "mollusc.hpp"
+#include "floyd-steinberg.hpp"
+#include "../mollusc.hpp"
 
 QVector3D toVec3(const QColor& color)
 {

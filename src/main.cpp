@@ -10,7 +10,7 @@
 #include <QDesktopWidget>
 
 #include "mainwindow.hpp"
-#include "mosaic.hpp"
+#include "algorithms/floyd-steinberg.hpp"
 #include "mollusc.hpp"
 
 
