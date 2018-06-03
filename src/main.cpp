@@ -6,14 +6,19 @@
 #include <QImage>
 #include <QDir>
 #include <QString>
+#include <QWidget>
+#include <QDesktopWidget>
 
+#include "mainwindow.hpp"
 #include "mosaic.hpp"
 #include "mollusc.hpp"
+
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("SnailSnap");
+    app.setStyleSheet("*{text-align: left; border: none; background: white}");
 
     QCommandLineParser parser;
     parser.addHelpOption();
@@ -75,7 +80,8 @@ int main(int argc, char *argv[])
     }
 
     // read input image
-    QImage image(input);
+    QRect display = QApplication::desktop()->screenGeometry();
+    QImage image = QImage(input).scaled(display.size(), Qt::KeepAspectRatio);
 
     // read meta file
     std::ifstream stream(data.toStdString() + "/meta_file.csv");
@@ -100,5 +106,9 @@ int main(int argc, char *argv[])
 
     result->save(output);
 
-    delete result;
+    QWidget *widget = new QWidget;
+    MainWindow mainWin(widget, result);
+    mainWin.showMaximized();
+
+    return app.exec();
 }
