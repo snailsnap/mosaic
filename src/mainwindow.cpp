@@ -4,8 +4,9 @@
 #include <QtGui>
 #include <QPixmap>
 
-MainWindow::MainWindow(QWidget *parent, QImage* image)
+MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs)
     : QMainWindow(parent)
+    , m_molluscs(molluscs)
 {
     QGraphicsView *view = new QGraphicsView;
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -37,24 +38,27 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
+    int selectedMolluscIndex = 0;
+    Mollusc selectedMollusc = m_molluscs->at(selectedMolluscIndex);
+    
     //TODO: Later change with specific data of highlighted snail
     QSize imageSize = QSize(100, 100);
     QImage image1 = QImage("./../data/ZMB_Mol_100073_1.png").scaled(imageSize, Qt::KeepAspectRatio);
     QImage image2 = QImage("./../data/ZMB_Mol_100073_2.png").scaled(imageSize, Qt::KeepAspectRatio);
     QImage image3 = QImage("./../data/ZMB_Mol_100073_3.png").scaled(imageSize, Qt::KeepAspectRatio);
 
-    const QString classContent = QStringLiteral("Gastropoda");
-    const QString familyContent = QStringLiteral("Ariophantidae");
-    const QString genusContent = QStringLiteral("Asperitas");
-    const QString speciesContent = QStringLiteral("trochus polymorpha");
-    const QString scientificNameContent = QStringLiteral("Asperitas trochus polymorpha");
-    const QString localityContent = QStringLiteral("Rana Mesé");
-    const QString dateContent = QStringLiteral("19-29.06.1927");
-    const QString areaContent = QStringLiteral("Flores");
-    const QString provinceContent = QStringLiteral("East Nusa Tenggara");
-    const QString countryContent = QStringLiteral("Indonesia");
-    const QString subContinentContent = QStringLiteral(" ");
-    const QString continentContent = QStringLiteral("Asia");
+    const QString classContent = QString::fromStdString(selectedMollusc.m_class);
+    const QString familyContent = QString::fromStdString(selectedMollusc.m_family);
+    const QString genusContent = QString::fromStdString(selectedMollusc.m_genus);
+    const QString speciesContent = QString::fromStdString(selectedMollusc.m_species);
+    const QString scientificNameContent = QString::fromStdString(selectedMollusc.m_scientificName);
+    const QString localityContent = QString::fromStdString(selectedMollusc.m_locality);
+    const QString dateContent = QString::fromStdString(selectedMollusc.m_date);
+    const QString areaContent = QString::fromStdString(selectedMollusc.m_area);
+    const QString provinceContent = QString::fromStdString(selectedMollusc.m_province);
+    const QString countryContent = QString::fromStdString(selectedMollusc.m_country);
+    const QString subContinentContent = QString::fromStdString(selectedMollusc.m_subContinent);
+    const QString continentContent = QString::fromStdString(selectedMollusc.m_continent);
     this->showSidebar(
         classContent,
         familyContent,

@@ -1,3 +1,5 @@
+#include "mollusc.hpp"
+
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -6,7 +8,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, QImage* image);
+    MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs);
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent* event);
@@ -29,4 +31,5 @@ public:
         const QImage &image3);
 
 private:
+    std::vector<Mollusc>* m_molluscs;
 };
