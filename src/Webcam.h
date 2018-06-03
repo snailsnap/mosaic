@@ -8,6 +8,7 @@
 #include <QCamera>
 #include <QCameraImageCapture>
 #include <QImage>
+#include <memory>
 
 class Webcam : public QObject {
     Q_OBJECT
