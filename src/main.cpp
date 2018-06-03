@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     parser.addOption(outputImageOption);
     QCommandLineOption dataDirOption({ "d", "data" }, "Location of the data files.", "data dir", "data");
     parser.addOption(dataDirOption);
-    QCommandLineOption scaleOption({ "s", "scale" }, "Scale for mosaic creation.", "scale", "32");
-    parser.addOption(scaleOption);
+    QCommandLineOption maxNumOfMolluscsOption({ "n", "maxNumOfMolluscs" }, "Maximum number of molluscs to use for the image.", "maxNumOfMolluscs", "1000");
+    parser.addOption(maxNumOfMolluscsOption);
 
     parser.process(app);
 
@@ -72,11 +72,11 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    auto scale = 32;
-    if (parser.isSet(scaleOption))
+    auto maxNumOfMolluscs = 1000;
+    if (parser.isSet(maxNumOfMolluscsOption))
     {
-        scale = parser.value(scaleOption).toInt();
-        std::cout << "Scale: " << scale << std::endl;
+        maxNumOfMolluscs = parser.value(maxNumOfMolluscsOption).toInt();
+        std::cout << "Maximum number of molluscs: " << maxNumOfMolluscs << std::endl;
     }
 
     // read input image
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
     auto mosaic = FloydSteinberg(molluscs);
-    auto result = mosaic.createMosaic(image, scale);
+    auto result = mosaic.createMosaic(image, maxNumOfMolluscs);
 
     result->save(output);
 

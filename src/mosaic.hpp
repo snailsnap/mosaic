@@ -12,7 +12,7 @@ class MosaicGenerator
 {
 public:
     MosaicGenerator(const std::vector<Mollusc>& molluscs) : m_molluscs{ molluscs } { };
-    virtual QImage * createMosaic(const QImage& input, int scale) = 0;
+    virtual QImage * createMosaic(const QImage& input, int maxNumOfMolluscs) = 0;
 
 protected:
     static QVector3D toVec3(const QColor& color);
