@@ -2,11 +2,16 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QPushButton>
+#include "Webcam.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("SnailSnap");
+    QApplication app(argc, argv);
+    QApplication::setApplicationName("SnailSnap");
+
+    QPushButton button( "Capture");
+    button.show();
 
     QCommandLineParser parser;
     parser.addHelpOption();
@@ -25,4 +30,10 @@ int main(int argc, char *argv[])
     {
         std::cout << "No input image specified." << std::endl;
     }
+
+
+    Webcam w;
+    QObject::connect(&button, &QPushButton::clicked, &w, &Webcam::captureImage);
+
+    return app.exec();
 }
