@@ -5,6 +5,9 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QMoveEvent>
+#include <QtWidgets>
+#include <QtGui>
+#include <QPixmap>
 
 class MainWindow : public QMainWindow {
 public:
@@ -32,4 +35,21 @@ public:
 
 private:
     std::vector<Mollusc>* m_molluscs;
+
+    QLabel *m_classLabel;
+    QLabel *m_familyLabel;
+    QLabel *m_genusLabel;
+    QLabel *m_speciesLabel;
+    QLabel *m_scientificNameLabel;
+    QLabel *m_localityLabel;
+    QLabel *m_dateLabel;
+    QLabel *m_areaLabel;
+    QLabel *m_provinceLabel;
+    QLabel *m_countryLabel;
+    QLabel *m_subContinentLabel;
+    QLabel *m_continentLabel;
+
+    QLabel *m_image1Label;
+    QLabel *m_image2Label;
+    QLabel *m_image3Label;
 };

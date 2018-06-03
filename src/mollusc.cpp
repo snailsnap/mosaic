@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <vector>
 
 #include <QColor>
@@ -20,6 +21,7 @@ Mollusc::Mollusc(const std::string& data)
 
     auto i = 0u;
     m_imageName = strings[i++];
+    std::cout << m_imageName << std::endl;
     m_color = QColor(strings[i++].c_str());
     m_rotation = stof(strings[i++]);
     m_ratio = stof(strings[i++]);
@@ -36,7 +38,7 @@ Mollusc::Mollusc(const std::string& data)
     m_province = strings[i++];
     m_country = strings[i++];
     m_subContinent = strings[i++];
-    m_continent = strings[i++];
+    m_continent = (strings.size() < 18)?"":strings[i++];
 }
 
 Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)

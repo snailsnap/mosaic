@@ -1,12 +1,23 @@
 #include "mainwindow.hpp"
 
-#include <QtWidgets>
-#include <QtGui>
-#include <QPixmap>
-
 MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs)
     : QMainWindow(parent)
     , m_molluscs(molluscs)
+    , m_classLabel(new QLabel())
+    , m_familyLabel(new QLabel())
+    , m_genusLabel(new QLabel())
+    , m_speciesLabel(new QLabel())
+    , m_scientificNameLabel(new QLabel())
+    , m_localityLabel(new QLabel())
+    , m_dateLabel(new QLabel())
+    , m_areaLabel(new QLabel())
+    , m_provinceLabel(new QLabel())
+    , m_countryLabel(new QLabel())
+    , m_subContinentLabel(new QLabel())
+    , m_continentLabel(new QLabel())
+    , m_image1Label(new QLabel("image1Label"))
+    , m_image2Label(new QLabel("image2Label"))
+    , m_image3Label(new QLabel("image3Label"))
 {
     QGraphicsView *view = new QGraphicsView;
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -94,25 +105,22 @@ void MainWindow::showSidebar(
     const QImage &image2,
     const QImage &image3)
 {
-    QLabel *classLabel = new QLabel("Klasse: " + classContent);
-    QLabel *familyLabel = new QLabel("Familie: " + familyContent);
-    QLabel *genusLabel = new QLabel("Geschlecht: " + genusContent);
-    QLabel *speciesLabel = new QLabel("Spezies: " + speciesContent);
-    QLabel *scientificNameLabel = new QLabel("Wissenschatflicher Begriff: " + scientificNameContent);
-    QLabel *localityLabel = new QLabel("Fundort: " + localityContent);
-    QLabel *dateLabel = new QLabel("Datum: " + dateContent);
-    QLabel *areaLabel = new QLabel("Gebiet: " + areaContent);
-    QLabel *provinceLabel = new QLabel("Provinz: " + provinceContent);
-    QLabel *countryLabel = new QLabel("Land: " + countryContent);
-    QLabel *subContinentLabel = new QLabel("Teilkontinent: " + subContinentContent);
-    QLabel *continentLabel = new QLabel("Kontinent: " + continentContent);
+    m_classLabel->setText("Klasse: " + classContent);
+    m_familyLabel->setText("Familie: " + familyContent);
+    m_genusLabel->setText("Geschlecht: " + genusContent);
+    m_speciesLabel->setText("Spezies: " + speciesContent);
+    m_scientificNameLabel->setText("Wissenschatflicher Begriff: " + scientificNameContent);
+    m_localityLabel->setText("Fundort: " + localityContent);
+    m_dateLabel->setText("Datum: " + dateContent);
+    m_areaLabel->setText("Gebiet: " + areaContent);
+    m_provinceLabel->setText("Provinz: " + provinceContent);
+    m_countryLabel->setText("Land: " + countryContent);
+    m_subContinentLabel->setText("Teilkontinent: " + subContinentContent);
+    m_continentLabel->setText("Kontinent: " + continentContent);
 
-    QLabel *image1Label = new QLabel("image1Label");
-    image1Label->setPixmap(QPixmap::fromImage(image1));
-    QLabel *image2Label = new QLabel("image2Label");
-    image2Label->setPixmap(QPixmap::fromImage(image2));
-    QLabel *image3Label = new QLabel("image3Label");
-    image3Label->setPixmap(QPixmap::fromImage(image3));
+    m_image1Label->setPixmap(QPixmap::fromImage(image1));
+    m_image2Label->setPixmap(QPixmap::fromImage(image2));
+    m_image3Label->setPixmap(QPixmap::fromImage(image3));
 
     QGridLayout *layout = new QGridLayout();
 
@@ -122,22 +130,22 @@ void MainWindow::showSidebar(
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(infoWidget);
 
-    layout->addWidget(classLabel);
-    layout->addWidget(familyLabel);
-    layout->addWidget(genusLabel);
-    layout->addWidget(speciesLabel);
-    layout->addWidget(scientificNameLabel);
-    layout->addWidget(localityLabel);
-    layout->addWidget(dateLabel);
-    layout->addWidget(areaLabel);
-    layout->addWidget(provinceLabel);
-    layout->addWidget(countryLabel);
-    layout->addWidget(subContinentLabel);
-    layout->addWidget(continentLabel);
+    layout->addWidget(m_classLabel);
+    layout->addWidget(m_familyLabel);
+    layout->addWidget(m_genusLabel);
+    layout->addWidget(m_speciesLabel);
+    layout->addWidget(m_scientificNameLabel);
+    layout->addWidget(m_localityLabel);
+    layout->addWidget(m_dateLabel);
+    layout->addWidget(m_areaLabel);
+    layout->addWidget(m_provinceLabel);
+    layout->addWidget(m_countryLabel);
+    layout->addWidget(m_subContinentLabel);
+    layout->addWidget(m_continentLabel);
 
-    layout->addWidget(image1Label);
-    layout->addWidget(image2Label);
-    layout->addWidget(image3Label);
+    layout->addWidget(m_image1Label);
+    layout->addWidget(m_image2Label);
+    layout->addWidget(m_image3Label);
 
     QDockWidget *dwidget = new QDockWidget(this);
     dwidget->setWindowTitle("Informationen");
