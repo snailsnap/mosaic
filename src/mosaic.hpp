@@ -19,3 +19,13 @@ protected:
     const Mollusc& getClosestColor(const std::vector<Mollusc>& molluscs, const QVector3D& color);
     const std::vector<Mollusc>& m_molluscs;
 };
+
+struct MolluscPosition
+{
+    int x;
+    int y;
+    int width;
+    int height;
+    float rotation;
+    QColor color;
+};

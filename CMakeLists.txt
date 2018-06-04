@@ -28,7 +28,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	add_definitions(${gcc_specific_flags})
 endif()
 
-# voronoi lib
+# voronoi lib - not really needed as target, but I like having access to it in VS
 
 set(jcv_sources dependencies/jc_voronoi/src/jc_voronoi.h)
 add_library(JCVoronoi ${jcv_sources})

@@ -10,7 +10,7 @@
 #include <QDesktopWidget>
 
 #include "mainwindow.hpp"
-#include "algorithms/floyd-steinberg.hpp"
+#include "algorithms/voronoi.hpp"
 #include "mollusc.hpp"
 
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     // white mollusc for background
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
-    auto mosaic = FloydSteinberg(molluscs);
+    auto mosaic = Voronoi(molluscs);
     auto result = mosaic.createMosaic(image, maxNumOfMolluscs);
 
     result->save(output);
