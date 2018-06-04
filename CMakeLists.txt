@@ -35,12 +35,14 @@ set(sources
 	${source_dir}/mosaic.cpp
 	${source_dir}/mollusc.cpp
 	${source_dir}/mainwindow.cpp
+	${source_dir}/mail.cpp
 )
 
 set(headers
 	${source_dir}/mosaic.hpp
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.hpp
+	${source_dir}/mail.hpp
 )
 
 add_executable(${target} ${headers} ${sources})

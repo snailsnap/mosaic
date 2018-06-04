@@ -12,7 +12,7 @@
 #include "mainwindow.hpp"
 #include "mosaic.hpp"
 #include "mollusc.hpp"
-
+#include "mail.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -105,6 +105,9 @@ int main(int argc, char *argv[])
     QImage* result = createMosaic(image, molluscs, scale);
 
     result->save(output);
+
+    //MailClient mailClient("server", "user", "password");
+    //mailClient.sendText("address", "subject", "message");
 
     QWidget *widget = new QWidget;
     MainWindow mainWin(widget, result, &molluscs);
