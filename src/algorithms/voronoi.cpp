@@ -7,11 +7,11 @@
 #include <QColor>
 #include <QPainter>
 
-#include "floyd-steinberg.hpp"
+#include "voronoi.hpp"
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 
-QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs
+QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     return new QImage(input);
 }
