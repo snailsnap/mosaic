@@ -10,10 +10,13 @@
 class MolluscPalette
 {
 public:
-    MolluscPalette();
+    MolluscPalette(QString dataPath);
     ~MolluscPalette();
 
+    std::vector<Mollusc>* getMolluscs();
+
 private:
+    std::vector<Mollusc>* m_molluscs; //TODO: remove
     std::vector<std::tuple<QColor, std::vector<Mollusc>>> buckets;
 };
 
