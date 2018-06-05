@@ -37,6 +37,8 @@ set(sources
 	${source_dir}/mainwindow.hpp
 	${source_dir}/Webcam.cpp
 	${source_dir}/Webcam.hpp
+	${source_dir}/molluscpalette.cpp
+	${source_dir}/molluscpalette.hpp
 )
 
 add_executable(${target} ${sources})
