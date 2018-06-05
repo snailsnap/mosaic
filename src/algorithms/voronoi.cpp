@@ -117,7 +117,13 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     return result;
 }
 
-void enqueueIfNeeded(const jcv_point& point, int width, int height, std::vector<bool>& floodFillCanvas, std::queue<jcv_point>& queue)
+struct IntPoint
+{
+    int x;
+    int y;
+};
+
+void enqueueIfNeeded(const IntPoint& point, int width, int height, std::vector<bool>& floodFillCanvas, std::queue<IntPoint>& queue)
 {
     // check for image boundaries
     if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height)
@@ -133,6 +139,14 @@ void enqueueIfNeeded(const jcv_point& point, int width, int height, std::vector<
 
     queue.push(point);
     floodFillCanvas[point.x + point.y * width] = true;
+}
+
+void enqueueNeighbors(const IntPoint& point, int width, int height, std::vector<bool>& floodFillCanvas, std::queue<IntPoint>& queue)
+{
+    enqueueIfNeeded(IntPoint{ point.x + 1, point.y }, width, height, floodFillCanvas, queue);
+    enqueueIfNeeded(IntPoint{ point.x - 1, point.y }, width, height, floodFillCanvas, queue);
+    enqueueIfNeeded(IntPoint{ point.x, point.y + 1 }, width, height, floodFillCanvas, queue);
+    enqueueIfNeeded(IntPoint{ point.x, point.y - 1 }, width, height, floodFillCanvas, queue);
 }
 
 void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vector<bool>& floodFillCanvas, int width, int height, QVector3D* color)
@@ -167,7 +181,17 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
             dir = (x1 - x0) / xDist;
             for (x = x0; x != x1; x += dir)
             {
+                if (x < 0 || x >= width)
+                {
+                    continue;
+                }
+
                 y = std::round((float)yDist * x / xDist);
+
+                if (y < 0 || y >= height)
+                {
+                    continue;
+                }
 
                 *color += toVec3(image.pixel(x, y));
                 ++count;
@@ -180,7 +204,17 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
             dir = (y1 - y0) / yDist;
             for (y = y0; y != y1; y += dir)
             {
+                if (y < 0 || y >= height)
+                {
+                    continue;
+                }
+
                 x = std::round((float)xDist * y / yDist);
+
+                if (x < 0 || x >= width)
+                {
+                    continue;
+                }
 
                 *color += toVec3(image.pixel(x, y));
                 ++count;
@@ -188,16 +222,25 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
                 floodFillCanvas[x + y * width] = true;
             }
         }
+
+        edge = edge->next;
     }
 
     // now floodfill, beginning from site base point
 
-    auto point = site->p;
+    auto point = IntPoint{ (int)std::round(site->p.x), (int)std::round(site->p.y) };
 
-    auto queue = std::queue<jcv_point>();
+    auto queue = std::queue<IntPoint>();
 
-    queue.push(point);
-    floodFillCanvas[point.x + point.y * width] = true;
+    if (x < 0 || x >= width || y < 0 || y >= height)
+    {
+        enqueueNeighbors(point, width, height, floodFillCanvas, queue);
+    }
+    else
+    {
+        queue.push(point);
+        floodFillCanvas[point.x + point.y * width] = true;
+    }
 
     while (!queue.empty())
     {
@@ -207,10 +250,7 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
         *color += toVec3(image.pixel(point.x, point.y));
         ++count;
 
-        enqueueIfNeeded(jcv_point{ point.x + 1, point.y }, width, height, floodFillCanvas, queue);
-        enqueueIfNeeded(jcv_point{ point.x - 1, point.y }, width, height, floodFillCanvas, queue);
-        enqueueIfNeeded(jcv_point{ point.x, point.y + 1 }, width, height, floodFillCanvas, queue);
-        enqueueIfNeeded(jcv_point{ point.x, point.y - 1 }, width, height, floodFillCanvas, queue);
+        enqueueNeighbors(point, width, height, floodFillCanvas, queue);
     }
 
     *color /= count;
