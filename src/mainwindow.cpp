@@ -1,6 +1,12 @@
 #include "mainwindow.hpp"
+#include "algorithms/floyd-steinberg.hpp"
 
-MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs)
+#include <QFileDialog>
+#include <QCameraInfo>
+
+#include <iostream>
+
+MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs, bool useCam)
     : QMainWindow(parent)
     , m_molluscs(molluscs)
     , m_selectedMolluscIndex(0)
@@ -23,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* mol
     , m_image1Label(new QLabel("image1Label"))
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
+    , m_useCam(useCam)
 {
     QGraphicsView *view = new QGraphicsView;
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -32,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* mol
 
     scene->addPixmap(QPixmap::fromImage(*image));
     view->setScene(scene);
+    this->m_view = view;
 
     this->setCentralWidget(view);
 }
@@ -40,18 +48,24 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_F11) {
-        if (!this->isFullScreen()) {
-            this->showFullScreen();
+    switch (event->key()) {
+        case Qt::Key_F11: {
+            if (!this->isFullScreen()) {
+                this->showFullScreen();
+            }
+            else {
+                this->showMaximized();
+            }
+            break;
         }
-        else {
-            this->showMaximized();
+        case Qt::Key_I: {
+            this->showSnailInfo();
+            break;
         }
-    }
-
-    if (event->key() == Qt::Key_I) {
-        //TODO: Later move it to mouse click on a snail in image
-        this->showSnailInfo();
+        case Qt::Key_P: {
+            this->takePicture();
+            break;
+        }
     }
 }
 
@@ -143,3 +157,28 @@ void MainWindow::showSidebar(
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
 }
 
+void MainWindow::takePicture() {
+    if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
+        std::cout << "take picture" << std::endl;
+    }
+    else {
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
+            "C:/",
+            tr("Images (*.png *.jpg)"));
+
+        if (fileName == "") return;
+
+        // read input image
+        QRect display = QApplication::desktop()->screenGeometry();
+        QImage image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
+
+        auto mosaic = FloydSteinberg(*m_molluscs);
+        auto result = mosaic.createMosaic(image, 1000);
+
+        QSize imageSize = result->size();
+        QGraphicsScene *scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+
+        scene->addPixmap(QPixmap::fromImage(*result));
+        m_view->setScene(scene);
+    }
+}

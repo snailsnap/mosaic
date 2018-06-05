@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
     parser.addOption(dataDirOption);
     QCommandLineOption maxNumOfMolluscsOption({ "n", "maxNumOfMolluscs" }, "Maximum number of molluscs to use for the image.", "maxNumOfMolluscs", "1000");
     parser.addOption(maxNumOfMolluscsOption);
+    QCommandLineOption useCamOption({ "c", "useCam" }, "Whether the cam or the image dialog.", "useCam", "true");
+    parser.addOption(useCamOption);
 
     parser.process(app);
 
@@ -79,6 +81,13 @@ int main(int argc, char *argv[])
         std::cout << "Maximum number of molluscs: " << maxNumOfMolluscs << std::endl;
     }
 
+    auto useCam = true;
+    if (parser.isSet(useCamOption))
+    {
+        useCam = parser.value(useCamOption).toUpper() == "TRUE";
+        std::cout << "Use Cam: " << useCam << std::endl;
+    }
+
     // read input image
     QRect display = QApplication::desktop()->screenGeometry();
     QImage image = QImage(input).scaled(display.size(), Qt::KeepAspectRatio);
@@ -108,7 +117,7 @@ int main(int argc, char *argv[])
     result->save(output);
 
     QWidget *widget = new QWidget;
-    MainWindow mainWin(widget, result, &molluscs);
+    MainWindow mainWin(widget, result, &molluscs, useCam);
     mainWin.showMaximized();
 
     return app.exec();

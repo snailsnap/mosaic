@@ -11,7 +11,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs);
+    MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs, bool useCam);
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent* event);
@@ -34,6 +34,8 @@ public:
         const QImage &image3);
 
 private:
+    bool m_useCam;
+
     std::vector<Mollusc>* m_molluscs;
     int m_selectedMolluscIndex;
 
@@ -58,4 +60,8 @@ private:
     QLabel *m_image1Label;
     QLabel *m_image2Label;
     QLabel *m_image3Label;
+
+    QGraphicsView *m_view;
+
+    void takePicture();
 };
