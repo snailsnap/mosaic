@@ -13,7 +13,7 @@ QVector3D MosaicGenerator::toVec3(const QColor& color)
 
 QVector3D MosaicGenerator::toVec3(const QRgb& rgb)
 {
-    return toVec3(QColor(rgb));
+    return QVector3D(qRed(rgb) / 255.0, qGreen(rgb) / 255.0, qBlue(rgb) / 255.0);
 }
 
 const Mollusc& MosaicGenerator::getClosestColor(const std::vector<Mollusc>& molluscs, const QVector3D& color)

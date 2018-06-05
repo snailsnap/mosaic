@@ -232,7 +232,7 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
 
     auto queue = std::queue<IntPoint>();
 
-    if (x < 0 || x >= width || y < 0 || y >= height)
+    if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height)
     {
         enqueueNeighbors(point, width, height, floodFillCanvas, queue);
     }
