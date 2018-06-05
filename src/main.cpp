@@ -13,6 +13,7 @@
 #include "mosaic.hpp"
 #include "mollusc.hpp"
 #include "mail.hpp"
+#include "../data/credentials.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -103,11 +104,14 @@ int main(int argc, char *argv[])
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
     QImage* result = createMosaic(image, molluscs, scale);
-
     result->save(output);
 
-    //MailClient mailClient("server", "user", "password");
-    //mailClient.sendText("address", "subject", "message");
+    MailClient mailClient(server, user, password);
+    mailClient.sendImage(
+        address, 
+        "SnailSnap - Naturkundemuseum Berlin", 
+        "Im Anhang befindet sich dein SnailSnap vom Coding-da-Vinci Event in Leipzig.", 
+        *result);
 
     QWidget *widget = new QWidget;
     MainWindow mainWin(widget, result, &molluscs);

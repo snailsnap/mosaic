@@ -43,6 +43,7 @@ set(headers
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.hpp
 	${source_dir}/mail.hpp
+	data/credentials.hpp
 )
 
 add_executable(${target} ${headers} ${sources})
