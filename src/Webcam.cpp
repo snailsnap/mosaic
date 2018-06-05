@@ -2,11 +2,12 @@
 // Created by Leonard Geier on 02.06.18.
 //
 
-#include "Webcam.h"
+#include "Webcam.hpp"
 
 #include <QFile>
 #include <iostream>
-#include <QtMultimedia/QCameraInfo>
+#include <QCameraInfo>
+#include <QCameraImageCapture>
 
 Webcam::Webcam() : path("./.temp.jpg") {
 

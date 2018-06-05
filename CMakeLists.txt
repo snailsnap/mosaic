@@ -31,7 +31,11 @@ set(sources
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.cpp
 	${source_dir}/mainwindow.hpp
+	${source_dir}/mainwindow.cpp
+	${source_dir}/mainwindow.hpp
+	${source_dir}/Webcam.cpp
+	${source_dir}/Webcam.hpp
 )
 
 add_executable(${target} ${sources})
-target_link_libraries(${target} Qt5::Widgets)
+target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia)
