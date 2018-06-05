@@ -3,11 +3,8 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
-#include <QImage>
 #include <QDir>
 #include <QString>
-#include <QWidget>
-#include <QDesktopWidget>
 
 #include "mainwindow.hpp"
 #include "algorithms/floyd-steinberg.hpp"

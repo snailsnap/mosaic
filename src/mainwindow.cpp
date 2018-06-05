@@ -5,6 +5,7 @@
 
 #include <QFileDialog>
 #include <QCameraInfo>
+#include <QDesktopWidget>
 
 #include <iostream>
 
@@ -55,10 +56,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             else {
                 this->showMaximized();
             }
-            break;
-        }
-        case Qt::Key_Escape: {
-            this->showMaximized();
             break;
         }
         case Qt::Key_I: {
