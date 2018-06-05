@@ -8,6 +8,13 @@ Muscheln und Schnecken des Museums für Naturkunde Berlin freistellen und neue B
   - [Mediendateien](http://gbif.naturkundemuseum-berlin.de/CDV2018/Mollusken/)
   - [Gallerie-Ansicht](http://gbif.naturkundemuseum-berlin.de/CDV2018/mollusken-gallery.html)
   
+## Build Status
+
+|Branch      |Linux     |Windows   |
+|------------|----------|----------|
+|master      | [![Build Status](https://travis-ci.com/snailsnap/mosaic.svg?branch=master)](https://travis-ci.com/snailsnap/mosaic) | [![Build status](https://ci.appveyor.com/api/projects/status/5g1x1yk1wvlohao2/branch/master?svg=true)](https://ci.appveyor.com/project/lukaswagner/mosaic/branch/master) |
+|develop     | [![Build Status](https://travis-ci.com/snailsnap/mosaic.svg?branch=develop)](https://travis-ci.com/snailsnap/mosaic) | [![Build status](https://ci.appveyor.com/api/projects/status/5g1x1yk1wvlohao2/branch/develop?svg=true)](https://ci.appveyor.com/project/lukaswagner/mosaic/branch/develop) |
+
 ## Dependencies
 
   - [Qt](https://www.qt.io/)

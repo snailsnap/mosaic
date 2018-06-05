@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mollusc.hpp"
+#include "Webcam.hpp"
 
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -13,9 +14,10 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs);
+    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs);
     ~MainWindow();
 
+    void sendMail();
     void keyPressEvent(QKeyEvent* event);
     void showSnailInfo();
     void showSidebar(
@@ -36,6 +38,13 @@ public:
         const QImage &image3);
 
 private:
+    bool m_useCam;
+    int m_maxNumOfMolluscs;
+    QImage* m_result = nullptr;
+    QString m_outputPath;
+    Webcam* m_webcam;
+    QString m_openImagePath = "C:/";
+
     std::vector<Mollusc>* m_molluscs;
     int m_selectedMolluscIndex;
 
@@ -60,4 +69,8 @@ private:
     QLabel *m_image1Label;
     QLabel *m_image2Label;
     QLabel *m_image3Label;
+
+    QGraphicsView *m_view;
+
+    void takePicture();
 };
