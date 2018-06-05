@@ -3,28 +3,32 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
+#include <queue>
 
 #include <QImage>
 #include <QVector3D>
 #include <QColor>
 #include <QPainter>
 
-#define JC_VORONOI_IMPLEMENTATION
-#include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
-
 #include "voronoi.hpp"
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 
+#define JC_VORONOI_IMPLEMENTATION
+#include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
+
 QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
+    auto width = input.width();
+    auto height = input.height();
+
     // init points
 
     std::random_device random;
     std::mt19937_64 generator(random());
     // todo: choose better generator or manipulate the generator based on face detection
-    std::uniform_real_distribution<float> horizontal(0.0, input.width());
-    std::uniform_real_distribution<float> vertical(0.0, input.height());
+    std::uniform_real_distribution<float> horizontal(0.0, width);
+    std::uniform_real_distribution<float> vertical(0.0, height);
 
     auto points = new jcv_point[maxNumOfMolluscs];
 
@@ -35,7 +39,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     // generate voronoi diagram
 
-    jcv_diagram diagram;
+    auto diagram = jcv_diagram();
     memset(&diagram, 0, sizeof(jcv_diagram));
     jcv_diagram_generate(maxNumOfMolluscs, points, 0, &diagram);
 
@@ -44,6 +48,8 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     auto sites = jcv_diagram_get_sites(&diagram);
 
     auto positions = std::vector<MolluscPosition>();
+
+    auto floodFillCanvas = std::vector<bool>(height * width, false);
 
     for (auto i = 0; i < diagram.numsites; ++i)
     {
@@ -82,12 +88,13 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         auto dimY = (int)(maxY - minY);
         auto dim = std::min<int>(dimX, dimY);
 
-        positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0, QColor(input.pixel((int)x, (int)y)) });
+        positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
+        getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
     }
 
     // draw molluscs
 
-    auto result = new QImage(input.width(), input.height(), input.format());
+    auto result = new QImage(width, height, input.format());
     result->fill(Qt::GlobalColor::white);
     QPainter painter(result);
 
@@ -95,7 +102,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     {
         auto pos = positions[i];
 
-        auto mollusc = getClosestColor(m_molluscs, toVec3(pos.color));
+        auto mollusc = getClosestColor(m_molluscs, pos.color);
 
         // todo: better drawing with save/translate/rotate/restore
         if (mollusc.m_imageName.compare("NONE") != 0)
@@ -108,4 +115,103 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     delete[] points;
 
     return result;
+}
+
+void enqueueIfNeeded(const jcv_point& point, int width, int height, std::vector<bool>& floodFillCanvas, std::queue<jcv_point>& queue)
+{
+    // check for image boundaries
+    if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height)
+    {
+        return;
+    }
+
+    // ignore pixels which were already used
+    if (floodFillCanvas[point.x + point.y * width])
+    {
+        return;
+    }
+
+    queue.push(point);
+    floodFillCanvas[point.x + point.y * width] = true;
+}
+
+void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vector<bool>& floodFillCanvas, int width, int height, QVector3D* color)
+{
+    *color = QVector3D();
+    auto count = 0;
+
+    // walk over edges first
+
+    auto edge = site->edges;
+    int x, y, x0, y0, x1, y1, xDist, yDist, dir;
+
+    while (edge)
+    {
+        x0 = (int)std::round(edge->pos[0].x);
+        y0 = (int)std::round(edge->pos[0].y);
+        x1 = (int)std::round(edge->pos[1].x);
+        y1 = (int)std::round(edge->pos[1].y);
+
+        xDist = std::abs(x1 - x0);
+        yDist = std::abs(y1 - y0);
+
+        if (xDist == 0 && yDist == 0)
+        {
+            // only one pixel, which is covered by one adjacent edge - skip
+            edge = edge->next;
+            continue;
+        }
+
+        if (xDist > yDist)
+        {
+            dir = (x1 - x0) / xDist;
+            for (x = x0; x != x1; x += dir)
+            {
+                y = std::round((float)yDist * x / xDist);
+
+                *color += toVec3(image.pixel(x, y));
+                ++count;
+
+                floodFillCanvas[x + y * width] = true;
+            }
+        }
+        else
+        {
+            dir = (y1 - y0) / yDist;
+            for (y = y0; y != y1; y += dir)
+            {
+                x = std::round((float)xDist * y / yDist);
+
+                *color += toVec3(image.pixel(x, y));
+                ++count;
+
+                floodFillCanvas[x + y * width] = true;
+            }
+        }
+    }
+
+    // now floodfill, beginning from site base point
+
+    auto point = site->p;
+
+    auto queue = std::queue<jcv_point>();
+
+    queue.push(point);
+    floodFillCanvas[point.x + point.y * width] = true;
+
+    while (!queue.empty())
+    {
+        point = queue.front();
+        queue.pop();
+
+        *color += toVec3(image.pixel(point.x, point.y));
+        ++count;
+
+        enqueueIfNeeded(jcv_point{ point.x + 1, point.y }, width, height, floodFillCanvas, queue);
+        enqueueIfNeeded(jcv_point{ point.x - 1, point.y }, width, height, floodFillCanvas, queue);
+        enqueueIfNeeded(jcv_point{ point.x, point.y + 1 }, width, height, floodFillCanvas, queue);
+        enqueueIfNeeded(jcv_point{ point.x, point.y - 1 }, width, height, floodFillCanvas, queue);
+    }
+
+    *color /= count;
 }

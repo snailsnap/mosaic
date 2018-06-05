@@ -16,6 +16,7 @@ public:
 
 protected:
     static QVector3D toVec3(const QColor& color);
+    static QVector3D toVec3(const QRgb& color);
     const Mollusc& getClosestColor(const std::vector<Mollusc>& molluscs, const QVector3D& color);
     const std::vector<Mollusc>& m_molluscs;
 };
@@ -27,5 +28,5 @@ struct MolluscPosition
     int width;
     int height;
     float rotation;
-    QColor color;
+    QVector3D color;
 };
