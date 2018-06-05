@@ -1,5 +1,5 @@
 #include "mainwindow.hpp"
-#include "algorithms/floyd-steinberg.hpp"
+#include "algorithms/voronoi.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
@@ -180,7 +180,7 @@ void MainWindow::takePicture() {
         auto display = QApplication::desktop()->screenGeometry();
         auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
 
-        auto mosaic = FloydSteinberg(*m_molluscs);
+        auto mosaic = Voronoi(*m_molluscs);
         m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
         auto imageSize = m_result->size();
