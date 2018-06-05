@@ -40,13 +40,14 @@ set_target_properties(JCVoronoi PROPERTIES LINKER_LANGUAGE CXX)
 set(source_dir src)
 
 set(sources
-    ${source_dir}/main.cpp
+	${source_dir}/main.cpp
 	${source_dir}/mosaic.cpp
 	${source_dir}/algorithms/floyd-steinberg.cpp
 	${source_dir}/algorithms/voronoi.cpp
 	${source_dir}/mollusc.cpp
 	${source_dir}/mainwindow.cpp
 	${source_dir}/Webcam.cpp
+	${source_dir}/helpers/boundingbox.cpp
 )
 
 set(headers
@@ -56,7 +57,19 @@ set(headers
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.hpp
 	${source_dir}/Webcam.hpp
+	${source_dir}/helpers/boundingbox.hpp
 )
 
 add_executable(${target} ${sources} ${headers})
 target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia)
+
+if (NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0")
+	option(VS_FILE_TREE_SPLIT_HEADER_AND_SOURCE "In the Visual Studio file list, headers and sources are normally split into two folders. Disable this to merge them." ON)
+	
+	if(${VS_FILE_TREE_SPLIT_HEADER_AND_SOURCE})
+		source_group(TREE ${CMAKE_SOURCE_DIR}/${source_dir} PREFIX "Source Files" FILES ${sources})
+		source_group(TREE ${CMAKE_SOURCE_DIR}/${source_dir} PREFIX "Header Files" FILES ${headers})
+	else()
+		source_group(TREE ${CMAKE_SOURCE_DIR}/${source_dir} PREFIX "Source Files" FILES ${sources} ${headers})
+	endif()
+endif()
