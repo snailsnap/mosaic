@@ -24,29 +24,18 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
 
     // set up inputs
-    QCommandLineOption inputImageOption({ "i", "input" }, "Use given input image instead of camera input.", "input image");
-    parser.addOption(inputImageOption);
     QCommandLineOption outputImageOption({ "o", "output" }, "Store the output image to this file.", "output image");
     parser.addOption(outputImageOption);
     QCommandLineOption dataDirOption({ "d", "data" }, "Location of the data files.", "data dir", "data");
     parser.addOption(dataDirOption);
     QCommandLineOption maxNumOfMolluscsOption({ "n", "maxNumOfMolluscs" }, "Maximum number of molluscs to use for the image.", "maxNumOfMolluscs", "1000");
     parser.addOption(maxNumOfMolluscsOption);
+    QCommandLineOption useCamOption({ "c", "useCam" }, "Whether the cam or the image dialog is used.", "useCam", "true");
+    parser.addOption(useCamOption);
 
     parser.process(app);
 
     // check inputs
-    QString input;
-    if (parser.isSet(inputImageOption))
-    {
-        input = parser.value(inputImageOption);
-        std::cout << "Input image: " << input.toStdString() << std::endl;
-    }
-    else
-    {
-        std::cout << "No input image specified." << std::endl;
-        exit(-1);
-    }
 
     QString output;
     if (parser.isSet(outputImageOption))
@@ -79,9 +68,12 @@ int main(int argc, char *argv[])
         std::cout << "Maximum number of molluscs: " << maxNumOfMolluscs << std::endl;
     }
 
-    // read input image
-    QRect display = QApplication::desktop()->screenGeometry();
-    QImage image = QImage(input).scaled(display.size(), Qt::KeepAspectRatio);
+    auto useCam = true;
+    if (parser.isSet(useCamOption))
+    {
+        useCam = parser.value(useCamOption).toUpper() == "TRUE";
+        std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
+    }
 
     // read meta file
     std::ifstream stream(data.toStdString() + "/meta_file.csv");
@@ -102,13 +94,8 @@ int main(int argc, char *argv[])
     // white mollusc for background
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
-    auto mosaic = FloydSteinberg(molluscs);
-    auto result = mosaic.createMosaic(image, maxNumOfMolluscs);
 
-    result->save(output);
-
-    QWidget *widget = new QWidget;
-    MainWindow mainWin(widget, result, &molluscs);
+    MainWindow mainWin(nullptr, &molluscs, useCam, output, maxNumOfMolluscs);
     mainWin.showMaximized();
 
     return app.exec();
