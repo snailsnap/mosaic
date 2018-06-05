@@ -5,5 +5,5 @@
 // bounding box algorithm based on https://github.com/cansik/LongLiveTheSquare
 BoundingBox calculateBoundingBox(const jcv_site* site)
 {
-
+    return BoundingBox();
 }
