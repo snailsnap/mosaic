@@ -18,16 +18,7 @@ Webcam::Webcam() : path("./.temp.jpg") {
 
         imgCapture = new QCameraImageCapture(cam);
 
-        QObject::connect(imgCapture, &QCameraImageCapture::imageSaved, [=](){
-            std::shared_ptr<QImage> image = std::make_shared<QImage>(path);
-
-            emit imageReady(image);
-
-            // delete file
-            if(!QFile::remove(path)) {
-                std::cerr << "Warning: Failed to remove temporary webcam image at " << path.toStdString() << std::endl;
-            }
-        });
+        QObject::connect(imgCapture, &QCameraImageCapture::imageSaved, this, &Webcam::emitImage);
     }
     else {
         cam = nullptr;
@@ -45,4 +36,15 @@ void Webcam::captureImage() {
     cam->searchAndLock();
     imgCapture->capture(path);
     cam->unlock();
+}
+
+void Webcam::emitImage() {
+    std::shared_ptr<QImage> image = std::make_shared<QImage>(path);
+
+    emit imageReady(image);
+
+    // delete file
+    if(!QFile::remove(path)) {
+        std::cerr << "Warning: Failed to remove temporary webcam image at " << path.toStdString() << std::endl;
+    }
 }

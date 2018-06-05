@@ -27,6 +27,9 @@ signals:
 public slots:
     void captureImage();
 
+private slots:
+    void emitImage();
+
 private:
     QCamera* cam;
     QCameraImageCapture* imgCapture;
