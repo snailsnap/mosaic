@@ -66,7 +66,6 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         auto maxY = std::numeric_limits<double>::min();
 
         // todo: check anisotropy, set angle accordingly, consider when calculating dimensions
-        // todo: average color in cell, don't just use center
         while (edge)
         {
             x += edge->pos[0].x;
@@ -89,7 +88,8 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         auto dim = std::min<int>(dimX, dimY);
 
         positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
-        getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
+        //getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
+        positions.back().color = toVec3(input.pixel(x, y));
     }
 
     // draw molluscs
