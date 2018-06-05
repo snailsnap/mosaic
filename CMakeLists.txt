@@ -37,17 +37,16 @@ set(sources
 	${source_dir}/mollusc.cpp
 	${source_dir}/mainwindow.cpp
 	${source_dir}/mail.cpp
+    ${source_dir}/Webcam.cpp
+    ${source_dir}/mainwindow.cpp
+    ${source_dir}/algorithms/floyd-steinberg.cpp
 )
 
 set(headers
 	${source_dir}/mosaic.hpp
-	${source_dir}/algorithms/floyd-steinberg.cpp
 	${source_dir}/algorithms/floyd-steinberg.hpp
-	${source_dir}/mollusc.cpp
 	${source_dir}/mollusc.hpp
-	${source_dir}/mainwindow.cpp
 	${source_dir}/mainwindow.hpp
-	${source_dir}/Webcam.cpp
 	${source_dir}/Webcam.hpp
 	${source_dir}/mail.hpp
 	data/credentials.hpp
