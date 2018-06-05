@@ -43,7 +43,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     auto sites = jcv_diagram_get_sites(&diagram);
 
-    auto positions = new MolluscPosition[diagram.numsites];
+    auto positions = std::vector<MolluscPosition>();
 
     for (auto i = 0; i < diagram.numsites; ++i)
     {
@@ -82,7 +82,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         auto dimY = (int)(maxY - minY);
         auto dim = std::min<int>(dimX, dimY);
 
-        new(positions + i) MolluscPosition{ (int)x, (int)y, dim, dim, 0, QColor(input.pixel((int)x, (int)y)) };
+        positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0, QColor(input.pixel((int)x, (int)y)) });
     }
 
     // draw molluscs
@@ -93,13 +93,13 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     for (auto i = 0; i < diagram.numsites; ++i)
     {
-        auto pos = &positions[i];
+        auto pos = positions[i];
 
-        auto mollusc = getClosestColor(m_molluscs, toVec3(pos->color));
+        auto mollusc = getClosestColor(m_molluscs, toVec3(pos.color));
 
         // todo: better drawing with save/translate/rotate/restore
         if (mollusc.m_imageName.compare("NONE") != 0)
-            painter.drawPixmap(pos->x - pos->width / 2, pos->y - pos->height / 2, pos->width, pos->height, mollusc.m_image);
+            painter.drawPixmap(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.width, pos.height, mollusc.m_image);
     }
 
     // clean up
