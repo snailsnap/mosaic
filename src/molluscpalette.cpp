@@ -32,7 +32,7 @@ MolluscPalette::~MolluscPalette()
 {
 }
 
-std::vector<Mollusc>* MolluscPalette::getMolluscs()
+std::vector<Mollusc>* MolluscPalette::getMolluscs() const
 {
     return m_molluscs;
 }

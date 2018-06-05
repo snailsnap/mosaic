@@ -13,7 +13,7 @@ public:
     MolluscPalette(QString dataPath);
     ~MolluscPalette();
 
-    std::vector<Mollusc>* getMolluscs();
+    std::vector<Mollusc>* getMolluscs() const;
 
 private:
     std::vector<Mollusc>* m_molluscs; //TODO: remove

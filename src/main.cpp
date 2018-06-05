@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
     auto molluscPalette = new MolluscPalette(data);
 
-    MainWindow mainWin(nullptr, molluscPalette->getMolluscs(), useCam, output, maxNumOfMolluscs);
+    MainWindow mainWin(nullptr, molluscPalette, useCam, output, maxNumOfMolluscs);
     mainWin.showMaximized();
 
     return app.exec();

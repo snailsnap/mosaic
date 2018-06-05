@@ -1,4 +1,5 @@
 #include "mollusc.hpp"
+#include "molluscpalette.hpp"
 #include "Webcam.hpp"
 
 #include <QMainWindow>
@@ -12,7 +13,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs);
+    MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs);
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent* event);
@@ -42,7 +43,7 @@ private:
     Webcam* m_webcam;
     QString m_openImagePath = "C:/";
 
-    std::vector<Mollusc>* m_molluscs;
+    MolluscPalette* m_molluscPalette;
     int m_selectedMolluscIndex;
 
     QGridLayout *m_layout;
