@@ -1,12 +1,18 @@
+#include "mollusc.hpp"
+#include "Webcam.hpp"
+
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QMoveEvent>
+#include <QtWidgets>
+#include <QtGui>
+#include <QPixmap>
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, QImage* image);
+    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs);
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent* event);
@@ -29,4 +35,39 @@ public:
         const QImage &image3);
 
 private:
+    bool m_useCam;
+    int m_maxNumOfMolluscs;
+    QImage* m_result = nullptr;
+    QString m_outputPath;
+    Webcam* m_webcam;
+    QString m_openImagePath = "C:/";
+
+    std::vector<Mollusc>* m_molluscs;
+    int m_selectedMolluscIndex;
+
+    QGridLayout *m_layout;
+    QScrollArea *m_scrollArea;
+    QWidget *m_infoWidget;
+    QDockWidget *m_dWidget;
+
+    QLabel *m_classLabel;
+    QLabel *m_familyLabel;
+    QLabel *m_genusLabel;
+    QLabel *m_speciesLabel;
+    QLabel *m_scientificNameLabel;
+    QLabel *m_localityLabel;
+    QLabel *m_dateLabel;
+    QLabel *m_areaLabel;
+    QLabel *m_provinceLabel;
+    QLabel *m_countryLabel;
+    QLabel *m_subContinentLabel;
+    QLabel *m_continentLabel;
+
+    QLabel *m_image1Label;
+    QLabel *m_image2Label;
+    QLabel *m_image3Label;
+
+    QGraphicsView *m_view;
+
+    void takePicture();
 };

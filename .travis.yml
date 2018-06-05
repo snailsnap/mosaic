@@ -8,11 +8,13 @@ addons:
   apt:
     packages:
       - g++-5
-      - qtbase5-dev
-    sources: &sources
-      - llvm-toolchain-precise-3.8
+      - qt510base
+      - qt510multimedia
+    sources:
       - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
 
 script:
-  - cmake .
+  - /opt/qt510/bin/qt510-env.sh
+  - cmake . -DQt5_DIR=$QTDIR/lib/cmake/Qt5
   - make

@@ -8,10 +8,11 @@ project(${target})
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_AUTOMOC ON)
 
 # dependencies
 
-find_package(Qt5Widgets)
+find_package(Qt5 COMPONENTS Widgets Multimedia)
 
 # output dir
 
@@ -45,6 +46,7 @@ set(sources
 	${source_dir}/algorithms/voronoi.cpp
 	${source_dir}/mollusc.cpp
 	${source_dir}/mainwindow.cpp
+	${source_dir}/Webcam.cpp
 )
 
 set(headers
@@ -53,7 +55,8 @@ set(headers
 	${source_dir}/algorithms/voronoi.hpp
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.hpp
+	${source_dir}/Webcam.hpp
 )
 
 add_executable(${target} ${sources} ${headers})
-target_link_libraries(${target} Qt5::Widgets)
+target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia)
