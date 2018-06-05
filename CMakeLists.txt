@@ -6,8 +6,9 @@ project(${target})
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5Widgets)
+find_package(Qt5 COMPONENTS Widgets Multimedia)
 
 set(output_dir bin)
 
@@ -30,7 +31,11 @@ set(sources
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.cpp
 	${source_dir}/mainwindow.hpp
+	${source_dir}/mainwindow.cpp
+	${source_dir}/mainwindow.hpp
+	${source_dir}/Webcam.cpp
+	${source_dir}/Webcam.hpp
 )
 
 add_executable(${target} ${sources})
-target_link_libraries(${target} Qt5::Widgets)
+target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia)
