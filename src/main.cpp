@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     parser.addOption(dataDirOption);
     QCommandLineOption maxNumOfMolluscsOption({ "n", "maxNumOfMolluscs" }, "Maximum number of molluscs to use for the image.", "maxNumOfMolluscs", "1000");
     parser.addOption(maxNumOfMolluscsOption);
-    QCommandLineOption useCamOption({ "c", "useCam" }, "Whether the cam or the image dialog.", "useCam", "true");
+    QCommandLineOption useCamOption({ "c", "useCam" }, "Whether the cam or the image dialog is used.", "useCam", "true");
     parser.addOption(useCamOption);
 
     parser.process(app);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
 
-    MainWindow mainWin(nullptr, &molluscs, useCam, output);
+    MainWindow mainWin(nullptr, &molluscs, useCam, output, maxNumOfMolluscs);
     mainWin.showMaximized();
 
     return app.exec();

@@ -12,7 +12,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath);
+    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs);
     ~MainWindow();
 
     void keyPressEvent(QKeyEvent* event);
@@ -36,6 +36,7 @@ public:
 
 private:
     bool m_useCam;
+    int m_maxNumOfMolluscs;
     QImage* m_result = nullptr;
     QString m_outputPath;
     Webcam* m_webcam;

@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath)
+MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs)
     : QMainWindow(parent)
     , m_molluscs(molluscs)
     , m_selectedMolluscIndex(0)
@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool use
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
     , m_outputPath(outputPath)
+    , m_maxNumOfMolluscs(maxNumOfMolluscs)
 {
     if(useCam) m_webcam = new Webcam();
 
@@ -165,7 +166,7 @@ void MainWindow::showSidebar(
 void MainWindow::takePicture() {
     if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
         std::cout << "image capturing using the webcam is not implemented yet" << std::endl;
-        m_webcam->captureImage();
+        //m_webcam->captureImage();
     }
     else {
         auto fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
@@ -180,7 +181,7 @@ void MainWindow::takePicture() {
         auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
 
         auto mosaic = FloydSteinberg(*m_molluscs);
-        m_result = mosaic.createMosaic(image, 1000);
+        m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
         auto imageSize = m_result->size();
         auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
