@@ -24,8 +24,6 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
 
     // set up inputs
-    QCommandLineOption inputImageOption({ "i", "input" }, "Use given input image instead of camera input.", "input image");
-    parser.addOption(inputImageOption);
     QCommandLineOption outputImageOption({ "o", "output" }, "Store the output image to this file.", "output image");
     parser.addOption(outputImageOption);
     QCommandLineOption dataDirOption({ "d", "data" }, "Location of the data files.", "data dir", "data");
@@ -38,17 +36,6 @@ int main(int argc, char *argv[])
     parser.process(app);
 
     // check inputs
-    QString input;
-    if (parser.isSet(inputImageOption))
-    {
-        input = parser.value(inputImageOption);
-        std::cout << "Input image: " << input.toStdString() << std::endl;
-    }
-    else
-    {
-        std::cout << "No input image specified." << std::endl;
-        exit(-1);
-    }
 
     QString output;
     if (parser.isSet(outputImageOption))
@@ -85,12 +72,8 @@ int main(int argc, char *argv[])
     if (parser.isSet(useCamOption))
     {
         useCam = parser.value(useCamOption).toUpper() == "TRUE";
-        std::cout << "Use Cam: " << useCam << std::endl;
+        std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
     }
-
-    // read input image
-    QRect display = QApplication::desktop()->screenGeometry();
-    QImage image = QImage(input).scaled(display.size(), Qt::KeepAspectRatio);
 
     // read meta file
     std::ifstream stream(data.toStdString() + "/meta_file.csv");
@@ -111,13 +94,8 @@ int main(int argc, char *argv[])
     // white mollusc for background
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
-    auto mosaic = FloydSteinberg(molluscs);
-    auto result = mosaic.createMosaic(image, maxNumOfMolluscs);
 
-    result->save(output);
-
-    QWidget *widget = new QWidget;
-    MainWindow mainWin(widget, result, &molluscs, useCam);
+    MainWindow mainWin(nullptr, &molluscs, useCam, output);
     mainWin.showMaximized();
 
     return app.exec();

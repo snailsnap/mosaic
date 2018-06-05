@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* molluscs, bool useCam)
+MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath)
     : QMainWindow(parent)
     , m_molluscs(molluscs)
     , m_selectedMolluscIndex(0)
@@ -30,17 +30,14 @@ MainWindow::MainWindow(QWidget *parent, QImage* image, std::vector<Mollusc>* mol
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
+    , m_outputPath(outputPath)
 {
+    if(useCam) m_webcam = new Webcam();
+
     QGraphicsView *view = new QGraphicsView;
+    this->m_view = view;
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    QSize imageSize = image->size();
-    QGraphicsScene *scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
-
-    scene->addPixmap(QPixmap::fromImage(*image));
-    view->setScene(scene);
-    this->m_view = view;
-
     this->setCentralWidget(view);
 }
 
@@ -58,6 +55,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             }
             break;
         }
+        case Qt::Key_Escape: {
+            this->showMaximized();
+            break;
+        }
         case Qt::Key_I: {
             this->showSnailInfo();
             break;
@@ -65,6 +66,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         case Qt::Key_P: {
             this->takePicture();
             break;
+        }
+        case Qt::Key_S: {
+            if(m_result != nullptr)
+                m_result->save(m_outputPath);
         }
     }
 }
@@ -159,26 +164,28 @@ void MainWindow::showSidebar(
 
 void MainWindow::takePicture() {
     if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
-        std::cout << "take picture" << std::endl;
+        std::cout << "image capturing using the webcam is not implemented yet" << std::endl;
+        m_webcam->captureImage();
     }
     else {
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
-            "C:/",
+        auto fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
+            m_openImagePath,
             tr("Images (*.png *.jpg)"));
 
         if (fileName == "") return;
+        m_openImagePath = fileName;
 
         // read input image
-        QRect display = QApplication::desktop()->screenGeometry();
-        QImage image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
+        auto display = QApplication::desktop()->screenGeometry();
+        auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
 
         auto mosaic = FloydSteinberg(*m_molluscs);
-        auto result = mosaic.createMosaic(image, 1000);
+        m_result = mosaic.createMosaic(image, 1000);
 
-        QSize imageSize = result->size();
-        QGraphicsScene *scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+        auto imageSize = m_result->size();
+        auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
 
-        scene->addPixmap(QPixmap::fromImage(*result));
+        scene->addPixmap(QPixmap::fromImage(*m_result));
         m_view->setScene(scene);
     }
 }
