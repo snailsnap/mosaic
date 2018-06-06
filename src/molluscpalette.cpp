@@ -42,7 +42,13 @@ const Mollusc & MolluscPalette::getClosestColor(const QVector3D & color) const
         }
     }
 
-    return m_buckets[closestIndex].second->at(0); //TODO use random
+    auto bucket = *(m_buckets[closestIndex].second);
+
+    std::random_device random;
+    std::mt19937_64 generator(random());
+    auto distribution = std::uniform_int_distribution<>(0, bucket.size()-1);
+    auto idx = distribution(generator);
+    return m_buckets[closestIndex].second->at(idx);
 }
 
 void MolluscPalette::loadData(QString dataPath) {
@@ -87,24 +93,8 @@ void MolluscPalette::fillBuckets()
         int r = (i & 0x7) * 32 + 15;
         int g = ((i >> 3) & 0x7) * 32 + 15;
         int b = ((i >> 6) & 0x7) * 32 + 15;
-        std::cout << "i = " << i << ": (" << r << "," << g << "," << b << ")" << std::endl;
-        auto color = QColor(r,g,b); //TODO use average color
+        auto color = QColor(r,g,b);
         m_buckets.push_back(std::make_pair(color, bucket));
-        /*std::cout << "bucket color: (" << color.red() << "," << color.green() << "," << color.blue() << ")" << std::endl;
-
-        for (auto m : *bucket) {
-            auto c = m.m_color;
-            std::cout << "  (" << c.red() << "," << c.green() << "," << c.blue() << ")" << std::endl;
-        }/**/
         i++;
-    }
-
-    auto col = m_buckets[0].first;
-    std::cout << "bucket color: (" << col.red() << "," << col.green() << "," << col.blue() << ")" << std::endl;
-
-    for (auto m : *(m_buckets[0].second)) {
-        auto c = m.m_color;
-        std::cout << "  (" << c.red() << "," << c.green() << "," << c.blue() << ")" << std::endl;
-        std::cout << m.m_imageName << std::endl;
     }
 }
