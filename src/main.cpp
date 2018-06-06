@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        std::cout << "No output image specified." << std::endl;
-        exit(-1);
+        std::cout << "No output image specified. initializing to empty string" << std::endl;
+        output = "";
     }
 
     QString data("data");
