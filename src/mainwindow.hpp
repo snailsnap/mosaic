@@ -1,6 +1,9 @@
+#pragma once
+
 #include "mollusc.hpp"
 #include "molluscpalette.hpp"
 #include "Webcam.hpp"
+#include "mail.hpp"
 
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -13,9 +16,10 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs);
+    MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
 
+    void sendMail();
     void keyPressEvent(QKeyEvent* event);
     void showSnailInfo();
     void showSidebar(
@@ -42,6 +46,7 @@ private:
     QString m_outputPath;
     Webcam* m_webcam;
     QString m_openImagePath = "C:/";
+    QString m_data;
 
     MolluscPalette* m_molluscPalette;
     int m_selectedMolluscIndex;
@@ -69,6 +74,8 @@ private:
     QLabel *m_image3Label;
 
     QGraphicsView *m_view;
+
+    MailClient m_mailClient;
 
     void takePicture();
 };

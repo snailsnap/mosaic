@@ -3,17 +3,13 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
-#include <QImage>
 #include <QDir>
 #include <QString>
-#include <QWidget>
-#include <QDesktopWidget>
 
 #include "mainwindow.hpp"
 #include "algorithms/floyd-steinberg.hpp"
 #include "mollusc.hpp"
 #include "molluscpalette.hpp"
-
 
 int main(int argc, char *argv[])
 {
@@ -78,7 +74,7 @@ int main(int argc, char *argv[])
 
     auto molluscPalette = new MolluscPalette(data);
 
-    MainWindow mainWin(nullptr, molluscPalette, useCam, output, maxNumOfMolluscs);
+    MainWindow mainWin(nullptr, molluscPalette, useCam, output, maxNumOfMolluscs, data);
     mainWin.showMaximized();
 
     return app.exec();
