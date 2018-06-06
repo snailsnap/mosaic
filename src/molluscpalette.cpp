@@ -7,17 +7,13 @@
 #include <QString>
 #include <QVector3D>
 
-MolluscPalette::MolluscPalette(QString dataPath)
+MolluscPalette::MolluscPalette(const QString& dataPath)
 {
     this->loadData(dataPath);
     this->fillBuckets();
 }
 
-MolluscPalette::~MolluscPalette()
-{
-}
-
-std::vector<Mollusc>* MolluscPalette::getMolluscs() const
+const std::vector<Mollusc>* MolluscPalette::getMolluscs() const
 {
     return m_molluscs;
 }
@@ -51,7 +47,7 @@ const Mollusc & MolluscPalette::getClosestColor(const QVector3D & color) const
     return m_buckets[closestIndex].second->at(idx);
 }
 
-void MolluscPalette::loadData(QString dataPath) {
+void MolluscPalette::loadData(const QString& dataPath) {
     // read meta file
     std::ifstream stream(dataPath.toStdString() + "/meta_file.csv");
     std::vector<std::string> strings;
@@ -84,17 +80,17 @@ void MolluscPalette::fillBuckets()
         buckets[idx]->push_back(mollusc);
     }
     
-    int i = 0;
+    auto i = 0;
     for (auto bucket : buckets) {
         if (bucket == nullptr) {
-            i++;
+            ++i;
             continue;
         }
-        int r = (i & 0x7) * 32 + 15;
-        int g = ((i >> 3) & 0x7) * 32 + 15;
-        int b = ((i >> 6) & 0x7) * 32 + 15;
+        auto r = (i & 0x7) * 32 + 15;
+        auto g = ((i >> 3) & 0x7) * 32 + 15;
+        auto b = ((i >> 6) & 0x7) * 32 + 15;
         auto color = QColor(r,g,b);
         m_buckets.push_back(std::make_pair(color, bucket));
-        i++;
+        ++i;
     }
 }
