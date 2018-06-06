@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QCameraInfo>
 #include <QDesktopWidget>
+#include <QTime>
 
 #include <iostream>
 
@@ -183,19 +184,36 @@ void MainWindow::takePicture() {
         if (fileName == "") return;
         m_openImagePath = fileName;
 
-        // read input image
-        auto display = QApplication::desktop()->screenGeometry();
-        auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
-
-        auto mosaic = FloydSteinberg(*m_molluscPalette);
-        m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-        auto imageSize = m_result->size();
-        auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
-
-        scene->addPixmap(QPixmap::fromImage(*m_result));
-        m_view->setScene(scene);
+        this->readInputPicture(fileName);
     }
+}
+
+void MainWindow::readInputPicture(QString fileName)
+{
+    auto display = QApplication::desktop()->screenGeometry();
+    auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
+
+    auto mosaic = FloydSteinberg(*m_molluscPalette);
+    m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
+
+    auto imageSize = m_result->size();
+    auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+
+    scene->addPixmap(QPixmap::fromImage(*m_result));
+    m_view->setScene(scene);
+}
+
+void MainWindow::showDia()
+{
+    QTime timer = QTime();
+    timer.start();
+    while(timer.elapsed() * 1000 <= 5) {
+        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
+    }
+    while(timer.elapsed() * 1000 <= 10) {
+        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"));
+    }
+    timer.restart();
 }
 
 void MainWindow::sendMail()

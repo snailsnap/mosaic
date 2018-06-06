@@ -78,4 +78,6 @@ private:
     MailClient m_mailClient;
 
     void takePicture();
+    void readInputPicture(QString fileName);
+    void showDia();
 };
