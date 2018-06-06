@@ -1,7 +1,6 @@
 #include "mainwindow.hpp"
 #include "algorithms/floyd-steinberg.hpp"
 #include "mail.hpp"
-#include "../data/credentials.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
@@ -9,7 +8,7 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs)
+MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
     , m_molluscs(molluscs)
     , m_selectedMolluscIndex(0)
@@ -36,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool use
     , m_view(new QGraphicsView())
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
+    , m_data(data)
+    , m_mailClient(m_data.toStdString() + "/credentials.txt")
 {
     if(useCam) m_webcam = new Webcam();
 
@@ -193,11 +194,9 @@ void MainWindow::takePicture() {
     }
 }
 
-void MainWindow::sendMail() 
+void MainWindow::sendMail()
 {
-    MailClient mailClient(server, user, password);
-    mailClient.sendImage(
-        address,
+    m_mailClient.sendImageToDefaultRecipient(
         "SnailSnap - Naturkundemuseum Berlin",
         "Im Anhang befindet sich dein SnailSnap vom Coding-da-Vinci Event in Leipzig.",
         *m_result);

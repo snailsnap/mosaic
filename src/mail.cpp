@@ -1,3 +1,6 @@
+#include <string>
+#include <fstream>
+
 #include <QString>
 #include <QBuffer>
 #include <QImage>
@@ -5,9 +8,29 @@
 #include "mail.hpp"
 #include "../dependencies/smtpclient/src/SmtpMime"
 
-MailClient::MailClient(const QString& server, const QString& user, const QString& password, int port, SmtpClient::ConnectionType connectionType)
+MailClient::MailClient(const std::string& credentials)
+{
+    std::ifstream stream(credentials);
+    std::vector<std::string> strings;
+    std::string string;
+    while (std::getline(stream, string))
+    {
+        strings.push_back(string);
+    }
+
+    m_client = new SmtpClient(QString::fromStdString(strings[0]), 465, SmtpClient::SslConnection);
+    m_client->setUser(QString::fromStdString(strings[1]));
+    m_client->setPassword(QString::fromStdString(strings[2]));
+
+    m_sender = new EmailAddress(QString::fromStdString(strings[1]));
+
+    m_defaultRecipient = new QString(strings.size() > 3 ? QString::fromStdString(strings[3]) : "");
+}
+
+MailClient::MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient)
     : m_sender{ new EmailAddress(user) }
-    , m_client{ new SmtpClient(server, port, connectionType) }
+    , m_client{ new SmtpClient(server, 465, SmtpClient::SslConnection) }
+    , m_defaultRecipient{ new QString(defaultRecipient) }
 {
     m_client->setUser(user);
     m_client->setPassword(password);
@@ -31,16 +54,8 @@ void MailClient::sendImage(const QString& recipient, const QString& subject, con
     text.setText(message);
     mail.addPart(&text);
 
-    //Convert QImage to QFile with QByteArray
-    QByteArray ba;
-    QBuffer buffer(&ba);
-    buffer.open(QIODevice::WriteOnly);
-    image.save(&buffer, "PNG");
-    QFile * file = new QFile("SnailSnap.png");
-    if (file->open(QIODevice::Truncate | QIODevice::WriteOnly)) {
-        file->write(ba);
-        file->close();
-    }
+    image.save("SnailSnap.png");
+    auto file = new QFile("SnailSnap.png");
 
     mail.addPart(new MimeAttachment(file));
 
@@ -48,4 +63,7 @@ void MailClient::sendImage(const QString& recipient, const QString& subject, con
     m_client->login();
     m_client->sendMail(mail);
     m_client->quit();
+
+    file->remove();
+    delete file;
 }

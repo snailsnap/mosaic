@@ -2,6 +2,7 @@
 
 #include "mollusc.hpp"
 #include "Webcam.hpp"
+#include "mail.hpp"
 
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -14,7 +15,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs);
+    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
 
     void sendMail();
@@ -44,6 +45,7 @@ private:
     QString m_outputPath;
     Webcam* m_webcam;
     QString m_openImagePath = "C:/";
+    QString m_data;
 
     std::vector<Mollusc>* m_molluscs;
     int m_selectedMolluscIndex;
@@ -71,6 +73,8 @@ private:
     QLabel *m_image3Label;
 
     QGraphicsView *m_view;
+
+    MailClient m_mailClient;
 
     void takePicture();
 };
