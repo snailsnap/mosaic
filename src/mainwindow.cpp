@@ -191,15 +191,6 @@ void MainWindow::takePicture() {
         auto image = QImage(fileName);
 
         processAndShowPicture(std::make_shared<QImage>(image));
-
-        /*auto mosaic = FloydSteinberg(*m_molluscPalette);
-        m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-        auto imageSize = m_result->size();
-        auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
-
-        scene->addPixmap(QPixmap::fromImage(*m_result));
-        m_view->setScene(scene);*/
     }
 }
 
