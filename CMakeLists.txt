@@ -60,8 +60,12 @@ set(headers
 	${source_dir}/helpers/boundingbox.hpp
 )
 
+# target and required libs
+
 add_executable(${target} ${sources} ${headers})
 target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia)
+
+# enable source file tree in VS if cmake supports it
 
 if (NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	option(VS_FILE_TREE_SPLIT_HEADER_AND_SOURCE "In the Visual Studio file list, headers and sources are normally split into two folders. Disable this to merge them." ON)
@@ -72,4 +76,12 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	else()
 		source_group(TREE ${CMAKE_SOURCE_DIR}/${source_dir} PREFIX "Source Files" FILES ${sources} ${headers})
 	endif()
+endif()
+
+# add option to enable voronoi's floodfill
+
+option(VORONOI_USE_FLOODFILL "Use floodfill to detect cell colors during voronoi mosaic generation. If turned off, only onde pixel will be sampled. This can be useful when compiling the Debug configuration in VS, since the floodfill algorithm gets really slow in this case." ON)
+
+if (${VORONOI_USE_FLOODFILL})
+	add_definitions(-DVORONOI_USE_FLOODFILL)
 endif()

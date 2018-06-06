@@ -88,8 +88,12 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         auto dim = std::min<int>(dimX, dimY);
 
         positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
-        //getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
+
+#ifdef VORONOI_USE_FLOODFILL
+        getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
+#else
         positions.back().color = toVec3(input.pixel(x, y));
+#endif // VORONOI_USE_FLOODFILL
     }
 
     // draw molluscs
