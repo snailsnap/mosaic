@@ -9,7 +9,7 @@
 #include <QCameraInfo>
 #include <QCameraImageCapture>
 
-Webcam::Webcam() : path("./.temp.jpg") {
+Webcam::Webcam() {
 
     if(QCameraInfo::availableCameras().count() > 0) {
         cam = new QCamera(QCameraInfo::availableCameras()[0]);
@@ -34,7 +34,7 @@ Webcam::~Webcam() {
 
 void Webcam::captureImage() {
     cam->searchAndLock();
-    imgCapture->capture(path);
+    imgCapture->capture();
     cam->unlock();
 }
 
