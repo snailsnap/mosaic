@@ -187,7 +187,6 @@ void MainWindow::takePicture() {
         m_openImagePath = fileName;
 
         // read input image
-        auto display = QApplication::desktop()->screenGeometry();
         auto image = QImage(fileName);
 
         processAndShowPicture(std::make_shared<QImage>(image));
