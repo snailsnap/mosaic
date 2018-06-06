@@ -8,8 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS Widgets Multimedia)
-find_package(Qt5Network)
+find_package(Qt5 COMPONENTS Widgets Multimedia Network)
 
 set(output_dir bin)
 

@@ -59,6 +59,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             }
             break;
         }
+        case Qt::Key_Escape: {
+            this->showMaximized();
+            break;
+        }
         case Qt::Key_I: {
             this->showSnailInfo();
             break;
