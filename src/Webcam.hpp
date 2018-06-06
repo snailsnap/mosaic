@@ -28,11 +28,11 @@ public slots:
     void captureImage();
 
 private slots:
-    void emitImage();
+    void emitImage(int id, const QString &savePath);
 
 private:
     QCamera* cam;
     QCameraImageCapture* imgCapture;
 
-    QString path;
+    QString path; // qt seems to ignore this on windows for some reason
 };
