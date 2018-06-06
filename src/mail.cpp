@@ -24,13 +24,16 @@ MailClient::MailClient(const std::string& credentials)
 
     m_sender = new EmailAddress(QString::fromStdString(strings[1]));
 
-    m_defaultRecipient = new QString(strings.size() > 3 ? QString::fromStdString(strings[3]) : "");
+    m_subject = QString::fromStdString(strings[3]);
+    m_message = QString::fromStdString(strings[4]).replace("\\n", "\n");
+
+    m_defaultRecipient = QString(strings.size() > 5 ? QString::fromStdString(strings[5]) : "");
 }
 
 MailClient::MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient)
     : m_sender{ new EmailAddress(user) }
     , m_client{ new SmtpClient(server, 465, SmtpClient::SslConnection) }
-    , m_defaultRecipient{ new QString(defaultRecipient) }
+    , m_defaultRecipient{ QString(defaultRecipient) }
 {
     m_client->setUser(user);
     m_client->setPassword(password);
@@ -41,17 +44,17 @@ MailClient::~MailClient()
     delete m_client;
 }
 
-void MailClient::sendImage(const QString& recipient, const QString& subject, const QString& message, const QImage& image)
+void MailClient::sendImage(const QString& recipient, const QImage& image)
 {
     MimeMessage mail;
 
     mail.setSender(m_sender);
     mail.addRecipient(new EmailAddress(recipient));
     mail.addRecipient(m_sender, MimeMessage::Bcc);
-    mail.setSubject(subject);
+    mail.setSubject(m_subject);
 
     MimeText text;
-    text.setText(message);
+    text.setText(m_message);
     mail.addPart(&text);
 
     image.save("SnailSnap.png");

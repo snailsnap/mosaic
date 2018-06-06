@@ -200,8 +200,5 @@ void MainWindow::takePicture() {
 
 void MainWindow::sendMail()
 {
-    m_mailClient.sendImageToDefaultRecipient(
-        "SnailSnap - Naturkundemuseum Berlin",
-        "Im Anhang befindet sich dein SnailSnap vom Coding-da-Vinci Event in Leipzig.",
-        *m_result);
+    m_mailClient.sendImageToDefaultRecipient(*m_result);
 }
