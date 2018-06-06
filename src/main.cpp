@@ -3,15 +3,12 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
-#include <QImage>
 #include <QDir>
 #include <QString>
-#include <QWidget>
-#include <QDesktopWidget>
 
 #include "mainwindow.hpp"
 #include "mollusc.hpp"
-
+#include "molluscpalette.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -74,26 +71,9 @@ int main(int argc, char *argv[])
         std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
     }
 
-    // read meta file
-    std::ifstream stream(data.toStdString() + "/meta_file.csv");
-    std::vector<std::string> strings;
-    std::string string;
-    while (std::getline(stream, string))
-    {
-        strings.push_back(string);
-    }
+    auto molluscPalette = new MolluscPalette(data);
 
-    // generate molluscs
-    std::vector<Mollusc> molluscs;
-    for (auto i = 1u; i < strings.size(); ++i)
-    {
-        molluscs.push_back(Mollusc(strings[i], data));
-    }
-
-    // white mollusc for background
-    molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
-
-    MainWindow mainWin(nullptr, &molluscs, useCam, output, maxNumOfMolluscs);
+    MainWindow mainWin(nullptr, molluscPalette, useCam, output, maxNumOfMolluscs, data);
     mainWin.showMaximized();
 
     return app.exec();

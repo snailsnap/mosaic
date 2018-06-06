@@ -106,7 +106,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     {
         auto pos = positions[i];
 
-        auto mollusc = getClosestColor(m_molluscs, pos.color);
+        auto mollusc = m_molluscPalette.getClosestColor(pos.color);
 
         // todo: better drawing with save/translate/rotate/restore
         if (mollusc.m_imageName.compare("NONE") != 0)

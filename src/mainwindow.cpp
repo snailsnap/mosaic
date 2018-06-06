@@ -1,14 +1,16 @@
 #include "mainwindow.hpp"
 #include "algorithms/voronoi.hpp"
+#include "mail.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
+#include <QDesktopWidget>
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs)
+MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
-    , m_molluscs(molluscs)
+    , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
     , m_layout(new QGridLayout())
     , m_scrollArea(new QScrollArea())
@@ -30,16 +32,17 @@ MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
+    , m_view(new QGraphicsView())
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
+    , m_data(data)
+    , m_mailClient(m_data.toStdString() + "/credentials.txt")
 {
     if(useCam) m_webcam = new Webcam();
 
-    QGraphicsView *view = new QGraphicsView;
-    this->m_view = view;
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->setCentralWidget(view);
+    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setCentralWidget(m_view);
 }
 
 MainWindow::~MainWindow() {}
@@ -72,13 +75,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             if(m_result != nullptr)
                 m_result->save(m_outputPath);
         }
+        case Qt::Key_M: {
+            if (m_result != nullptr)
+                this->sendMail();
+        }
     }
 }
 
 void MainWindow::showSnailInfo()
 {
     //TODO: Later change with selected snail index and not incremented index
-    Mollusc selectedMollusc = m_molluscs->at(++m_selectedMolluscIndex);
+    Mollusc selectedMollusc = m_molluscPalette->getMolluscs()->at(++m_selectedMolluscIndex);
     
     //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
@@ -180,7 +187,7 @@ void MainWindow::takePicture() {
         auto display = QApplication::desktop()->screenGeometry();
         auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
 
-        auto mosaic = Voronoi(*m_molluscs);
+        auto mosaic = Voronoi(*m_molluscPalette);
         m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
         auto imageSize = m_result->size();
@@ -189,4 +196,9 @@ void MainWindow::takePicture() {
         scene->addPixmap(QPixmap::fromImage(*m_result));
         m_view->setScene(scene);
     }
+}
+
+void MainWindow::sendMail()
+{
+    m_mailClient.sendImageToDefaultRecipient(*m_result);
 }

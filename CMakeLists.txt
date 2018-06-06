@@ -12,7 +12,7 @@ set(CMAKE_AUTOMOC ON)
 
 # dependencies
 
-find_package(Qt5 COMPONENTS Widgets Multimedia)
+find_package(Qt5 COMPONENTS Widgets Multimedia Network)
 
 # output dir
 
@@ -27,6 +27,16 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${output_dir})
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	set(gcc_specific_flags "-finput-charset=Latin1 -fexec-charset=UTF-8")
 	add_definitions(${gcc_specific_flags})
+endif()
+
+# smtp client lib
+
+file(GLOB smtp_sources "dependencies/smtpclient/src/*")
+add_definitions(-DSMTP_BUILD)
+add_library(SmtpClient ${smtp_sources})
+target_link_libraries(SmtpClient Qt5::Widgets Qt5::Network)
+if(APPLE)
+	set_target_properties(SmtpClient PROPERTIES FRAMEWORK TRUE)
 endif()
 
 # voronoi lib - not really needed as target, but I like having access to it in VS
@@ -46,7 +56,9 @@ set(sources
 	${source_dir}/algorithms/voronoi.cpp
 	${source_dir}/mollusc.cpp
 	${source_dir}/mainwindow.cpp
+	${source_dir}/mail.cpp
 	${source_dir}/Webcam.cpp
+	${source_dir}/molluscpalette.cpp
 	${source_dir}/helpers/boundingbox.cpp
 )
 
@@ -56,14 +68,16 @@ set(headers
 	${source_dir}/algorithms/voronoi.hpp
 	${source_dir}/mollusc.hpp
 	${source_dir}/mainwindow.hpp
+	${source_dir}/mail.hpp
 	${source_dir}/Webcam.hpp
+	${source_dir}/molluscpalette.hpp
 	${source_dir}/helpers/boundingbox.hpp
 )
 
 # target and required libs
 
 add_executable(${target} ${sources} ${headers})
-target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia)
+target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia SmtpClient)
 
 # enable source file tree in VS if cmake supports it
 

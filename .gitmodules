@@ -1,3 +1,6 @@
+[submodule "dependencies/smtpclient"]
+	path = dependencies/smtpclient
+	url = https://github.com/bluetiger9/SmtpClient-for-Qt
 [submodule "dependencies/jc_voronoi"]
 	path = dependencies/jc_voronoi
 	url = https://github.com/JCash/voronoi

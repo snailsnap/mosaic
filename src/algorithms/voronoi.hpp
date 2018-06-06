@@ -12,7 +12,7 @@
 class Voronoi : MosaicGenerator
 {
 public:
-    Voronoi(const std::vector<Mollusc>& molluscs) : MosaicGenerator(molluscs) { };
+    Voronoi(const MolluscPalette& molluscPalette) : MosaicGenerator(molluscPalette) { };
 
     QImage * createMosaic(const QImage& input, int maxNumOfMolluscs);
 
