@@ -78,4 +78,5 @@ private:
     MailClient m_mailClient;
 
     void takePicture();
+    void processAndShowPicture(std::shared_ptr<QImage> image);
 };
