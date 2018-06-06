@@ -8,9 +8,9 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
+MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
-    , m_molluscs(molluscs)
+    , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
     , m_layout(new QGridLayout())
     , m_scrollArea(new QScrollArea())
@@ -85,7 +85,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 void MainWindow::showSnailInfo()
 {
     //TODO: Later change with selected snail index and not incremented index
-    Mollusc selectedMollusc = m_molluscs->at(++m_selectedMolluscIndex);
+    Mollusc selectedMollusc = m_molluscPalette->getMolluscs()->at(++m_selectedMolluscIndex);
     
     //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
@@ -187,7 +187,7 @@ void MainWindow::takePicture() {
         auto display = QApplication::desktop()->screenGeometry();
         auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
 
-        auto mosaic = FloydSteinberg(*m_molluscs);
+        auto mosaic = FloydSteinberg(*m_molluscPalette);
         m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
         auto imageSize = m_result->size();

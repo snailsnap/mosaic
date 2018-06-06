@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mollusc.hpp"
+#include "molluscpalette.hpp"
 #include "Webcam.hpp"
 #include "mail.hpp"
 
@@ -15,7 +16,7 @@
 
 class MainWindow : public QMainWindow {
 public:
-    MainWindow(QWidget *parent, std::vector<Mollusc>* molluscs, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
+    MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
 
     void sendMail();
@@ -47,7 +48,7 @@ private:
     QString m_openImagePath = "C:/";
     QString m_data;
 
-    std::vector<Mollusc>* m_molluscs;
+    MolluscPalette* m_molluscPalette;
     int m_selectedMolluscIndex;
 
     QGridLayout *m_layout;

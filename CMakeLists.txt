@@ -36,6 +36,7 @@ set(sources
 	${source_dir}/mail.cpp
     ${source_dir}/Webcam.cpp
     ${source_dir}/algorithms/floyd-steinberg.cpp
+	${source_dir}/molluscpalette.cpp
 )
 
 set(headers
@@ -45,6 +46,7 @@ set(headers
 	${source_dir}/mail.hpp
 	${source_dir}/Webcam.hpp
 	${source_dir}/algorithms/floyd-steinberg.hpp
+	${source_dir}/molluscpalette.hpp
 )
 
 add_executable(${target} ${headers} ${sources})
