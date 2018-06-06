@@ -73,20 +73,38 @@ void MolluscPalette::fillBuckets()
         auto color = mollusc.m_color;
         auto idx = color.red() / 32
             + (color.green() / 32) * 8
-            + (color.blue() / 32) * 16;
+            + (color.blue() / 32) * 8 * 8;
         if (buckets[idx] == nullptr) buckets[idx] = new std::vector<Mollusc>();
         buckets[idx]->push_back(mollusc);
     }
     
     int i = 0;
     for (auto bucket : buckets) {
-        if (bucket == nullptr) continue;
+        if (bucket == nullptr) {
+            i++;
+            continue;
+        }
         int r = (i & 0x7) * 32 + 15;
-        int g = ((i / 8) & 0x7) * 32 + 15;
-        int b = ((i / 16) & 0x7) * 32 + 15;
-        std::cout << "(" << r << "," << g << "," << b << ")" << std::endl;
+        int g = ((i >> 3) & 0x7) * 32 + 15;
+        int b = ((i >> 6) & 0x7) * 32 + 15;
+        std::cout << "i = " << i << ": (" << r << "," << g << "," << b << ")" << std::endl;
         auto color = QColor(r,g,b); //TODO use average color
         m_buckets.push_back(std::make_pair(color, bucket));
+        /*std::cout << "bucket color: (" << color.red() << "," << color.green() << "," << color.blue() << ")" << std::endl;
+
+        for (auto m : *bucket) {
+            auto c = m.m_color;
+            std::cout << "  (" << c.red() << "," << c.green() << "," << c.blue() << ")" << std::endl;
+        }/**/
         i++;
+    }
+
+    auto col = m_buckets[0].first;
+    std::cout << "bucket color: (" << col.red() << "," << col.green() << "," << col.blue() << ")" << std::endl;
+
+    for (auto m : *(m_buckets[0].second)) {
+        auto c = m.m_color;
+        std::cout << "  (" << c.red() << "," << c.green() << "," << c.blue() << ")" << std::endl;
+        std::cout << m.m_imageName << std::endl;
     }
 }
