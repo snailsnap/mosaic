@@ -38,13 +38,13 @@ void Webcam::captureImage() {
     cam->unlock();
 }
 
-void Webcam::emitImage() {
-    std::shared_ptr<QImage> image = std::make_shared<QImage>(path);
+void Webcam::emitImage(int id, const QString &savePath) {
+    std::shared_ptr<QImage> image = std::make_shared<QImage>(savePath);
 
     emit imageReady(image);
 
     // delete file
-    if(!QFile::remove(path)) {
-        std::cerr << "Warning: Failed to remove temporary webcam image at " << path.toStdString() << std::endl;
+    if(!QFile::remove(savePath)) {
+        std::cerr << "Warning: Failed to remove temporary webcam image at " << savePath.toStdString() << std::endl;
     }
 }
