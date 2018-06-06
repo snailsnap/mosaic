@@ -3,16 +3,12 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
-#include <QImage>
 #include <QDir>
 #include <QString>
-#include <QWidget>
-#include <QDesktopWidget>
 
 #include "mainwindow.hpp"
 #include "algorithms/floyd-steinberg.hpp"
 #include "mollusc.hpp"
-
 
 int main(int argc, char *argv[])
 {
@@ -94,8 +90,7 @@ int main(int argc, char *argv[])
     // white mollusc for background
     molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 
-
-    MainWindow mainWin(nullptr, &molluscs, useCam, output, maxNumOfMolluscs);
+    MainWindow mainWin(nullptr, &molluscs, useCam, output, maxNumOfMolluscs, data);
     mainWin.showMaximized();
 
     return app.exec();
