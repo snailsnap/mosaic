@@ -1,5 +1,5 @@
 #include "mainwindow.hpp"
-#include "algorithms/floyd-steinberg.hpp"
+#include "algorithms/voronoi.hpp"
 #include "mail.hpp"
 
 #include <QFileDialog>
@@ -38,7 +38,10 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_data(data)
     , m_mailClient(m_data.toStdString() + "/credentials.txt")
 {
-    if(useCam) m_webcam = new Webcam();
+    if(useCam) {
+        m_webcam = new Webcam();
+        QObject::connect(m_webcam, &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
+    }
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -172,8 +175,8 @@ void MainWindow::showSidebar(
 
 void MainWindow::takePicture() {
     if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
-        std::cout << "image capturing using the webcam is not implemented yet" << std::endl;
-        //m_webcam->captureImage();
+        std::cout << "Capturing image..." << std::endl;
+        m_webcam->captureImage();
     }
     else {
         auto fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
@@ -184,21 +187,32 @@ void MainWindow::takePicture() {
         m_openImagePath = fileName;
 
         // read input image
-        auto display = QApplication::desktop()->screenGeometry();
-        auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
+        auto image = QImage(fileName);
 
-        auto mosaic = FloydSteinberg(*m_molluscPalette);
-        m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-        auto imageSize = m_result->size();
-        auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
-
-        scene->addPixmap(QPixmap::fromImage(*m_result));
-        m_view->setScene(scene);
+        processAndShowPicture(std::make_shared<QImage>(image));
     }
 }
+
+
 
 void MainWindow::sendMail()
 {
     m_mailClient.sendImageToDefaultRecipient(*m_result);
+}
+
+void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
+    std::cout << "Showing image..." << std::endl;
+    // scale image to screen size
+    auto display = QApplication::desktop()->screenGeometry();
+    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatio);
+
+    // process image
+    auto mosaic  = Voronoi(*m_molluscPalette);
+    m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
+
+    auto imageSize = m_result->size();
+    auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+
+    scene->addPixmap(QPixmap::fromImage(*m_result));
+    m_view->setScene(scene);
 }
