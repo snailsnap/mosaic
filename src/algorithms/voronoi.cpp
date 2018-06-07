@@ -13,6 +13,7 @@
 #include "voronoi.hpp"
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
+#include "../helpers/boundingbox.hpp"
 
 #define JC_VORONOI_IMPLEMENTATION
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
@@ -54,45 +55,15 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     for (auto i = 0; i < diagram.numsites; ++i)
     {
         auto site = &sites[i];
-        auto edge = site->edges;
+        
+        auto box = calculateBoundingBox(site);
 
-        auto x = 0.0;
-        auto y = 0.0;
-        auto count = 0;
-
-        auto minX = std::numeric_limits<double>::max();
-        auto maxX = std::numeric_limits<double>::min();
-        auto minY = std::numeric_limits<double>::max();
-        auto maxY = std::numeric_limits<double>::min();
-
-        // todo: check anisotropy, set angle accordingly, consider when calculating dimensions
-        while (edge)
-        {
-            x += edge->pos[0].x;
-            y += edge->pos[1].y;
-            ++count;
-
-            minX = std::min<double>(minX, edge->pos[0].x);
-            maxX = std::max<double>(maxX, edge->pos[0].x);
-            minY = std::min<double>(minY, edge->pos[0].y);
-            maxY = std::max<double>(maxY, edge->pos[0].y);
-
-            edge = edge->next;
-        }
-
-        x /= count;
-        y /= count;
-
-        auto dimX = (int)(maxX - minX);
-        auto dimY = (int)(maxY - minY);
-        auto dim = std::min<int>(dimX, dimY);
-
-        positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
+        positions.push_back(MolluscPosition{ (int)std::round(box.centerX), (int)std::round(box.centerY), (int)box.width, (int)box.height, box.rotation });
 
 #ifdef VORONOI_USE_FLOODFILL
         getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
 #else
-        positions.back().color = toVec3(input.pixel(x, y));
+        positions.back().color = toVec3(input.pixel((int)std::round(box.centerX), (int)std::round(box.centerY)));
 #endif // VORONOI_USE_FLOODFILL
     }
 
