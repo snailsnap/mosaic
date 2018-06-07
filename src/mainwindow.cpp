@@ -210,7 +210,7 @@ void MainWindow::showDia()
 {
     this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
     QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"))));
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"))));
     timer->start(5000);
 }
 
