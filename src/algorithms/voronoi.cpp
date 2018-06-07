@@ -9,6 +9,7 @@
 #include <QVector3D>
 #include <QColor>
 #include <QPainter>
+#include <QtMath>
 
 #include "voronoi.hpp"
 #include "../mollusc.hpp"
@@ -81,7 +82,14 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
         // todo: better drawing with save/translate/rotate/restore
         if (mollusc.m_imageName.compare("NONE") != 0)
-            painter.drawPixmap(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.width, pos.height, mollusc.m_image);
+        {
+            painter.save();
+            painter.translate(pos.x, pos.y);
+            painter.rotate(-qRadiansToDegrees(pos.rotation));
+            painter.translate(-pos.width / 2, -pos.height / 2);
+            painter.drawPixmap(0, 0, pos.width, pos.height, mollusc.m_image);
+            painter.restore();
+        }
     }
 
     // clean up
