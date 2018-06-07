@@ -1,5 +1,5 @@
 #include "mainwindow.hpp"
-#include "algorithms/floyd-steinberg.hpp"
+#include "algorithms/voronoi.hpp"
 #include "mail.hpp"
 
 #include <QFileDialog>
@@ -207,7 +207,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatio);
 
     // process image
-    auto mosaic  = FloydSteinberg(*m_molluscPalette);
+    auto mosaic  = Voronoi(*m_molluscPalette);
     m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
     auto imageSize = m_result->size();

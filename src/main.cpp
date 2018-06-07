@@ -7,7 +7,6 @@
 #include <QString>
 
 #include "mainwindow.hpp"
-#include "algorithms/floyd-steinberg.hpp"
 #include "mollusc.hpp"
 #include "molluscpalette.hpp"
 
