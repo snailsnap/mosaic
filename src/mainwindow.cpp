@@ -80,6 +80,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             if (m_result != nullptr)
                 this->sendMail();
         }
+        case Qt::Key_D: {
+            this->showDia();
+        }
     }
 }
 
@@ -205,15 +208,10 @@ void MainWindow::readInputPicture(QString fileName)
 
 void MainWindow::showDia()
 {
-    QTime timer = QTime();
-    timer.start();
-    while(timer.elapsed() * 1000 <= 5) {
-        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
-    }
-    while(timer.elapsed() * 1000 <= 10) {
-        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"));
-    }
-    timer.restart();
+    this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"))));
+    timer->start(5000);
 }
 
 void MainWindow::sendMail()
