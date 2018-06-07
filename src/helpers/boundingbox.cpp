@@ -2,6 +2,7 @@
 #include <utility>
 #include <limits>
 #include <algorithm>
+#include <cmath>
 
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
 
