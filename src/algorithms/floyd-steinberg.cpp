@@ -11,7 +11,7 @@
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 
-QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
+std::vector<MolluscPosition*>* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     auto sizeRatio = (float)input.width() / input.height();
     auto horizontal = sizeRatio >= 1;
@@ -71,5 +71,5 @@ QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
         }
     }
 
-    return idTexture;
+    return new std::vector<MolluscPosition*>(); // TODO: actually generate this
 }

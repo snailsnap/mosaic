@@ -17,7 +17,7 @@
 #define JC_VORONOI_IMPLEMENTATION
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
 
-QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
+std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     auto width = input.width();
     auto height = input.height();
@@ -47,7 +47,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     auto sites = jcv_diagram_get_sites(&diagram);
 
-    auto positions = std::vector<MolluscPosition>();
+    auto positions = new std::vector<MolluscPosition*>();
 
     auto floodFillCanvas = std::vector<bool>(height * width, false);
 
@@ -87,18 +87,24 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         auto dimY = (int)(maxY - minY);
         auto dim = std::min<int>(dimX, dimY);
 
-        positions.push_back(MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
+        positions->push_back(new MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
 
 #ifdef VORONOI_USE_FLOODFILL
-        getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
+        getSiteColor(site, input, floodFillCanvas, width, height, &(positions->back()->color));
 #else
-        positions.back().color = toVec3(input.pixel(x, y));
+        positions->back()->color = toVec3(input.pixel(x, y));
 #endif // VORONOI_USE_FLOODFILL
     }
 
+    // clean up
+
+    jcv_diagram_free(&diagram);
+    delete[] points;
+
+    return positions;
     // draw molluscs
 
-    auto result = new QImage(width, height, input.format());
+    /*auto result = new QImage(width, height, input.format());
     result->fill(Qt::GlobalColor::white);
     QPainter painter(result);
 
@@ -113,12 +119,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
             painter.drawPixmap(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.width, pos.height, mollusc.m_image);
     }
 
-    // clean up
-
-    jcv_diagram_free(&diagram);
-    delete[] points;
-
-    return result;
+    return result;/**/
 }
 
 struct IntPoint

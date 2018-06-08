@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include "algorithms/voronoi.hpp"
 #include "mail.hpp"
+#include "helpers/painter.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
@@ -207,8 +208,11 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatio);
 
     // process image
-    auto mosaic  = Voronoi(*m_molluscPalette);
-    m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
+    auto mosaic = Voronoi(*m_molluscPalette);
+    auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
+
+    m_result = new QImage(inputImage->width(), inputImage->height(), inputImage->format());
+    auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, QImage()); //TODO use id image
 
     auto imageSize = m_result->size();
     auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
