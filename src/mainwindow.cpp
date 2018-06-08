@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
-    , m_view(new MolluscScene())
+    , m_view(new MolluscScene(this))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
@@ -173,6 +173,17 @@ void MainWindow::showSidebar(
     m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
     m_dWidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
+}
+
+void MainWindow::onClick(QMouseEvent * event)
+{
+    if (m_idImage != nullptr) {
+        auto x = event->x();
+        auto y = event->y();
+        auto color = m_result->pixelColor(x, y);
+        auto idx = color.red() + (color.green() << 8) + (color.blue() << 16);
+        std::cout << "clicked at " << x << ", " << y << " | color(" << color.red() << "," << color.green() << "," << color.blue() << ") | idx = " << idx << std::endl;
+    }
 }
 
 void MainWindow::takePicture() {

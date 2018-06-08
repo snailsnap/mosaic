@@ -7,7 +7,7 @@ std::vector<Mollusc*> Painter::paint(const std::vector<MolluscPosition*>* mollus
     //auto colorImage = new QImage(width, height, input.format());
     colorImage.fill(Qt::GlobalColor::white);
     QPainter painter(&colorImage);
-    idImage.fill(Qt::GlobalColor::black);
+    idImage.fill(Qt::GlobalColor::white);
     QPainter idPainter(&idImage);
 
     auto i = 1;

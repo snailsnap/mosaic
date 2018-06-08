@@ -38,6 +38,7 @@ public:
         const QImage &image1,
         const QImage &image2,
         const QImage &image3);
+    void onClick(QMouseEvent * event);
 
 private:
     bool m_useCam;
