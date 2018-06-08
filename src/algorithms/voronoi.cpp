@@ -102,24 +102,6 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
     delete[] points;
 
     return positions;
-    // draw molluscs
-
-    /*auto result = new QImage(width, height, input.format());
-    result->fill(Qt::GlobalColor::white);
-    QPainter painter(result);
-
-    for (auto i = 0; i < diagram.numsites; ++i)
-    {
-        auto pos = positions[i];
-
-        auto mollusc = m_molluscPalette.getClosestColor(pos.color);
-
-        // todo: better drawing with save/translate/rotate/restore
-        if (mollusc.m_imageName.compare("NONE") != 0)
-            painter.drawPixmap(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.width, pos.height, mollusc.m_image);
-    }
-
-    return result;/**/
 }
 
 struct IntPoint
