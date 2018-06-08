@@ -28,11 +28,14 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
             auto b = (i >> 16) & 0xff;
 
             for (int y = 0; y < mask.height(); y++) {
+                QRgb *line = (QRgb *)mask.scanLine(y);
                 for (int x = 0; x < mask.width(); x++) {
-                    auto a = mask.pixelColor(x, y).alpha()<127?0:255;
-                    mask.setPixelColor(x, y, QColor(r,g,b,a));
+                    // line[x] has an individual pixel
+                    auto a = QColor(line[x]).alpha()<127?0:255;
+                    line[x] = QColor(r, g, b, a).rgb();
                 }
             }
+
             tintPainter->fillRect(mask.rect(), QColor(r, g, b));
             tintPainter->end();
             idPainter.drawPixmap(pos->x - pos->width / 2, pos->y - pos->height / 2, pos->width, pos->height, QPixmap::fromImage(mask));
