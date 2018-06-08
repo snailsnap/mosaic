@@ -59,6 +59,7 @@ set(sources
 	${source_dir}/mail.cpp
 	${source_dir}/Webcam.cpp
 	${source_dir}/molluscpalette.cpp
+	${source_dir}/helpers/painter.cpp
 	${source_dir}/helpers/boundingbox.cpp
 )
 
@@ -71,6 +72,7 @@ set(headers
 	${source_dir}/mail.hpp
 	${source_dir}/Webcam.hpp
 	${source_dir}/molluscpalette.hpp
+	${source_dir}/helpers/painter.hpp
 	${source_dir}/helpers/boundingbox.hpp
 )
 
