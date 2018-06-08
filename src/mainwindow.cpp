@@ -2,6 +2,7 @@
 #include "algorithms/voronoi.hpp"
 #include "mail.hpp"
 #include "helpers/painter.hpp"
+#include "molluscview.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
@@ -33,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
-    , m_view(new QGraphicsView())
+    , m_view(new MolluscScene())
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
@@ -213,7 +214,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     m_result = new QImage(image.width(), image.height(), image.format());
     m_idImage = new QImage(image.width(), image.height(), image.format());
-    auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
+    auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_idImage, *m_result);
 
     auto imageSize = m_result->size();
     auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
