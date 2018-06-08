@@ -11,5 +11,5 @@
 
 class Painter {
 public:
-    static std::vector<Mollusc*> paint(const std::vector<MolluscPosition*>* molluscs, MolluscPalette* palette , QImage& colorImage, QImage& idImage);
+    static std::vector<Mollusc*>* paint(const std::vector<MolluscPosition*>* molluscs, MolluscPalette* palette , QImage& colorImage, QImage& idImage);
 };

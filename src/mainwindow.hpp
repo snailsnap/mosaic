@@ -51,6 +51,7 @@ private:
     QString m_data;
 
     MolluscPalette* m_molluscPalette;
+    std::vector<Mollusc*>* m_molluscs;
     int m_selectedMolluscIndex;
 
     QGridLayout *m_layout;

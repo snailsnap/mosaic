@@ -89,26 +89,36 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    //TODO: Later change with selected snail index and not incremented index
-    Mollusc selectedMollusc = m_molluscPalette->getMolluscs()->at(++m_selectedMolluscIndex);
+    if (m_molluscs == nullptr) return;
+    Mollusc* selectedMollusc = m_molluscs->at(m_selectedMolluscIndex);
+
+    auto lastDotIndex = selectedMollusc->m_imageName.find_last_of(".");
+    auto imageName = selectedMollusc->m_imageName.substr(0, lastDotIndex);
+    
+    auto underscoreIdx1 = imageName.find_last_of("_");
+    auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
+    
+    std::cout << "imageName: " << imageName << std::endl;
+    std::cout << "imageNumber: " << imageNumber.toStdString() << std::endl;
     
     //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
-        QString::fromStdString(selectedMollusc.m_class),
-        QString::fromStdString(selectedMollusc.m_family),
-        QString::fromStdString(selectedMollusc.m_genus),
-        QString::fromStdString(selectedMollusc.m_species),
-        QString::fromStdString(selectedMollusc.m_scientificName),
-        QString::fromStdString(selectedMollusc.m_locality),
-        QString::fromStdString(selectedMollusc.m_date),
-        QString::fromStdString(selectedMollusc.m_area),
-        QString::fromStdString(selectedMollusc.m_province),
-        QString::fromStdString(selectedMollusc.m_country),
-        QString::fromStdString(selectedMollusc.m_subContinent),
-        QString::fromStdString(selectedMollusc.m_continent),
-        QImage("./../data/ZMB_Mol_100073_1.png").scaledToHeight(100),
-        QImage("./../data/ZMB_Mol_100073_2.png").scaledToHeight(100),
-        QImage("./../data/ZMB_Mol_100073_3.png").scaledToHeight(100));
+        QString::fromStdString(selectedMollusc->m_class),
+        QString::fromStdString(selectedMollusc->m_family),
+        QString::fromStdString(selectedMollusc->m_genus),
+        QString::fromStdString(selectedMollusc->m_species),
+        QString::fromStdString(selectedMollusc->m_scientificName),
+        QString::fromStdString(selectedMollusc->m_locality),
+        QString::fromStdString(selectedMollusc->m_date),
+        QString::fromStdString(selectedMollusc->m_area),
+        QString::fromStdString(selectedMollusc->m_province),
+        QString::fromStdString(selectedMollusc->m_country),
+        QString::fromStdString(selectedMollusc->m_subContinent),
+        QString::fromStdString(selectedMollusc->m_continent),
+        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
+        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
+        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100));
+        std::cout << selectedMollusc->m_inventoryNumber << "_1" << imageNumber.toStdString() << ".png" << std::endl;
 }
 
 void MainWindow::showSidebar(
@@ -180,9 +190,12 @@ void MainWindow::onClick(QMouseEvent * event)
     if (m_idImage != nullptr) {
         auto x = event->x();
         auto y = event->y();
-        auto color = m_result->pixelColor(x, y);
-        auto idx = color.red() + (color.green() << 8) + (color.blue() << 16);
-        std::cout << "clicked at " << x << ", " << y << " | color(" << color.red() << "," << color.green() << "," << color.blue() << ") | idx = " << idx << std::endl;
+        auto color = m_idImage->pixelColor(x, y);
+        if (color != Qt::white) {
+            m_selectedMolluscIndex = color.red() + (color.green() << 8) + (color.blue() << 16);
+            std::cout << "clicked at " << x << ", " << y << " | color(" << color.red() << "," << color.green() << "," << color.blue() << ") | idx = " << m_selectedMolluscIndex << std::endl;
+            this->showSnailInfo();
+        }
     }
 }
 
@@ -225,7 +238,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     m_result = new QImage(image.width(), image.height(), image.format());
     m_idImage = new QImage(image.width(), image.height(), image.format());
-    auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_idImage, *m_result);
+    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
     auto imageSize = m_result->size();
     auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);

@@ -46,12 +46,12 @@ std::vector<MolluscPosition*>* FloydSteinberg::createMosaic(const QImage& input,
             auto oldColor = QColor(scaled.pixel(x, y));
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
-            const Mollusc& mollusc = m_molluscPalette.getClosestColor(oldVector);
-            auto newVector = toVec3(mollusc.m_color);
+            auto mollusc = m_molluscPalette.getClosestColor(oldVector);
+            auto newVector = toVec3(mollusc->m_color);
 
-            if (mollusc.m_imageName.compare("NONE") != 0) {
-                resultPainter.drawPixmap(x * molluscSize, y * molluscSize, molluscSize, molluscSize, mollusc.m_image);
-                auto mask = mollusc.m_image.copy();
+            if (mollusc->m_imageName.compare("NONE") != 0) {
+                resultPainter.drawPixmap(x * molluscSize, y * molluscSize, molluscSize, molluscSize, mollusc->m_image);
+                auto mask = mollusc->m_image.copy();
                 auto tintPainter = new QPainter(&mask);
                 tintPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
                 auto r = i & 0xff;
