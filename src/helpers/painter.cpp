@@ -20,7 +20,7 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
         if (mollusc->m_imageName.compare("NONE") != 0) {
             molluscs->push_back(mollusc);
             painter.drawPixmap(pos->x - pos->width / 2, pos->y - pos->height / 2, pos->width, pos->height, mollusc->m_image);
-            auto mask = mollusc->m_image.toImage();
+            auto mask = mollusc->m_image.toImage().scaled(pos->width, pos->height);
             auto tintPainter = new QPainter(&mask);
             tintPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
             auto r = i & 0xff;
