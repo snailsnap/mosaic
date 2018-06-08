@@ -230,7 +230,8 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
-    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatio);
+    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    std::cout << "displaySize(" << display.size().width() << "," << display.size().height() << ") | imageSize(" << image.width() << "," << image.height() << ")" << std::endl;
 
     // process image
     auto mosaic = Voronoi(*m_molluscPalette);
