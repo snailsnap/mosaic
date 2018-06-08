@@ -31,8 +31,8 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
                 QRgb *line = (QRgb *)mask.scanLine(y);
                 for (int x = 0; x < mask.width(); x++) {
                     // line[x] has an individual pixel
-                    auto a = QColor(line[x]).alpha()<127?0:255;
-                    line[x] = QColor(r, g, b, a).rgb();
+                    auto a = qAlpha(line[x]) < 127 ? 0 : 255;
+                    line[x] = qRgba(r, g, b, a);
                 }
             }
 
