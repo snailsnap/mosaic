@@ -43,6 +43,7 @@ private:
     bool m_useCam;
     int m_maxNumOfMolluscs;
     QImage* m_result = nullptr;
+    QImage* m_idImage = nullptr;
     QString m_outputPath;
     Webcam* m_webcam;
     QString m_openImagePath = "C:/";

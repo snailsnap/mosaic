@@ -212,7 +212,8 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
     m_result = new QImage(image.width(), image.height(), image.format());
-    auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, QImage()); //TODO use id image
+    m_idImage = new QImage(image.width(), image.height(), image.format());
+    auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
     auto imageSize = m_result->size();
     auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
