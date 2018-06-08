@@ -77,10 +77,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         case Qt::Key_S: {
             if(m_result != nullptr)
                 m_result->save(m_outputPath);
+            break;
         }
         case Qt::Key_M: {
             if (m_result != nullptr)
                 this->sendMail();
+            break;
         }
     }
 }
