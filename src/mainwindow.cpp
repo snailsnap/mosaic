@@ -5,7 +5,6 @@
 #include <QFileDialog>
 #include <QCameraInfo>
 #include <QDesktopWidget>
-#include <QTime>
 
 #include <iostream>
 
@@ -33,7 +32,10 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
+    , m_dia1(true)
+    , m_timer(new QTimer(this))
     , m_view(new QGraphicsView())
+    , m_scene(new QGraphicsScene())
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
@@ -200,18 +202,25 @@ void MainWindow::readInputPicture(QString fileName)
     m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
     auto imageSize = m_result->size();
-    auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+    m_scene->update(0, 0, imageSize.width(), imageSize.height());
 
-    scene->addPixmap(QPixmap::fromImage(*m_result));
-    m_view->setScene(scene);
+    m_scene->addPixmap(QPixmap::fromImage(*m_result));
+    m_view->setScene(m_scene);
+}
+
+
+void MainWindow::diaChange() {
+    if (m_dia1) {
+        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
+    } else {
+        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"));
+    }
 }
 
 void MainWindow::showDia()
 {
-    this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
-    QTimer *timer = new QTimer(this);
-    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"))));
-    timer->start(5000);
+    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(diaChange()));
+    m_timer->start(5000);
 }
 
 void MainWindow::sendMail()

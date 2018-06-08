@@ -13,8 +13,11 @@
 #include <QtWidgets>
 #include <QtGui>
 #include <QPixmap>
+#include <QObject>
+#include <QTimer>
 
 class MainWindow : public QMainWindow {
+    Q_OBJECT
 public:
     MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
@@ -37,10 +40,11 @@ public:
         const QString &continentContent,
         const QImage &image1,
         const QImage &image2,
-        const QImage &image3);
+        const QImage &image3); 
 
 private:
     bool m_useCam;
+    bool m_dia1;
     int m_maxNumOfMolluscs;
     QImage* m_result = nullptr;
     QString m_outputPath;
@@ -74,10 +78,16 @@ private:
     QLabel *m_image3Label;
 
     QGraphicsView *m_view;
+    QGraphicsScene *m_scene;
 
     MailClient m_mailClient;
+    QTimer *m_timer;
 
     void takePicture();
-    void readInputPicture(QString fileName);
     void showDia();
+    void readInputPicture(QString fileName);
+
+public slots:
+    void diaChange();
+    
 };
