@@ -41,17 +41,5 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
 
     }
 
-    for (auto y = 0; y < idImage.height(); ++y) {
-        for (auto x = 0; x < idImage.width(); ++x) {
-            auto r = idImage.pixelColor(x, y).red();
-            auto g = idImage.pixelColor(x, y).green();
-            auto b = idImage.pixelColor(x, y).blue();
-
-            if (b > 0 && r < 255 && g << 255) {
-                std::cout << "color(" + std::to_string(r) << "," << std::to_string(g) << "," << std::to_string(b) << ")" << std::endl;
-            }
-        }
-    }
-
     return molluscs;
 }

@@ -98,9 +98,6 @@ void MainWindow::showSnailInfo()
     auto underscoreIdx1 = imageName.find_last_of("_");
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
     
-    std::cout << "imageName: " << imageName << std::endl;
-    std::cout << "imageNumber: " << imageNumber.toStdString() << std::endl;
-    
     //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
         QString::fromStdString(selectedMollusc->m_class),
@@ -118,7 +115,6 @@ void MainWindow::showSnailInfo()
         QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
         QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
         QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100));
-        std::cout << selectedMollusc->m_inventoryNumber << "_1" << imageNumber.toStdString() << ".png" << std::endl;
 }
 
 void MainWindow::showSidebar(
@@ -193,7 +189,6 @@ void MainWindow::onClick(QMouseEvent * event)
         auto color = m_idImage->pixelColor(x, y);
         if (color != Qt::white) {
             m_selectedMolluscIndex = color.red() + (color.green() << 8) + (color.blue() << 16);
-            std::cout << "clicked at " << x << ", " << y << " | color(" << color.red() << "," << color.green() << "," << color.blue() << ") | idx = " << m_selectedMolluscIndex << std::endl;
             this->showSnailInfo();
         }
     }
@@ -231,8 +226,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
     auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
-    std::cout << "displaySize(" << display.size().width() << "," << display.size().height() << ") | imageSize(" << image.width() << "," << image.height() << ")" << std::endl;
-
+    
     // process image
     auto mosaic = Voronoi(*m_molluscPalette);
     auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
