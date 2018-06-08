@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-MolluscScene::MolluscScene(MainWindow * window)
+MolluscView::MolluscView(MainWindow * window)
     : m_window(window)
 {
 }
 
-void MolluscScene::mouseReleaseEvent(QMouseEvent * event)
+void MolluscView::mouseReleaseEvent(QMouseEvent * event)
 {
     m_window->onClick(event);
 }

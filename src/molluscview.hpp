@@ -5,9 +5,9 @@
 #include <QGraphicsView>
 #include <QMouseEvent>
 
-class MolluscScene : public QGraphicsView {
+class MolluscView : public QGraphicsView {
 public:
-    MolluscScene(MainWindow* window);
+    MolluscView(MainWindow* window);
 protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 private:

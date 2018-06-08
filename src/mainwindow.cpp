@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
-    , m_view(new MolluscScene(this))
+    , m_view(new MolluscView(this))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
@@ -98,7 +98,6 @@ void MainWindow::showSnailInfo()
     auto underscoreIdx1 = imageName.find_last_of("_");
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
     
-    //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
         QString::fromStdString(selectedMollusc->m_class),
         QString::fromStdString(selectedMollusc->m_family),
