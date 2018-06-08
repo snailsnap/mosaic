@@ -211,7 +211,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto mosaic = Voronoi(*m_molluscPalette);
     auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
-    m_result = new QImage(inputImage->width(), inputImage->height(), inputImage->format());
+    m_result = new QImage(image.width(), image.height(), image.format());
     auto m_usedMolluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, QImage()); //TODO use id image
 
     auto imageSize = m_result->size();
