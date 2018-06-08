@@ -214,8 +214,6 @@ void MainWindow::takePicture() {
     }
 }
 
-
-
 void MainWindow::sendMail()
 {
     m_mailClient.sendImageToDefaultRecipient(*m_result);
