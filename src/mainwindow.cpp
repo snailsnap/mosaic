@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
-    , m_dia1(true)
     , m_timer(new QTimer(this))
+    , m_dia1(true)
     , m_view(new QGraphicsView())
     , m_scene(new QGraphicsScene())
     , m_outputPath(outputPath)
@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_data(data)
     , m_mailClient(m_data.toStdString() + "/credentials.txt")
 {
-    if(useCam) m_webcam = new Webcam();
+    if (useCam) m_webcam = new Webcam();
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -75,7 +75,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         }
         case Qt::Key_S: {
-            if(m_result != nullptr)
+            if (m_result != nullptr)
                 m_result->save(m_outputPath);
         }
         case Qt::Key_M: {
@@ -84,6 +84,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
         case Qt::Key_D: {
             this->showDia();
+            break;
+        }
+        case Qt::Key_X: {
+            this->stopDia();
+            break;
         }
     }
 }
@@ -92,7 +97,7 @@ void MainWindow::showSnailInfo()
 {
     //TODO: Later change with selected snail index and not incremented index
     Mollusc selectedMollusc = m_molluscPalette->getMolluscs()->at(++m_selectedMolluscIndex);
-    
+
     //TODO: Later change images with specific data of highlighted snail
     this->showSidebar(
         QString::fromStdString(selectedMollusc.m_class),
@@ -113,10 +118,10 @@ void MainWindow::showSnailInfo()
 }
 
 void MainWindow::showSidebar(
-    const QString &classContent, 
-    const QString &familyContent, 
-    const QString &genusContent, 
-    const QString &speciesContent, 
+    const QString &classContent,
+    const QString &familyContent,
+    const QString &genusContent,
+    const QString &speciesContent,
     const QString &scientificNameContent,
     const QString &localityContent,
     const QString &dateContent,
@@ -208,19 +213,28 @@ void MainWindow::readInputPicture(QString fileName)
     m_view->setScene(m_scene);
 }
 
-
 void MainWindow::diaChange() {
     if (m_dia1) {
+        m_dia1 = !m_dia1;
         this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
-    } else {
+    }
+    else {
+        m_dia1 = !m_dia1;
         this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"));
     }
+    m_timer->start(2000);
 }
 
 void MainWindow::showDia()
 {
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(diaChange()));
-    m_timer->start(5000);
+    m_timer->start(2000);
+}
+
+void MainWindow::stopDia()
+{
+    if (!m_timer->isActive()) return;
+    m_timer->stop();
 }
 
 void MainWindow::sendMail()

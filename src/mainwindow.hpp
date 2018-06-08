@@ -85,6 +85,7 @@ private:
 
     void takePicture();
     void showDia();
+    void stopDia();
     void readInputPicture(QString fileName);
 
 public slots:
