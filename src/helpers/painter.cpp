@@ -38,7 +38,7 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
 
             tintPainter->fillRect(mask.rect(), QColor(r, g, b));
             tintPainter->end();
-            idPainter.drawPixmap(pos->x - pos->width / 2, pos->y - pos->height / 2, pos->width, pos->height, QPixmap::fromImage(mask));
+            idPainter.drawImage(pos->x - pos->width / 2, pos->y - pos->height / 2, mask);
             ++i;
         }
 
