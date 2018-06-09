@@ -243,23 +243,6 @@ void MainWindow::takePicture() {
     }
 }
 
-/*void MainWindow::readInputPicture(QString fileName)
-{
-    auto display = QApplication::desktop()->screenGeometry();
-    auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
-    auto mosaic = FloydSteinberg(*m_molluscPalette);
-    m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-    m_scene->removeItem(m_pixmapItem);
-    delete m_pixmapItem;
-    auto offset = (display.width() - m_result->width()) / 2;
-    m_scene->setSceneRect(-offset, 0, display.width(), display.height());
-    m_pixmapItem = m_scene->addPixmap(QPixmap::fromImage(*m_result));
-
-    m_cameraButton->move(display.width() - m_cameraButton->iconSize().width() - offset, display.height() - m_cameraButton->iconSize().height());
-
-}/**/
-
 void MainWindow::takeSelfie()
 {
     takePicture();
@@ -308,19 +291,9 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     m_idImage = new QImage(image.width(), image.height(), image.format());
     m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
-    //m_scene->removeItem(m_pixmapItem);
-    //delete m_pixmapItem;
     auto offset = (display.width() - m_result->width()) / 2;
-    //m_scene->setSceneRect(-offset, 0, display.width(), display.height());
-    //m_pixmapItem = m_scene->addPixmap(QPixmap::fromImage(*m_result));
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));
 
     m_cameraButton->move(display.width() - m_cameraButton->iconSize().width() - offset, display.height() - m_cameraButton->iconSize().height());
-
-    /*auto imageSize = m_result->size();
-    auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
-
-    scene->addPixmap(QPixmap::fromImage(*m_result));
-    m_view->setScene(scene);/**/
 }
