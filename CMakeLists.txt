@@ -41,7 +41,7 @@ set(sources
     ${source_dir}/Webcam.cpp
     ${source_dir}/algorithms/floyd-steinberg.cpp
 	${source_dir}/molluscpalette.cpp
-)
+	${source_dir}/wikiretriever.cpp)
 
 set(headers
 	${source_dir}/mosaic.hpp
@@ -51,7 +51,7 @@ set(headers
 	${source_dir}/Webcam.hpp
 	${source_dir}/algorithms/floyd-steinberg.hpp
 	${source_dir}/molluscpalette.hpp
-)
+	${source_dir}/wikiretriever.h)
 
 add_executable(${target} ${headers} ${sources})
 target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia SmtpClient)
