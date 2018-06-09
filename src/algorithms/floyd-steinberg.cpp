@@ -11,7 +11,7 @@
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 
-QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
+std::vector<MolluscPosition*>* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     auto sizeRatio = (float)input.width() / input.height();
     auto horizontal = sizeRatio >= 1;
@@ -33,8 +33,12 @@ QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     auto result = new QImage(width * molluscSize, height * molluscSize, input.format());
     result->fill(Qt::GlobalColor::white);
-    QPainter painter(result);
+    QPainter resultPainter(result);
+    auto idTexture = new QImage(width * molluscSize, height * molluscSize, input.format());
+    idTexture->fill(Qt::GlobalColor::black);
+    QPainter idPainter(idTexture);
 
+    auto positions = new std::vector<MolluscPosition*>();
     for (auto y = 0; y < scaled.height(); ++y)
     {
         for (auto x = 0; x < scaled.width(); ++x)
@@ -42,11 +46,12 @@ QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
             auto oldColor = QColor(scaled.pixel(x, y));
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
-            const Mollusc& mollusc = m_molluscPalette.getClosestColor(oldVector);
-            auto newVector = toVec3(mollusc.m_color);
+            auto mollusc = m_molluscPalette.getClosestColor(oldVector);
+            auto newVector = toVec3(mollusc->m_color);
 
-            if (mollusc.m_imageName.compare("NONE") != 0)
-                painter.drawPixmap(x * molluscSize, y * molluscSize, molluscSize, molluscSize, mollusc.m_image);
+            if (mollusc->m_imageName.compare("NONE") != 0) {
+                positions->push_back(new MolluscPosition{ x * molluscSize, y * molluscSize, molluscSize, molluscSize, 0, newVector});
+            }
 
             auto error = oldVector - newVector;
 
@@ -57,5 +62,5 @@ QImage* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
         }
     }
 
-    return result;
+    return positions;
 }

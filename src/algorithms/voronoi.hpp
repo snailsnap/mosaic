@@ -14,7 +14,7 @@ class Voronoi : MosaicGenerator
 public:
     Voronoi(const MolluscPalette& molluscPalette) : MosaicGenerator(molluscPalette) { };
 
-    QImage * createMosaic(const QImage& input, int maxNumOfMolluscs);
+    std::vector<MolluscPosition*>* createMosaic(const QImage& input, int maxNumOfMolluscs);
 
 private:
     void getSiteColor(const jcv_site* site, const QImage& image, std::vector<bool>& floodFillCanvas, int width, int height, QVector3D* color);

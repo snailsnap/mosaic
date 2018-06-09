@@ -38,17 +38,20 @@ public:
         const QImage &image1,
         const QImage &image2,
         const QImage &image3);
+    void onClick(QMouseEvent * event);
 
 private:
     bool m_useCam;
     int m_maxNumOfMolluscs;
     QImage* m_result = nullptr;
+    QImage* m_idImage = nullptr;
     QString m_outputPath;
     Webcam* m_webcam;
     QString m_openImagePath = "C:/";
     QString m_data;
 
     MolluscPalette* m_molluscPalette;
+    std::vector<Mollusc*>* m_molluscs;
     int m_selectedMolluscIndex;
 
     QGridLayout *m_layout;
