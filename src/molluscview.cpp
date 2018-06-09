@@ -9,5 +9,6 @@ MolluscView::MolluscView(MainWindow * window)
 
 void MolluscView::mouseReleaseEvent(QMouseEvent * event)
 {
+    QGraphicsView::mouseReleaseEvent(event);
     m_window->onClick(event);
 }

@@ -65,6 +65,7 @@ private:
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
     QPushButton *m_cameraButton;
+    QLabel *m_resultLabel;
 
     QLabel *m_classLabel;
     QLabel *m_familyLabel;
