@@ -200,6 +200,7 @@ void MainWindow::showSidebar(
     m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
     m_dWidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
+    m_dWidget->setVisible(true);
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
 }
 
@@ -246,6 +247,7 @@ void MainWindow::takePicture() {
 void MainWindow::takeSelfie()
 {
     takePicture();
+    m_timer->start(30000);
 }
 
 void MainWindow::diaChange() {
@@ -257,7 +259,7 @@ void MainWindow::diaChange() {
         m_dia1 = !m_dia1;
         this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia2.png")));
     }
-    m_timer->start(2000);
+    m_timer->start(5000);
 }
 
 void MainWindow::showDia()
@@ -281,7 +283,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
-    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatio);
+    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
     
     // process image
     auto mosaic = Voronoi(*m_molluscPalette);
