@@ -15,6 +15,7 @@
 #include <QPixmap>
 #include <QObject>
 #include <QTimer>
+#include <QGraphicsProxyWidget>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -25,6 +26,7 @@ public:
     void sendMail();
     void keyPressEvent(QKeyEvent* event);
     void showSnailInfo();
+    void showCameraButton();
     void showSidebar(
         const QString &classContent,
         const QString &familyContent,
@@ -40,7 +42,7 @@ public:
         const QString &continentContent,
         const QImage &image1,
         const QImage &image2,
-        const QImage &image3); 
+        const QImage &image3);
 
 private:
     bool m_useCam;
@@ -59,6 +61,7 @@ private:
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
+    QPushButton *m_cameraButton;
 
     QLabel *m_classLabel;
     QLabel *m_familyLabel;
@@ -79,6 +82,7 @@ private:
 
     QGraphicsView *m_view;
     QGraphicsScene *m_scene;
+    QGraphicsPixmapItem *m_pixmapItem;
 
     MailClient m_mailClient;
     QTimer *m_timer;
@@ -90,5 +94,6 @@ private:
 
 public slots:
     void diaChange();
+    void takeSelfie();
     
 };
