@@ -58,6 +58,11 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
         
         auto box = calculateBoundingBox(site);
 
+        if (box.centerX < 0 || box.centerX >= width || box.centerY < 0 || box.centerY >= height)
+        {
+            continue;
+        }
+
         positions.push_back(MolluscPosition{ (int)std::round(box.centerX), (int)std::round(box.centerY), (int)box.width, (int)box.height, box.rotation });
 
 #ifdef VORONOI_USE_FLOODFILL
@@ -73,7 +78,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     result->fill(Qt::GlobalColor::white);
     QPainter painter(result);
 
-    for (auto i = 0; i < diagram.numsites; ++i)
+    for (auto i = 0; i < positions.size(); ++i)
     {
         auto pos = positions[i];
 
