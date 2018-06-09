@@ -60,6 +60,7 @@ set(sources
 	${source_dir}/Webcam.cpp
 	${source_dir}/molluscpalette.cpp
 	${source_dir}/helpers/boundingbox.cpp
+	${source_dir}/helpers/positionGenerator.cpp
 )
 
 set(headers
@@ -72,6 +73,7 @@ set(headers
 	${source_dir}/Webcam.hpp
 	${source_dir}/molluscpalette.hpp
 	${source_dir}/helpers/boundingbox.hpp
+	${source_dir}/helpers/positionGenerator.hpp
 )
 
 # target and required libs

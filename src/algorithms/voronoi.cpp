@@ -15,6 +15,7 @@
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 #include "../helpers/boundingbox.hpp"
+#include "../helpers/positionGenerator.hpp"
 
 #define JC_VORONOI_IMPLEMENTATION
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
@@ -26,17 +27,14 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     // init points
 
-    std::random_device random;
-    std::mt19937_64 generator(random());
-    // todo: choose better generator or manipulate the generator based on face detection
-    std::uniform_real_distribution<float> horizontal(0.0, width);
-    std::uniform_real_distribution<float> vertical(0.0, height);
+    auto gen = RandomPostionGenerator(0, 0, width, height, width / 2, height / 2, width / 3, height / 3);
 
     auto points = new jcv_point[maxNumOfMolluscs];
 
     for (auto i = 0; i < maxNumOfMolluscs; ++i)
     {
-        new(points + i) jcv_point{ horizontal(generator), vertical(generator) };
+        new(points + i) jcv_point();
+        gen.getPosition(points + i);
     }
 
     // generate voronoi diagram
@@ -80,7 +78,6 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
         auto mollusc = m_molluscPalette.getClosestColor(pos.color);
 
-        // todo: better drawing with save/translate/rotate/restore
         if (mollusc.m_imageName.compare("NONE") != 0)
         {
             painter.save();
