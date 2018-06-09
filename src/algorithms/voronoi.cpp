@@ -78,6 +78,10 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     result->fill(Qt::GlobalColor::white);
     QPainter painter(result);
 
+    std::random_device random;
+    std::mt19937_64 generator(random());
+    std::uniform_int_distribution<int> dist(0, 1);
+
     for (auto i = 0; i < positions.size(); ++i)
     {
         auto pos = positions[i];
@@ -86,11 +90,47 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
         if (mollusc.m_imageName.compare("NONE") != 0)
         {
+            auto angle = pos.rotation + dist(generator) * M_PI; //-mollusc.m_rotation;
+
+            auto imageWidth = mollusc.m_image.width();
+            auto imageHeight = mollusc.m_image.height();
+            auto imageSizeRatio = (float)imageHeight / imageWidth;
+
+            auto boxWidth = pos.width;
+            auto boxHeight = pos.height;
+            if (boxHeight > boxWidth)
+            {
+                auto temp = boxWidth;
+                boxWidth = boxHeight;
+                boxHeight = temp;
+                angle += M_PI_2;
+            }
+            auto boxSizeRatio = (float)boxHeight / boxWidth;
+
+            auto targetWidth = 0;
+            auto targetHeight = 0;
+            if (imageSizeRatio > boxSizeRatio)
+            {
+                targetHeight = boxHeight;
+                targetWidth = targetHeight / imageSizeRatio;
+            }
+            else
+            {
+                targetWidth = boxWidth;
+                targetHeight = targetWidth * imageSizeRatio;
+            }
+
             painter.save();
             painter.translate(pos.x, pos.y);
             painter.rotate(-qRadiansToDegrees(pos.rotation));
-            painter.translate(-pos.width / 2, -pos.height / 2);
-            painter.drawPixmap(0, 0, pos.width, pos.height, mollusc.m_image);
+            painter.drawRect(-pos.width / 2, -pos.height / 2, pos.width, pos.height);
+            painter.restore();
+
+            painter.save();
+            painter.translate(pos.x, pos.y);
+            painter.rotate(-qRadiansToDegrees(angle));
+            painter.translate(-targetWidth / 2, -targetHeight / 2);
+            painter.drawPixmap(0, 0, targetWidth, targetHeight, mollusc.m_image);
             painter.restore();
         }
     }
