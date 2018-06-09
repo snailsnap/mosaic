@@ -1,6 +1,8 @@
 #include "mainwindow.hpp"
-#include "algorithms/floyd-steinberg.hpp"
+#include "algorithms/voronoi.hpp"
 #include "mail.hpp"
+#include "helpers/painter.hpp"
+#include "molluscview.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
@@ -32,16 +34,19 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
+    , m_view(new MolluscView(this))
     , m_timer(new QTimer(this))
     , m_dia1(true)
-    , m_view(new QGraphicsView())
     , m_scene(new QGraphicsScene())
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
     , m_mailClient(m_data.toStdString() + "/credentials.txt")
 {
-    if (useCam) m_webcam = new Webcam();
+    if(useCam) {
+        m_webcam = new Webcam();
+        QObject::connect(m_webcam, &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
+    }
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -77,10 +82,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         case Qt::Key_S: {
             if (m_result != nullptr)
                 m_result->save(m_outputPath);
+            break;
         }
         case Qt::Key_M: {
             if (m_result != nullptr)
                 this->sendMail();
+            break;
         }
         case Qt::Key_D: {
             this->showDia();
@@ -95,26 +102,31 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    //TODO: Later change with selected snail index and not incremented index
-    Mollusc selectedMollusc = m_molluscPalette->getMolluscs()->at(++m_selectedMolluscIndex);
+    if (m_molluscs == nullptr) return;
+    Mollusc* selectedMollusc = m_molluscs->at(m_selectedMolluscIndex);
 
-    //TODO: Later change images with specific data of highlighted snail
+    auto lastDotIndex = selectedMollusc->m_imageName.find_last_of(".");
+    auto imageName = selectedMollusc->m_imageName.substr(0, lastDotIndex);
+    
+    auto underscoreIdx1 = imageName.find_last_of("_");
+    auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
+    
     this->showSidebar(
-        QString::fromStdString(selectedMollusc.m_class),
-        QString::fromStdString(selectedMollusc.m_family),
-        QString::fromStdString(selectedMollusc.m_genus),
-        QString::fromStdString(selectedMollusc.m_species),
-        QString::fromStdString(selectedMollusc.m_scientificName),
-        QString::fromStdString(selectedMollusc.m_locality),
-        QString::fromStdString(selectedMollusc.m_date),
-        QString::fromStdString(selectedMollusc.m_area),
-        QString::fromStdString(selectedMollusc.m_province),
-        QString::fromStdString(selectedMollusc.m_country),
-        QString::fromStdString(selectedMollusc.m_subContinent),
-        QString::fromStdString(selectedMollusc.m_continent),
-        QImage("./../data/ZMB_Mol_100073_1.png").scaledToHeight(100),
-        QImage("./../data/ZMB_Mol_100073_2.png").scaledToHeight(100),
-        QImage("./../data/ZMB_Mol_100073_3.png").scaledToHeight(100));
+        QString::fromStdString(selectedMollusc->m_class),
+        QString::fromStdString(selectedMollusc->m_family),
+        QString::fromStdString(selectedMollusc->m_genus),
+        QString::fromStdString(selectedMollusc->m_species),
+        QString::fromStdString(selectedMollusc->m_scientificName),
+        QString::fromStdString(selectedMollusc->m_locality),
+        QString::fromStdString(selectedMollusc->m_date),
+        QString::fromStdString(selectedMollusc->m_area),
+        QString::fromStdString(selectedMollusc->m_province),
+        QString::fromStdString(selectedMollusc->m_country),
+        QString::fromStdString(selectedMollusc->m_subContinent),
+        QString::fromStdString(selectedMollusc->m_continent),
+        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
+        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
+        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100));
 }
 
 void MainWindow::showSidebar(
@@ -181,10 +193,23 @@ void MainWindow::showSidebar(
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
 }
 
+void MainWindow::onClick(QMouseEvent * event)
+{
+    if (m_idImage != nullptr) {
+        auto x = event->x();
+        auto y = event->y();
+        auto color = m_idImage->pixelColor(x, y);
+        if (color != Qt::white) {
+            m_selectedMolluscIndex = color.red() + (color.green() << 8) + (color.blue() << 16);
+            this->showSnailInfo();
+        }
+    }
+}
+
 void MainWindow::takePicture() {
     if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
-        std::cout << "image capturing using the webcam is not implemented yet" << std::endl;
-        //m_webcam->captureImage();
+        std::cout << "Capturing image..." << std::endl;
+        m_webcam->captureImage();
     }
     else {
         auto fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
@@ -194,33 +219,20 @@ void MainWindow::takePicture() {
         if (fileName == "") return;
         m_openImagePath = fileName;
 
-        this->readInputPicture(fileName);
+        // read input image
+        auto image = QImage(fileName);
+        processAndShowPicture(std::make_shared<QImage>(image));
     }
-}
-
-void MainWindow::readInputPicture(QString fileName)
-{
-    auto display = QApplication::desktop()->screenGeometry();
-    auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
-
-    auto mosaic = FloydSteinberg(*m_molluscPalette);
-    m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-    auto imageSize = m_result->size();
-    m_scene->update(0, 0, imageSize.width(), imageSize.height());
-
-    m_scene->addPixmap(QPixmap::fromImage(*m_result));
-    m_view->setScene(m_scene);
 }
 
 void MainWindow::diaChange() {
     if (m_dia1) {
         m_dia1 = !m_dia1;
-        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia1.png"));
+        this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia1.png")));
     }
     else {
         m_dia1 = !m_dia1;
-        this->readInputPicture(QString::fromStdString(m_data.toStdString() + "/dia2.png"));
+        this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia2.png")));
     }
     m_timer->start(2000);
 }
@@ -240,4 +252,25 @@ void MainWindow::stopDia()
 void MainWindow::sendMail()
 {
     m_mailClient.sendImageToDefaultRecipient(*m_result);
+}
+
+void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
+    std::cout << "Showing image..." << std::endl;
+    // scale image to screen size
+    auto display = QApplication::desktop()->screenGeometry();
+    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    
+    // process image
+    auto mosaic = Voronoi(*m_molluscPalette);
+    auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
+
+    m_result = new QImage(image.width(), image.height(), image.format());
+    m_idImage = new QImage(image.width(), image.height(), image.format());
+    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_idImage, *m_result);
+
+    auto imageSize = m_result->size();
+    auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+
+    scene->addPixmap(QPixmap::fromImage(*m_result));
+    m_view->setScene(scene);
 }

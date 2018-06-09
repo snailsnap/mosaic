@@ -40,19 +40,22 @@ public:
         const QString &continentContent,
         const QImage &image1,
         const QImage &image2,
-        const QImage &image3); 
+        const QImage &image3);
+    void onClick(QMouseEvent * event);
 
 private:
     bool m_useCam;
     bool m_dia1;
     int m_maxNumOfMolluscs;
     QImage* m_result = nullptr;
+    QImage* m_idImage = nullptr;
     QString m_outputPath;
     Webcam* m_webcam;
     QString m_openImagePath = "C:/";
     QString m_data;
 
     MolluscPalette* m_molluscPalette;
+    std::vector<Mollusc*>* m_molluscs;
     int m_selectedMolluscIndex;
 
     QGridLayout *m_layout;
@@ -86,9 +89,8 @@ private:
     void takePicture();
     void showDia();
     void stopDia();
-    void readInputPicture(QString fileName);
+    void processAndShowPicture(std::shared_ptr<QImage> image);
 
 public slots:
     void diaChange();
-    
 };

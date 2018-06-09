@@ -13,7 +13,7 @@ MolluscPalette::MolluscPalette(const QString& dataPath)
     this->fillBuckets();
 }
 
-const std::vector<Mollusc>* MolluscPalette::getMolluscs() const
+const std::vector<Mollusc*>* MolluscPalette::getMolluscs() const
 {
     return m_molluscs;
 }
@@ -23,7 +23,7 @@ QVector3D MolluscPalette::toVec3(const QColor& color) const
     return QVector3D(color.redF(), color.greenF(), color.blueF());
 }
 
-const Mollusc & MolluscPalette::getClosestColor(const QVector3D & color) const
+Mollusc* MolluscPalette::getClosestColor(const QVector3D & color) const
 {
     auto closestIndex = 0;
     auto minDist = std::numeric_limits<float>::max();
@@ -58,25 +58,25 @@ void MolluscPalette::loadData(const QString& dataPath) {
     }
 
     // generate molluscs
-    m_molluscs = new std::vector<Mollusc>();
+    m_molluscs = new std::vector<Mollusc*>();
     for (auto i = 1u; i < strings.size(); ++i)
     {
-        m_molluscs->push_back(Mollusc(strings[i], dataPath));
+        m_molluscs->push_back(new Mollusc(strings[i], dataPath));
     }
 
     // white mollusc for background
-    m_molluscs->push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
+    m_molluscs->push_back(new Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
 }
 
 void MolluscPalette::fillBuckets()
 {
-    auto buckets = std::array<std::vector<Mollusc>*, 8*8*8>();
+    auto buckets = std::array<std::vector<Mollusc*>*, 8*8*8>();
     for (auto mollusc : *m_molluscs) {
-        auto color = mollusc.m_color;
+        auto color = mollusc->m_color;
         auto idx = color.red() / 32
             + (color.green() / 32) * 8
             + (color.blue() / 32) * 8 * 8;
-        if (buckets[idx] == nullptr) buckets[idx] = new std::vector<Mollusc>();
+        if (buckets[idx] == nullptr) buckets[idx] = new std::vector<Mollusc*>();
         buckets[idx]->push_back(mollusc);
     }
     
