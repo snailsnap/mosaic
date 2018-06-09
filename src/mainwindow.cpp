@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QCameraInfo>
 #include <QDesktopWidget>
+#include <QPointer>
 
 #include <iostream>
 
@@ -33,14 +34,16 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image1Label(new QLabel("image1Label"))
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
+    , m_data(data)
     , m_useCam(useCam)
     , m_view(new MolluscView(this))
     , m_timer(new QTimer(this))
     , m_dia1(true)
     , m_scene(new QGraphicsScene())
+    , m_pixmapItem(new QGraphicsPixmapItem())
+    , m_cameraButton(new QPushButton())
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
-    , m_data(data)
     , m_mailClient(m_data.toStdString() + "/credentials.txt")
 {
     if(useCam) {
@@ -50,7 +53,12 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     this->setCentralWidget(m_view);
+    m_view->setScene(m_scene);
+
+    this->showCameraButton();
+    this->showDia();
 }
 
 MainWindow::~MainWindow() {}
@@ -193,6 +201,14 @@ void MainWindow::showSidebar(
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
 }
 
+void MainWindow::showCameraButton() {
+    m_cameraButton->setIcon(QIcon(m_data + "/camera.png"));
+    m_cameraButton->setIconSize(QSize(100, 100));
+    m_cameraButton->setStyleSheet("text-align:center; background: black; border: none");
+    m_scene->addWidget(m_cameraButton);
+    connect(m_cameraButton, SIGNAL(released()), this, SLOT(takeSelfie()));
+}
+
 void MainWindow::onClick(QMouseEvent * event)
 {
     if (m_idImage != nullptr) {
@@ -225,6 +241,28 @@ void MainWindow::takePicture() {
     }
 }
 
+/*void MainWindow::readInputPicture(QString fileName)
+{
+    auto display = QApplication::desktop()->screenGeometry();
+    auto image = QImage(fileName).scaled(display.size(), Qt::KeepAspectRatio);
+    auto mosaic = FloydSteinberg(*m_molluscPalette);
+    m_result = mosaic.createMosaic(image, m_maxNumOfMolluscs);
+
+    m_scene->removeItem(m_pixmapItem);
+    delete m_pixmapItem;
+    auto offset = (display.width() - m_result->width()) / 2;
+    m_scene->setSceneRect(-offset, 0, display.width(), display.height());
+    m_pixmapItem = m_scene->addPixmap(QPixmap::fromImage(*m_result));
+
+    m_cameraButton->move(display.width() - m_cameraButton->iconSize().width() - offset, display.height() - m_cameraButton->iconSize().height());
+
+}/**/
+
+void MainWindow::takeSelfie()
+{
+    takePicture();
+}
+
 void MainWindow::diaChange() {
     if (m_dia1) {
         m_dia1 = !m_dia1;
@@ -240,7 +278,7 @@ void MainWindow::diaChange() {
 void MainWindow::showDia()
 {
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(diaChange()));
-    m_timer->start(2000);
+    m_timer->start(0);
 }
 
 void MainWindow::stopDia()
@@ -258,7 +296,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
-    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatio);
     
     // process image
     auto mosaic = Voronoi(*m_molluscPalette);
@@ -266,11 +304,19 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     m_result = new QImage(image.width(), image.height(), image.format());
     m_idImage = new QImage(image.width(), image.height(), image.format());
-    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_idImage, *m_result);
+    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
-    auto imageSize = m_result->size();
+    m_scene->removeItem(m_pixmapItem);
+    delete m_pixmapItem;
+    auto offset = (display.width() - m_result->width()) / 2;
+    m_scene->setSceneRect(-offset, 0, display.width(), display.height());
+    m_pixmapItem = m_scene->addPixmap(QPixmap::fromImage(*m_result));
+
+    m_cameraButton->move(display.width() - m_cameraButton->iconSize().width() - offset, display.height() - m_cameraButton->iconSize().height());
+
+    /*auto imageSize = m_result->size();
     auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
 
     scene->addPixmap(QPixmap::fromImage(*m_result));
-    m_view->setScene(scene);
+    m_view->setScene(scene);/**/
 }
