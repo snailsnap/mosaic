@@ -120,15 +120,19 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
                 targetHeight = targetWidth * imageSizeRatio;
             }
 
-            painter.save();
+            const auto scale = 1.3;
+
+            /*painter.save();
             painter.translate(pos.x, pos.y);
             painter.rotate(-qRadiansToDegrees(pos.rotation));
+            painter.scale(scale, scale);
             painter.drawRect(-pos.width / 2, -pos.height / 2, pos.width, pos.height);
-            painter.restore();
+            painter.restore();*/
 
             painter.save();
             painter.translate(pos.x, pos.y);
             painter.rotate(-qRadiansToDegrees(angle));
+            painter.scale(scale, scale);
             painter.translate(-targetWidth / 2, -targetHeight / 2);
             painter.drawPixmap(0, 0, targetWidth, targetHeight, mollusc.m_image);
             painter.restore();
