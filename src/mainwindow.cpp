@@ -250,11 +250,6 @@ void MainWindow::takeSelfie()
     m_timer->start(30000);
 }
 
-void MainWindow::takeSelfie()
-{
-    takePicture();
-}
-
 void MainWindow::diaChange() {
     if (m_dia1) {
         m_dia1 = !m_dia1;
