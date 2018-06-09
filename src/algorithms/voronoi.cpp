@@ -21,7 +21,7 @@
 #define JC_VORONOI_IMPLEMENTATION
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
 
-QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
+std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     auto width = input.width();
     auto height = input.height();
@@ -48,7 +48,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 
     auto sites = jcv_diagram_get_sites(&diagram);
 
-    auto positions = std::vector<MolluscPosition>();
+    auto positions = new std::vector<MolluscPosition*>();
 
     auto floodFillCanvas = std::vector<bool>(height * width, false);
 
@@ -63,80 +63,13 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
             continue;
         }
 
-        positions.push_back(MolluscPosition{ (int)std::round(box.centerX), (int)std::round(box.centerY), (int)box.width, (int)box.height, box.rotation });
+        positions->push_back(new MolluscPosition{ (int)std::round(box.centerX), (int)std::round(box.centerY), (int)box.width, (int)box.height, box.rotation });
 
 #ifdef VORONOI_USE_FLOODFILL
-        getSiteColor(site, input, floodFillCanvas, width, height, &(positions.back().color));
+        getSiteColor(site, input, floodFillCanvas, width, height, &(positions->back()->color));
 #else
-        positions.back().color = toVec3(input.pixel((int)std::round(box.centerX), (int)std::round(box.centerY)));
+        positions->back()->color = toVec3(input.pixel((int)std::round(box.centerX), (int)std::round(box.centerY)));
 #endif // VORONOI_USE_FLOODFILL
-    }
-
-    // draw molluscs
-
-    auto result = new QImage(width, height, input.format());
-    result->fill(Qt::GlobalColor::white);
-    QPainter painter(result);
-
-    std::random_device random;
-    std::mt19937_64 generator(random());
-    std::uniform_int_distribution<int> dist(0, 1);
-
-    for (auto i = 0; i < positions.size(); ++i)
-    {
-        auto pos = positions[i];
-
-        auto mollusc = m_molluscPalette.getClosestColor(pos.color);
-
-        if (mollusc.m_imageName.compare("NONE") != 0)
-        {
-            auto angle = pos.rotation + dist(generator) * M_PI; //-mollusc.m_rotation;
-
-            auto imageWidth = mollusc.m_image.width();
-            auto imageHeight = mollusc.m_image.height();
-            auto imageSizeRatio = (float)imageHeight / imageWidth;
-
-            auto boxWidth = pos.width;
-            auto boxHeight = pos.height;
-            if (boxHeight > boxWidth)
-            {
-                auto temp = boxWidth;
-                boxWidth = boxHeight;
-                boxHeight = temp;
-                angle += M_PI_2;
-            }
-            auto boxSizeRatio = (float)boxHeight / boxWidth;
-
-            auto targetWidth = 0;
-            auto targetHeight = 0;
-            if (imageSizeRatio > boxSizeRatio)
-            {
-                targetHeight = boxHeight;
-                targetWidth = targetHeight / imageSizeRatio;
-            }
-            else
-            {
-                targetWidth = boxWidth;
-                targetHeight = targetWidth * imageSizeRatio;
-            }
-
-            const auto scale = 1.3;
-
-            /*painter.save();
-            painter.translate(pos.x, pos.y);
-            painter.rotate(-qRadiansToDegrees(pos.rotation));
-            painter.scale(scale, scale);
-            painter.drawRect(-pos.width / 2, -pos.height / 2, pos.width, pos.height);
-            painter.restore();*/
-
-            painter.save();
-            painter.translate(pos.x, pos.y);
-            painter.rotate(-qRadiansToDegrees(angle));
-            painter.scale(scale, scale);
-            painter.translate(-targetWidth / 2, -targetHeight / 2);
-            painter.drawPixmap(0, 0, targetWidth, targetHeight, mollusc.m_image);
-            painter.restore();
-        }
     }
 
     // clean up
@@ -144,7 +77,7 @@ QImage* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
     jcv_diagram_free(&diagram);
     delete[] points;
 
-    return result;
+    return positions;
 }
 
 struct IntPoint
