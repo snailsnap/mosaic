@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include <queue>
+#include <iostream>
 
 #include <QImage>
 #include <QVector3D>
@@ -212,6 +213,17 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
 
     auto queue = std::queue<IntPoint>();
 
+    if (floodFillCanvas[point.x + point.y * width])
+    {
+        std::cout << "IS ALREADY TRUE" << std::endl;
+
+        *color += toVec3(image.pixel(point.x, point.y));
+        ++count;
+
+        *color /= count;
+        return;
+    }
+    
     if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height)
     {
         enqueueNeighbors(point, width, height, floodFillCanvas, queue);

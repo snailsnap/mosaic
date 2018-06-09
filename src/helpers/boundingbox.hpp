@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
 
 struct BoundingBox
