@@ -46,7 +46,7 @@ Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc
     m_image = QPixmap(dir + "/" + m_imageName.c_str());
 }
 
-std::string Mollusc::description(std::string dataDir) {
+std::string Mollusc::description(const std::string &dataDir) {
     // prioritizes family over class. Only shows class if family info doesn't exist
     std::string result = loadString("Family", m_family, dataDir);
     if (result.empty()) {
@@ -55,7 +55,7 @@ std::string Mollusc::description(std::string dataDir) {
     return result;
 }
 
-std::string Mollusc::loadString(std::string termType, std::string term, std::string dataDir) {
+std::string Mollusc::loadString(const std::string &termType, const std::string &term, const std::string &dataDir) {
     std::string p = dataDir + "/descriptions/" + termType + "_" + term + ".txt";
     QString filepath = QString::fromStdString(p);
     QFile file(filepath);

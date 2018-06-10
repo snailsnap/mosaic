@@ -33,8 +33,8 @@ struct Mollusc
     std::string m_subContinent;
     std::string m_continent;
 
-    std::string description(std::string dataDir);
+    std::string description(const std::string &dataDir);
 
 private:
-    std::string loadString(std::string termType, std::string term, std::string dataDir);
+    std::string loadString(const std::string &termType, const std::string &term, const std::string &dataDir);
 };
