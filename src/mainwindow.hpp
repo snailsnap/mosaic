@@ -84,4 +84,6 @@ private:
 
     void takePicture();
     void processAndShowPicture(std::shared_ptr<QImage> image);
+
+    void initializeSidebar();
 };

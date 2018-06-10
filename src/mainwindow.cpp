@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setCentralWidget(m_view);
+
+    initializeSidebar();
 }
 
 MainWindow::~MainWindow() {}
@@ -139,47 +141,35 @@ void MainWindow::showSidebar(
 {
 
     m_titleLabel->setText("<b><font size=\"6\">" + scientificNameContent + "</font></b>");
+    m_titleLabel->setContentsMargins(0,0,0,10);
     m_classLabel->setText("<b>Klasse:</b> " + classContent);
+    m_classLabel->setContentsMargins(0,0,0,10);
     m_familyLabel->setText("<b>Familie:</b> " + familyContent);
+    m_familyLabel->setContentsMargins(0,0,0,10);
     m_genusLabel->setText("<b>Geschlecht:</b> " + genusContent);
+    m_genusLabel->setContentsMargins(0,0,0,10);
     m_speciesLabel->setText("<b>Spezies:</b> " + speciesContent);
+    m_speciesLabel->setContentsMargins(0,0,0,10);
     m_scientificNameLabel->setText("<b>Wissenschatflicher Begriff:</b> " + scientificNameContent);
+    m_scientificNameLabel->setContentsMargins(0,0,0,10);
     m_localityLabel->setText("<b>Fundort:</b> " + localityContent);
+    m_localityLabel->setContentsMargins(0,0,0,10);
     m_dateLabel->setText("<b>Datum:</b> " + dateContent);
+    m_dateLabel->setContentsMargins(0,0,0,10);
     m_areaLabel->setText("<b>Gebiet:</b> " + areaContent);
+    m_areaLabel->setContentsMargins(0,0,0,10);
     m_provinceLabel->setText("<b>Provinz:</b> " + provinceContent);
+    m_provinceLabel->setContentsMargins(0,0,0,10);
     m_countryLabel->setText("<b>Land:</b> " + countryContent);
+    m_countryLabel->setContentsMargins(0,0,0,10);
     m_subContinentLabel->setText("<b>Teilkontinent:</b> " + subContinentContent);
+    m_subContinentLabel->setContentsMargins(0,0,0,10);
     m_continentLabel->setText("<b>Kontinent:</b> " + continentContent);
+    m_continentLabel->setContentsMargins(0,0,0,10);
 
     m_image1Label->setPixmap(QPixmap::fromImage(image1));
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
     m_image3Label->setPixmap(QPixmap::fromImage(image3));
-
-
-    m_infoWidget->setLayout(m_layout);
-    m_scrollArea->setWidgetResizable(true);
-    m_scrollArea->setWidget(m_infoWidget);
-
-    // position images side by side
-    m_imageLayout->addWidget(m_image1Label);
-    m_imageLayout->addWidget(m_image2Label);
-    m_imageLayout->addWidget(m_image3Label);
-
-    m_layout->addWidget(m_titleLabel);
-    m_layout->addLayout(m_imageLayout);
-    m_layout->addWidget(m_classLabel);
-    m_layout->addWidget(m_familyLabel);
-    m_layout->addWidget(m_genusLabel);
-    m_layout->addWidget(m_speciesLabel);
-    m_layout->addWidget(m_scientificNameLabel);
-    m_layout->addWidget(m_localityLabel);
-    m_layout->addWidget(m_dateLabel);
-    m_layout->addWidget(m_areaLabel);
-    m_layout->addWidget(m_provinceLabel);
-    m_layout->addWidget(m_countryLabel);
-    m_layout->addWidget(m_subContinentLabel);
-    m_layout->addWidget(m_continentLabel);
 
     m_dWidget->setWidget(m_scrollArea);
     m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -245,4 +235,36 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     scene->addPixmap(QPixmap::fromImage(*m_result));
     m_view->setScene(scene);
+}
+
+void MainWindow::initializeSidebar() {
+    m_layout->setSpacing(0);
+    m_infoWidget->setLayout(m_layout);
+    m_scrollArea->setWidgetResizable(true);
+    m_scrollArea->setWidget(m_infoWidget);
+
+    // position images side by side
+    m_imageLayout->addWidget(m_image1Label);
+    m_imageLayout->addWidget(m_image2Label);
+    m_imageLayout->addWidget(m_image3Label);
+    m_imageLayout->setSpacing(10);
+
+    m_imageLayout->setContentsMargins(0,0,0,10);
+
+    m_layout->addWidget(m_titleLabel);
+    m_layout->addLayout(m_imageLayout);
+    m_layout->addWidget(m_classLabel);
+    m_layout->addWidget(m_familyLabel);
+    m_layout->addWidget(m_genusLabel);
+    m_layout->addWidget(m_speciesLabel);
+    m_layout->addWidget(m_scientificNameLabel);
+    m_layout->addWidget(m_localityLabel);
+    m_layout->addWidget(m_dateLabel);
+    m_layout->addWidget(m_areaLabel);
+    m_layout->addWidget(m_provinceLabel);
+    m_layout->addWidget(m_countryLabel);
+    m_layout->addWidget(m_subContinentLabel);
+    m_layout->addWidget(m_continentLabel);
+    // remove spaces
+    m_layout->insertStretch( -1, 1 );
 }
