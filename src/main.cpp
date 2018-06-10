@@ -6,9 +6,12 @@
 #include <QDir>
 #include <QString>
 
+#include "globalVars.hpp"
 #include "mainwindow.hpp"
 #include "mollusc.hpp"
 #include "molluscpalette.hpp"
+
+int g_numThreads = 4;
 
 int main(int argc, char *argv[])
 {
@@ -28,6 +31,8 @@ int main(int argc, char *argv[])
     parser.addOption(maxNumOfMolluscsOption);
     QCommandLineOption useCamOption({ "c", "useCam" }, "Whether the cam or the image dialog is used.", "useCam", "true");
     parser.addOption(useCamOption);
+    QCommandLineOption numThreadsOptions({ "t", "threads" }, "Number of threads for multithreaded parts.", "numThreads", "4");
+    parser.addOption(numThreadsOptions);
 
     parser.process(app);
 
@@ -69,6 +74,12 @@ int main(int argc, char *argv[])
     {
         useCam = parser.value(useCamOption).toUpper() == "TRUE";
         std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
+    }
+
+    if (parser.isSet(numThreadsOptions))
+    {
+        g_numThreads = parser.value(numThreadsOptions).toInt();
+        std::cout << "Number of threads: " << g_numThreads << std::endl;
     }
 
     auto molluscPalette = new MolluscPalette(data);

@@ -8,8 +8,8 @@
 
 struct Mollusc
 {
-    Mollusc(const std::string& data, const QString& dir);
     Mollusc(const std::string& data);
+    void loadImage(const QString& dir);
 
     std::string m_imageName;
     QPixmap m_image;

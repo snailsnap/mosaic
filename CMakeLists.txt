@@ -63,9 +63,12 @@ set(sources
 	${source_dir}/helpers/painter.cpp
 	${source_dir}/helpers/boundingbox.cpp
 	${source_dir}/helpers/positionGenerator.cpp
+	${source_dir}/helpers/imageloader.cpp
+	${source_dir}/helpers/imageloaderthread.cpp
 )
 
 set(headers
+    ${source_dir}/globalVars.hpp
 	${source_dir}/mosaic.hpp
 	${source_dir}/algorithms/floyd-steinberg.hpp
 	${source_dir}/algorithms/voronoi.hpp
@@ -78,6 +81,8 @@ set(headers
 	${source_dir}/helpers/painter.hpp
 	${source_dir}/helpers/boundingbox.hpp
 	${source_dir}/helpers/positionGenerator.hpp
+	${source_dir}/helpers/imageloader.hpp
+	${source_dir}/helpers/imageloaderthread.hpp
 )
 
 # target and required libs

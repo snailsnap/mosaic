@@ -6,6 +6,10 @@
 
 #include <QString>
 #include <QVector3D>
+#include <QThread>
+
+#include "globalVars.hpp"
+#include "helpers/imageloader.hpp"
 
 MolluscPalette::MolluscPalette(const QString& dataPath)
 {
@@ -42,7 +46,7 @@ Mollusc* MolluscPalette::getClosestColor(const QVector3D & color) const
 
     std::random_device random;
     std::mt19937_64 generator(random());
-    auto distribution = std::uniform_int_distribution<>(0, bucket.size()-1);
+    auto distribution = std::uniform_int_distribution<>(0, bucket.size() - 1);
     auto idx = distribution(generator);
     return m_buckets[closestIndex].second->at(idx);
 }
@@ -61,8 +65,11 @@ void MolluscPalette::loadData(const QString& dataPath) {
     m_molluscs = new std::vector<Mollusc*>();
     for (auto i = 1u; i < strings.size(); ++i)
     {
-        m_molluscs->push_back(new Mollusc(strings[i], dataPath));
+        m_molluscs->push_back(new Mollusc(strings[i]));
     }
+
+    auto loader = ImageLoader(m_molluscs, dataPath);
+    loader.load();
 
     // white mollusc for background
     m_molluscs->push_back(new Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));

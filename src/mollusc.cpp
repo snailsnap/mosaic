@@ -39,7 +39,7 @@ Mollusc::Mollusc(const std::string& data)
     m_continent = (strings.size() > i) ? strings[i++] : "";
 }
 
-Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)
+void Mollusc::loadImage(const QString& dir)
 {
     m_image = QPixmap(dir + "/" + m_imageName.c_str());
 }
