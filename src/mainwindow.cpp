@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_scrollArea(new QScrollArea())
     , m_infoWidget(new QWidget())
     , m_dWidget(new QDockWidget(this))
+    , m_titleLabel(new QLabel())
     , m_classLabel(new QLabel())
     , m_familyLabel(new QLabel())
     , m_genusLabel(new QLabel())
@@ -136,18 +137,19 @@ void MainWindow::showSidebar(
     const QImage &image2,
     const QImage &image3)
 {
-    m_classLabel->setText("Klasse: " + classContent);
-    m_familyLabel->setText("Familie: " + familyContent);
-    m_genusLabel->setText("Geschlecht: " + genusContent);
-    m_speciesLabel->setText("Spezies: " + speciesContent);
-    m_scientificNameLabel->setText("Wissenschatflicher Begriff: " + scientificNameContent);
-    m_localityLabel->setText("Fundort: " + localityContent);
-    m_dateLabel->setText("Datum: " + dateContent);
-    m_areaLabel->setText("Gebiet: " + areaContent);
-    m_provinceLabel->setText("Provinz: " + provinceContent);
-    m_countryLabel->setText("Land: " + countryContent);
-    m_subContinentLabel->setText("Teilkontinent: " + subContinentContent);
-    m_continentLabel->setText("Kontinent: " + continentContent);
+    m_titleLabel->setText("<b><font size=\"6\">" + scientificNameContent + "</font></b>");
+    m_classLabel->setText("<b>Klasse:</b> " + classContent);
+    m_familyLabel->setText("<b>Familie:</b> " + familyContent);
+    m_genusLabel->setText("<b>Geschlecht:</b> " + genusContent);
+    m_speciesLabel->setText("<b>Spezies:</b> " + speciesContent);
+    m_scientificNameLabel->setText("<b>Wissenschatflicher Begriff:</b> " + scientificNameContent);
+    m_localityLabel->setText("<b>Fundort:</b> " + localityContent);
+    m_dateLabel->setText("<b>Datum:</b> " + dateContent);
+    m_areaLabel->setText("<b>Gebiet:</b> " + areaContent);
+    m_provinceLabel->setText("<b>Provinz:</b> " + provinceContent);
+    m_countryLabel->setText("<b>Land:</b> " + countryContent);
+    m_subContinentLabel->setText("<b>Teilkontinent:</b> " + subContinentContent);
+    m_continentLabel->setText("<b>Kontinent:</b> " + continentContent);
 
     m_image1Label->setPixmap(QPixmap::fromImage(image1));
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
@@ -163,20 +165,20 @@ void MainWindow::showSidebar(
     m_imageLayout->addWidget(m_image2Label, 0, 1);
     m_imageLayout->addWidget(m_image3Label, 0, 2);
 
-    m_layout->addWidget(m_classLabel, 0, 0);
-    m_layout->addWidget(m_familyLabel, 1, 0);
-    m_layout->addWidget(m_genusLabel, 2, 0);
-    m_layout->addWidget(m_speciesLabel, 3, 0);
-    m_layout->addWidget(m_scientificNameLabel, 4, 0);
-    m_layout->addWidget(m_localityLabel, 5, 0);
-    m_layout->addWidget(m_dateLabel, 6, 0);
-    m_layout->addWidget(m_areaLabel, 7, 0);
-    m_layout->addWidget(m_provinceLabel, 8, 0);
-    m_layout->addWidget(m_countryLabel, 9, 0);
-    m_layout->addWidget(m_subContinentLabel, 10, 0);
-    m_layout->addWidget(m_continentLabel, 11, 0);
-
-    m_layout->addLayout(m_imageLayout, 12, 0);
+    m_layout->addWidget(m_titleLabel, 0, 0);
+    m_layout->addLayout(m_imageLayout, 1, 0);
+    m_layout->addWidget(m_classLabel, 2, 0);
+    m_layout->addWidget(m_familyLabel, 3, 0);
+    m_layout->addWidget(m_genusLabel, 4, 0);
+    m_layout->addWidget(m_speciesLabel, 5, 0);
+    m_layout->addWidget(m_scientificNameLabel, 6, 0);
+    m_layout->addWidget(m_localityLabel, 7, 0);
+    m_layout->addWidget(m_dateLabel, 8, 0);
+    m_layout->addWidget(m_areaLabel, 9, 0);
+    m_layout->addWidget(m_provinceLabel, 10, 0);
+    m_layout->addWidget(m_countryLabel, 11, 0);
+    m_layout->addWidget(m_subContinentLabel, 12, 0);
+    m_layout->addWidget(m_continentLabel, 13, 0);
 
     m_dWidget->setWindowTitle("Informationen");
     m_dWidget->setWidget(m_scrollArea);

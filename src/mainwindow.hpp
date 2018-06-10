@@ -60,6 +60,7 @@ private:
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
 
+    QLabel *m_titleLabel;
     QLabel *m_classLabel;
     QLabel *m_familyLabel;
     QLabel *m_genusLabel;
