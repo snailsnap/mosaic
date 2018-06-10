@@ -14,8 +14,8 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     : QMainWindow(parent)
     , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
-    , m_layout(new QGridLayout())
-    , m_imageLayout(new QGridLayout())
+    , m_layout(new QVBoxLayout())
+    , m_imageLayout(new QHBoxLayout())
     , m_scrollArea(new QScrollArea())
     , m_infoWidget(new QWidget())
     , m_dWidget(new QDockWidget(this))
@@ -137,6 +137,7 @@ void MainWindow::showSidebar(
     const QImage &image2,
     const QImage &image3)
 {
+
     m_titleLabel->setText("<b><font size=\"6\">" + scientificNameContent + "</font></b>");
     m_classLabel->setText("<b>Klasse:</b> " + classContent);
     m_familyLabel->setText("<b>Familie:</b> " + familyContent);
@@ -161,24 +162,24 @@ void MainWindow::showSidebar(
     m_scrollArea->setWidget(m_infoWidget);
 
     // position images side by side
-    m_imageLayout->addWidget(m_image1Label, 0, 0);
-    m_imageLayout->addWidget(m_image2Label, 0, 1);
-    m_imageLayout->addWidget(m_image3Label, 0, 2);
+    m_imageLayout->addWidget(m_image1Label);
+    m_imageLayout->addWidget(m_image2Label);
+    m_imageLayout->addWidget(m_image3Label);
 
-    m_layout->addWidget(m_titleLabel, 0, 0);
-    m_layout->addLayout(m_imageLayout, 1, 0);
-    m_layout->addWidget(m_classLabel, 2, 0);
-    m_layout->addWidget(m_familyLabel, 3, 0);
-    m_layout->addWidget(m_genusLabel, 4, 0);
-    m_layout->addWidget(m_speciesLabel, 5, 0);
-    m_layout->addWidget(m_scientificNameLabel, 6, 0);
-    m_layout->addWidget(m_localityLabel, 7, 0);
-    m_layout->addWidget(m_dateLabel, 8, 0);
-    m_layout->addWidget(m_areaLabel, 9, 0);
-    m_layout->addWidget(m_provinceLabel, 10, 0);
-    m_layout->addWidget(m_countryLabel, 11, 0);
-    m_layout->addWidget(m_subContinentLabel, 12, 0);
-    m_layout->addWidget(m_continentLabel, 13, 0);
+    m_layout->addWidget(m_titleLabel);
+    m_layout->addLayout(m_imageLayout);
+    m_layout->addWidget(m_classLabel);
+    m_layout->addWidget(m_familyLabel);
+    m_layout->addWidget(m_genusLabel);
+    m_layout->addWidget(m_speciesLabel);
+    m_layout->addWidget(m_scientificNameLabel);
+    m_layout->addWidget(m_localityLabel);
+    m_layout->addWidget(m_dateLabel);
+    m_layout->addWidget(m_areaLabel);
+    m_layout->addWidget(m_provinceLabel);
+    m_layout->addWidget(m_countryLabel);
+    m_layout->addWidget(m_subContinentLabel);
+    m_layout->addWidget(m_continentLabel);
 
     m_dWidget->setWidget(m_scrollArea);
     m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);

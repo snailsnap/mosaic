@@ -54,8 +54,8 @@ private:
     std::vector<Mollusc*>* m_molluscs;
     int m_selectedMolluscIndex;
 
-    QGridLayout *m_layout;
-    QGridLayout *m_imageLayout;
+    QVBoxLayout *m_layout;
+    QHBoxLayout *m_imageLayout;
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
