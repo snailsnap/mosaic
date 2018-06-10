@@ -54,7 +54,7 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
                 targetHeight = targetWidth * imageSizeRatio;
             }
 
-            const auto scale = 1.0;
+            const auto scale = 1.3;
 
             painter.save();
             painter.translate(pos->x, pos->y);
