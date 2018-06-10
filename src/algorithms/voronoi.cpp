@@ -61,7 +61,6 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
         // throw away cells outside of canvas
         if (box.centerX < 0 || box.centerX >= width || box.centerY < 0 || box.centerY >= height)
         {
-            std::cout << "outside canvas" << std::endl;
             continue;
         }
 
@@ -69,7 +68,6 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
         const auto minEdge = 5;
         if (box.width < minEdge || box.height < minEdge)
         {
-            std::cout << "dropped a box" << std::endl;
             continue;
         }
 
