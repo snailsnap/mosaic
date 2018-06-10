@@ -58,6 +58,7 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
         
         auto box = calculateBoundingBox(site);
 
+        // throw away cells outside of canvas
         if (box.centerX < 0 || box.centerX >= width || box.centerY < 0 || box.centerY >= height)
         {
             continue;
