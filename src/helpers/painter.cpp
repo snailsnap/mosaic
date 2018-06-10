@@ -25,7 +25,7 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
         if (mollusc->m_imageName.compare("NONE") != 0) {
             molluscs->push_back(mollusc);
 
-            auto angle = pos->rotation + dist(generator) * M_PI; //-mollusc.m_rotation;
+            auto angle = pos->rotation + dist(generator) * M_PI + mollusc->m_rotation;
 
             auto imageWidth = mollusc->m_image.width();
             auto imageHeight = mollusc->m_image.height();
