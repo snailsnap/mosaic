@@ -62,6 +62,7 @@ set(sources
 	${source_dir}/molluscview.cpp
 	${source_dir}/helpers/painter.cpp
 	${source_dir}/helpers/boundingbox.cpp
+	${source_dir}/helpers/positionGenerator.cpp
 )
 
 set(headers
@@ -76,6 +77,7 @@ set(headers
 	${source_dir}/molluscview.hpp
 	${source_dir}/helpers/painter.hpp
 	${source_dir}/helpers/boundingbox.hpp
+	${source_dir}/helpers/positionGenerator.hpp
 )
 
 # target and required libs
@@ -98,7 +100,7 @@ endif()
 
 # add option to enable voronoi's floodfill
 
-option(VORONOI_USE_FLOODFILL "Use floodfill to detect cell colors during voronoi mosaic generation. If turned off, only onde pixel will be sampled. This can be useful when compiling the Debug configuration in VS, since the floodfill algorithm gets really slow in this case." ON)
+option(VORONOI_USE_FLOODFILL "Use floodfill to detect cell colors during voronoi mosaic generation. If turned off, only onde pixel will be sampled. This can be useful when compiling the Debug configuration in VS, since the floodfill algorithm gets really slow in this case." OFF)
 
 if (${VORONOI_USE_FLOODFILL})
 	add_definitions(-DVORONOI_USE_FLOODFILL)

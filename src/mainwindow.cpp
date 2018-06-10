@@ -270,7 +270,7 @@ void MainWindow::takeSelfie()
 
 void MainWindow::countdownChange() {
     if (m_countdown > -1) {
-        m_countdownLabel->setText(QStringLiteral("lächeln in: ") + QString::number(m_countdown--));
+        m_countdownLabel->setText(QStringLiteral("lï¿½cheln in: ") + QString::number(m_countdown--));
         m_countdownLabel->adjustSize();
 
         auto display = QApplication::desktop()->screenGeometry();
