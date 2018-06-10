@@ -64,13 +64,6 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
             continue;
         }
 
-        // throw away small cells
-        const auto minEdge = 5;
-        if (box.width < minEdge || box.height < minEdge)
-        {
-            continue;
-        }
-
         positions->push_back(new MolluscPosition{ box.centerX, box.centerY, box.width, box.height, box.rotation });
 
 #ifdef VORONOI_USE_FLOODFILL
