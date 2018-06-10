@@ -4,15 +4,19 @@
 #include <random>
 #include <algorithm>
 #include <queue>
+#include <iostream>
 
 #include <QImage>
 #include <QVector3D>
 #include <QColor>
 #include <QPainter>
+#include <QtMath>
 
 #include "voronoi.hpp"
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
+#include "../helpers/boundingbox.hpp"
+#include "../helpers/positionGenerator.hpp"
 
 #define JC_VORONOI_IMPLEMENTATION
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
@@ -24,17 +28,14 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
 
     // init points
 
-    std::random_device random;
-    std::mt19937_64 generator(random());
-    // todo: choose better generator or manipulate the generator based on face detection
-    std::uniform_real_distribution<float> horizontal(0.0, width);
-    std::uniform_real_distribution<float> vertical(0.0, height);
+    auto gen = RandomPostionGenerator(0, 0, width, height, width / 2, height / 2, width / 3, height / 3);
 
     auto points = new jcv_point[maxNumOfMolluscs];
 
     for (auto i = 0; i < maxNumOfMolluscs; ++i)
     {
-        new(points + i) jcv_point{ horizontal(generator), vertical(generator) };
+        new(points + i) jcv_point();
+        gen.getPosition(points + i);
     }
 
     // generate voronoi diagram
@@ -54,45 +55,20 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
     for (auto i = 0; i < diagram.numsites; ++i)
     {
         auto site = &sites[i];
-        auto edge = site->edges;
+        
+        auto box = calculateBoundingBox(site);
 
-        auto x = 0.0;
-        auto y = 0.0;
-        auto count = 0;
-
-        auto minX = std::numeric_limits<double>::max();
-        auto maxX = std::numeric_limits<double>::min();
-        auto minY = std::numeric_limits<double>::max();
-        auto maxY = std::numeric_limits<double>::min();
-
-        // todo: check anisotropy, set angle accordingly, consider when calculating dimensions
-        while (edge)
+        if (box.centerX < 0 || box.centerX >= width || box.centerY < 0 || box.centerY >= height)
         {
-            x += edge->pos[0].x;
-            y += edge->pos[1].y;
-            ++count;
-
-            minX = std::min<double>(minX, edge->pos[0].x);
-            maxX = std::max<double>(maxX, edge->pos[0].x);
-            minY = std::min<double>(minY, edge->pos[0].y);
-            maxY = std::max<double>(maxY, edge->pos[0].y);
-
-            edge = edge->next;
+            continue;
         }
 
-        x /= count;
-        y /= count;
-
-        auto dimX = (int)(maxX - minX);
-        auto dimY = (int)(maxY - minY);
-        auto dim = std::min<int>(dimX, dimY);
-
-        positions->push_back(new MolluscPosition{ (int)x, (int)y, dim, dim, 0 });
+        positions->push_back(new MolluscPosition{ (int)std::round(box.centerX), (int)std::round(box.centerY), (int)box.width, (int)box.height, box.rotation });
 
 #ifdef VORONOI_USE_FLOODFILL
         getSiteColor(site, input, floodFillCanvas, width, height, &(positions->back()->color));
 #else
-        positions->back()->color = toVec3(input.pixel(x, y));
+        positions->back()->color = toVec3(input.pixel((int)std::round(box.centerX), (int)std::round(box.centerY)));
 #endif // VORONOI_USE_FLOODFILL
     }
 
@@ -219,6 +195,17 @@ void Voronoi::getSiteColor(const jcv_site* site, const QImage& image, std::vecto
 
     auto queue = std::queue<IntPoint>();
 
+    if (floodFillCanvas[point.x + point.y * width])
+    {
+        std::cout << "IS ALREADY TRUE" << std::endl;
+
+        *color += toVec3(image.pixel(point.x, point.y));
+        ++count;
+
+        *color /= count;
+        return;
+    }
+    
     if (point.x < 0 || point.x >= width || point.y < 0 || point.y >= height)
     {
         enqueueNeighbors(point, width, height, floodFillCanvas, queue);
