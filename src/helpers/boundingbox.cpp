@@ -65,9 +65,9 @@ BoundingBox calculateBoundingBox(const jcv_site* site)
 
         // find x/y range of rotated points
         auto minX = std::numeric_limits<float>::max();
-        auto maxX = std::numeric_limits<float>::min();
+        auto maxX = std::numeric_limits<float>::lowest();
         auto minY = std::numeric_limits<float>::max();
-        auto maxY = std::numeric_limits<float>::min();
+        auto maxY = std::numeric_limits<float>::lowest();
 
         for (auto j = 0; j < rotated.size(); ++j)
         {
