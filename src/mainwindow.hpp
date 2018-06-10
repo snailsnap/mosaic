@@ -22,22 +22,22 @@ public:
     void sendMail();
     void keyPressEvent(QKeyEvent* event);
     void showSnailInfo();
-    void showSidebar(
-        const QString &classContent,
-        const QString &familyContent,
-        const QString &genusContent,
-        const QString &speciesContent,
-        const QString &scientificNameContent,
-        const QString &localityContent,
-        const QString &dateContent,
-        const QString &areaContent,
-        const QString &provinceContent,
-        const QString &countryContent,
-        const QString &subContinentContent,
-        const QString &continentContent,
-        const QImage &image1,
-        const QImage &image2,
-        const QImage &image3);
+    void showSidebar(const QString &classContent,
+                     const QString &familyContent,
+                     const QString &genusContent,
+                     const QString &speciesContent,
+                     const QString &scientificNameContent,
+                     const QString &localityContent,
+                     const QString &dateContent,
+                     const QString &areaContent,
+                     const QString &provinceContent,
+                     const QString &countryContent,
+                     const QString &subContinentContent,
+                     const QString &continentContent,
+                     const QImage &image1,
+                     const QImage &image2,
+                     const QImage &image3,
+                     const QString &descriptionContent);
     void onClick(QMouseEvent * event);
 
 private:
@@ -73,6 +73,7 @@ private:
     QLabel *m_countryLabel;
     QLabel *m_subContinentLabel;
     QLabel *m_continentLabel;
+    QLabel *m_descriptionLabel;
 
     QLabel *m_image1Label;
     QLabel *m_image2Label;

@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_countryLabel(new QLabel())
     , m_subContinentLabel(new QLabel())
     , m_continentLabel(new QLabel())
+    , m_descriptionLabel(new QLabel())
     , m_image1Label(new QLabel("image1Label"))
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
@@ -103,41 +104,42 @@ void MainWindow::showSnailInfo()
     
     auto underscoreIdx1 = imageName.find_last_of("_");
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
-    
+
     this->showSidebar(
-        QString::fromStdString(selectedMollusc->m_class),
-        QString::fromStdString(selectedMollusc->m_family),
-        QString::fromStdString(selectedMollusc->m_genus),
-        QString::fromStdString(selectedMollusc->m_species),
-        QString::fromStdString(selectedMollusc->m_scientificName),
-        QString::fromStdString(selectedMollusc->m_locality),
-        QString::fromStdString(selectedMollusc->m_date),
-        QString::fromStdString(selectedMollusc->m_area),
-        QString::fromStdString(selectedMollusc->m_province),
-        QString::fromStdString(selectedMollusc->m_country),
-        QString::fromStdString(selectedMollusc->m_subContinent),
-        QString::fromStdString(selectedMollusc->m_continent),
-        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
-        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
-        QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100));
+            QString::fromStdString(selectedMollusc->m_class),
+            QString::fromStdString(selectedMollusc->m_family),
+            QString::fromStdString(selectedMollusc->m_genus),
+            QString::fromStdString(selectedMollusc->m_species),
+            QString::fromStdString(selectedMollusc->m_scientificName),
+            QString::fromStdString(selectedMollusc->m_locality),
+            QString::fromStdString(selectedMollusc->m_date), QString::fromStdString(selectedMollusc->m_area),
+            QString::fromStdString(selectedMollusc->m_province),
+            QString::fromStdString(selectedMollusc->m_country),
+            QString::fromStdString(selectedMollusc->m_subContinent),
+            QString::fromStdString(selectedMollusc->m_continent),
+            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
+            QString::fromStdString(selectedMollusc->description(m_data.toStdString())));
 }
 
 void MainWindow::showSidebar(
-    const QString &classContent, 
-    const QString &familyContent, 
-    const QString &genusContent, 
-    const QString &speciesContent, 
-    const QString &scientificNameContent,
-    const QString &localityContent,
-    const QString &dateContent,
-    const QString &areaContent,
-    const QString &provinceContent,
-    const QString &countryContent,
-    const QString &subContinentContent,
-    const QString &continentContent,
-    const QImage &image1,
-    const QImage &image2,
-    const QImage &image3)
+        const QString &classContent,
+        const QString &familyContent,
+        const QString &genusContent,
+        const QString &speciesContent,
+        const QString &scientificNameContent,
+        const QString &localityContent,
+        const QString &dateContent,
+        const QString &areaContent,
+        const QString &provinceContent,
+        const QString &countryContent,
+        const QString &subContinentContent,
+        const QString &continentContent,
+        const QImage &image1,
+        const QImage &image2,
+        const QImage &image3,
+        const QString &descriptionContent)
 {
 
     m_titleLabel->setText("<b><font size=\"6\">" + scientificNameContent + "</font></b>");
@@ -166,6 +168,8 @@ void MainWindow::showSidebar(
     m_subContinentLabel->setContentsMargins(0,0,0,10);
     m_continentLabel->setText("<b>Kontinent:</b> " + continentContent);
     m_continentLabel->setContentsMargins(0,0,0,10);
+    m_descriptionLabel->setText("<b>Zusätzliche Informationen:</b> " + descriptionContent);
+    m_descriptionLabel->setContentsMargins(0,0,0,10);
 
     m_image1Label->setPixmap(QPixmap::fromImage(image1));
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
@@ -226,8 +230,8 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto mosaic = Voronoi(*m_molluscPalette);
     auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
-    m_result = new QImage(image.width(), image.height(), image.format());
-    m_idImage = new QImage(image.width(), image.height(), image.format());
+    m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
     auto imageSize = m_result->size();
@@ -265,6 +269,8 @@ void MainWindow::initializeSidebar() {
     m_layout->addWidget(m_countryLabel);
     m_layout->addWidget(m_subContinentLabel);
     m_layout->addWidget(m_continentLabel);
+    m_layout->addWidget(m_descriptionLabel);
+    m_descriptionLabel->setWordWrap(true);
     // remove spaces
     m_layout->insertStretch( -1, 1 );
 }

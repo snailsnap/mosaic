@@ -4,10 +4,10 @@
 
 struct BoundingBox
 {
-    float centerX;
-    float centerY;
-    float width;
-    float height;
+    int centerX;
+    int centerY;
+    int width;
+    int height;
     float rotation;
 };
 
