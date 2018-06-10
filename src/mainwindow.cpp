@@ -180,7 +180,6 @@ void MainWindow::showSidebar(
     m_layout->addWidget(m_subContinentLabel, 12, 0);
     m_layout->addWidget(m_continentLabel, 13, 0);
 
-    m_dWidget->setWindowTitle("Informationen");
     m_dWidget->setWidget(m_scrollArea);
     m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
