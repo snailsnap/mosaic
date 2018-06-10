@@ -49,6 +49,7 @@ private:
     const int c_diaTime = 5000;
     const int c_photoTime = 30000;
 
+    bool m_imageCaptureInProgress = false;
     int m_countdown = -1;
     bool m_useCam;
     bool m_dia1;

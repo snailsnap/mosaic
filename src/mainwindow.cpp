@@ -99,7 +99,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         }
         case Qt::Key_P: {
-            this->takePicture();
+            this->takeSelfie();
             break;
         }
         case Qt::Key_S: {
@@ -227,7 +227,7 @@ void MainWindow::showCameraButton() {
 
 void MainWindow::onClick(QMouseEvent * event)
 {
-    if (m_idImage != nullptr) {
+    if (m_idImage != nullptr && !m_imageCaptureInProgress) {
         auto x = event->x();
         auto y = event->y();
         auto color = m_idImage->pixelColor(x, y);
@@ -251,6 +251,7 @@ void MainWindow::takePicture() {
         if (fileName == "") {
             m_diaTimer->setInterval(c_diaTime);
             m_countdownLabel->setVisible(false);
+            m_imageCaptureInProgress = false;
             return;
         }
         m_openImagePath = fileName;
@@ -263,6 +264,7 @@ void MainWindow::takePicture() {
 
 void MainWindow::takeSelfie()
 {
+    m_imageCaptureInProgress = true;
     m_countdown = 3;
     m_countdownTimer->start(1000);
     m_diaTimer->stop();
@@ -270,7 +272,7 @@ void MainWindow::takeSelfie()
 
 void MainWindow::countdownChange() {
     if (m_countdown > -1) {
-        m_countdownLabel->setText(QStringLiteral("l�cheln in: ") + QString::number(m_countdown--));
+        m_countdownLabel->setText(QStringLiteral("lächeln in: ") + QString::number(m_countdown--));
         m_countdownLabel->adjustSize();
 
         auto display = QApplication::desktop()->screenGeometry();
@@ -337,4 +339,5 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));
 
     m_cameraButton->move(display.width() - m_cameraButton->iconSize().width() - offset, display.height() - m_cameraButton->iconSize().height());
+    m_imageCaptureInProgress = false;
 }
