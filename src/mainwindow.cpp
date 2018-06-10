@@ -318,9 +318,11 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
 
     m_countdownLabel->setVisible(false);
+    m_dWidget->setVisible(false);
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
-    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    auto scaledImage = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    auto image = scaledImage.copy((scaledImage.width() - display.width()) / 2, (scaledImage.height() - display.height()) / 2, display.width(), display.height());
     
     // process image
     auto mosaic = Voronoi(*m_molluscPalette);
