@@ -4,6 +4,8 @@
 
 #include <QPainter>
 #include <QtMath>
+#include <QPen>
+#include <QColor>
 
 std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* molluscPositions, MolluscPalette* palette, QImage & colorImage, QImage & idImage)
 {
@@ -31,6 +33,8 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
             auto imageHeight = mollusc->m_image.height();
             auto imageSizeRatio = (float)imageHeight / imageWidth;
 
+            auto color = QColor("#000");
+
             auto boxWidth = pos->width;
             auto boxHeight = pos->height;
             if (boxHeight > boxWidth)
@@ -39,6 +43,7 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
                 boxWidth = boxHeight;
                 boxHeight = temp;
                 angle += M_PI_2;
+                color = QColor("#00f");
             }
             auto boxSizeRatio = (float)boxHeight / boxWidth;
 
@@ -55,14 +60,19 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
                 targetHeight = targetWidth * imageSizeRatio;
             }
 
-            const auto scale = 1.3;
+            const auto scale = 1.0;
 
-            /*painter.save();
-            painter.translate(pos.x, pos.y);
-            painter.rotate(-qRadiansToDegrees(pos.rotation));
+            painter.save();
+            auto pen = painter.pen();
+            pen.setColor(color);
+            painter.setPen(pen);
+            painter.translate(pos->x, pos->y);
+            painter.rotate(-qRadiansToDegrees(pos->rotation));
             painter.scale(scale, scale);
-            painter.drawRect(-pos.width / 2, -pos.height / 2, pos.width, pos.height);
-            painter.restore();*/
+            painter.drawLine(0, 0, pos->width / 2, 0);
+            painter.translate(-pos->width / 2, -pos->height / 2);
+            painter.drawRect(0, 0, pos->width, pos->height);
+            painter.restore();
 
             painter.save();
             painter.translate(pos->x, pos->y);
@@ -70,6 +80,12 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
             painter.scale(scale, scale);
             painter.translate(-targetWidth / 2, -targetHeight / 2);
             painter.drawPixmap(0, 0, targetWidth, targetHeight, mollusc->m_image);
+            pen = painter.pen();
+            pen.setColor(QColor("#f00"));
+            painter.setPen(pen);
+            painter.drawRect(0, 0, targetWidth, targetHeight);
+            painter.translate(targetWidth / 2, targetHeight / 2);
+            painter.drawLine(0, 0, targetWidth / 2, 0);
             painter.restore();
 
             auto mask = mollusc->m_image.toImage().scaled(pos->width, pos->height);
