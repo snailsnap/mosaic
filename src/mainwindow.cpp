@@ -38,11 +38,13 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_data(data)
     , m_useCam(useCam)
     , m_view(new MolluscView(this))
-    , m_timer(new QTimer(this))
+    , m_diaTimer(new QTimer(this))
+    , m_countdownTimer(new QTimer(this))
     , m_dia1(true)
     , m_scene(new QGraphicsScene())
     , m_pixmapItem(new QGraphicsPixmapItem())
     , m_cameraButton(new QPushButton())
+    , m_countdownLabel(new QLabel("text"))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_mailClient(m_data.toStdString() + "/credentials.txt")
@@ -59,6 +61,17 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     m_view->setScene(m_scene);
 
     m_scene->addWidget(m_resultLabel);
+
+    QObject::connect(m_diaTimer, SIGNAL(timeout()), this, SLOT(diaChange()));
+    
+    QObject::connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(countdownChange()));
+    auto font = m_countdownLabel->font();
+    font.setPointSize(70);
+    font.setBold(true);
+    m_countdownLabel->setFont(font);
+    m_countdownLabel->setStyleSheet("QLabel { background-color : black; color : white; font}");
+    m_scene->addWidget(m_countdownLabel);
+
     this->showCameraButton();
     this->showDia();
 }
@@ -235,7 +248,11 @@ void MainWindow::takePicture() {
             m_openImagePath,
             tr("Images (*.png *.jpg)"));
 
-        if (fileName == "") return;
+        if (fileName == "") {
+            m_diaTimer->setInterval(c_diaTime);
+            m_countdownLabel->setVisible(false);
+            return;
+        }
         m_openImagePath = fileName;
 
         // read input image
@@ -246,8 +263,27 @@ void MainWindow::takePicture() {
 
 void MainWindow::takeSelfie()
 {
-    takePicture();
-    m_timer->start(30000);
+    m_countdown = 3;
+    m_countdownTimer->start(1000);
+    m_diaTimer->stop();
+}
+
+void MainWindow::countdownChange() {
+    if (m_countdown > -1) {
+        m_countdownLabel->setText(QStringLiteral("lächeln in: ") + QString::number(m_countdown--));
+        m_countdownLabel->adjustSize();
+
+        auto display = QApplication::desktop()->screenGeometry();
+        m_countdownLabel->move((display.width() - m_countdownLabel->width()) / 2, (display.height() - m_countdownLabel->height()) / 2);
+        m_countdownLabel->setVisible(true);
+        return;
+    }
+    
+    if (m_countdown == -1) {
+        takePicture();
+        m_countdownTimer->stop();
+        m_diaTimer->start(c_photoTime);
+    }
 }
 
 void MainWindow::diaChange() {
@@ -259,19 +295,18 @@ void MainWindow::diaChange() {
         m_dia1 = !m_dia1;
         this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia2.png")));
     }
-    m_timer->start(5000);
+    m_diaTimer->start(c_diaTime);
 }
 
 void MainWindow::showDia()
 {
-    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(diaChange()));
-    m_timer->start(0);
+    m_diaTimer->start(0);
 }
 
 void MainWindow::stopDia()
 {
-    if (!m_timer->isActive()) return;
-    m_timer->stop();
+    if (!m_diaTimer->isActive()) return;
+    m_diaTimer->stop();
 }
 
 void MainWindow::sendMail()
@@ -281,6 +316,8 @@ void MainWindow::sendMail()
 
 void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
+
+    m_countdownLabel->setVisible(false);
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
     auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);

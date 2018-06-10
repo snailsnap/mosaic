@@ -46,6 +46,10 @@ public:
     void onClick(QMouseEvent * event);
 
 private:
+    const int c_diaTime = 5000;
+    const int c_photoTime = 30000;
+
+    int m_countdown = -1;
     bool m_useCam;
     bool m_dia1;
     int m_maxNumOfMolluscs;
@@ -66,6 +70,7 @@ private:
     QDockWidget *m_dWidget;
     QPushButton *m_cameraButton;
     QLabel *m_resultLabel;
+    QLabel *m_countdownLabel;
 
     QLabel *m_classLabel;
     QLabel *m_familyLabel;
@@ -89,7 +94,8 @@ private:
     QGraphicsPixmapItem *m_pixmapItem;
 
     MailClient m_mailClient;
-    QTimer *m_timer;
+    QTimer *m_diaTimer;
+    QTimer *m_countdownTimer;
 
     void takePicture();
     void showDia();
@@ -99,5 +105,5 @@ private:
 public slots:
     void diaChange();
     void takeSelfie();
-    
+    void countdownChange();
 };
