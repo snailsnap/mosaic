@@ -60,7 +60,6 @@ std::string Mollusc::loadString(const std::string &termType, const std::string &
     QString filepath = QString::fromStdString(p);
     QFile file(filepath);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        std::cerr << "Warning: Failed to load description file at " << p << ": " << file.errorString().toStdString() << std::endl;
         return "";
     }
     return file.readAll().toStdString();
