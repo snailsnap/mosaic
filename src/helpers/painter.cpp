@@ -12,6 +12,8 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
     idImage.fill(Qt::GlobalColor::white);
     QPainter idPainter(&idImage);
 
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
     std::random_device random;
     std::mt19937_64 generator(random());
     std::uniform_int_distribution<int> dist(0, 1);
