@@ -143,33 +143,19 @@ void MainWindow::showSidebar(
 {
 
     m_titleLabel->setText("<b><font size=\"6\">" + scientificNameContent + "</font></b>");
-    m_titleLabel->setContentsMargins(0,0,0,10);
     m_classLabel->setText("<b>Klasse:</b> " + classContent);
-    m_classLabel->setContentsMargins(0,0,0,10);
     m_familyLabel->setText("<b>Familie:</b> " + familyContent);
-    m_familyLabel->setContentsMargins(0,0,0,10);
     m_genusLabel->setText("<b>Geschlecht:</b> " + genusContent);
-    m_genusLabel->setContentsMargins(0,0,0,10);
     m_speciesLabel->setText("<b>Spezies:</b> " + speciesContent);
-    m_speciesLabel->setContentsMargins(0,0,0,10);
     m_scientificNameLabel->setText("<b>Wissenschatflicher Begriff:</b> " + scientificNameContent);
-    m_scientificNameLabel->setContentsMargins(0,0,0,10);
     m_localityLabel->setText("<b>Fundort:</b> " + localityContent);
-    m_localityLabel->setContentsMargins(0,0,0,10);
     m_dateLabel->setText("<b>Datum:</b> " + dateContent);
-    m_dateLabel->setContentsMargins(0,0,0,10);
     m_areaLabel->setText("<b>Gebiet:</b> " + areaContent);
-    m_areaLabel->setContentsMargins(0,0,0,10);
     m_provinceLabel->setText("<b>Provinz:</b> " + provinceContent);
-    m_provinceLabel->setContentsMargins(0,0,0,10);
     m_countryLabel->setText("<b>Land:</b> " + countryContent);
-    m_countryLabel->setContentsMargins(0,0,0,10);
     m_subContinentLabel->setText("<b>Teilkontinent:</b> " + subContinentContent);
-    m_subContinentLabel->setContentsMargins(0,0,0,10);
     m_continentLabel->setText("<b>Kontinent:</b> " + continentContent);
-    m_continentLabel->setContentsMargins(0,0,0,10);
     m_descriptionLabel->setText("<b>Zusätzliche Informationen:</b> " + descriptionContent);
-    m_descriptionLabel->setContentsMargins(0,0,0,10);
 
     m_image1Label->setPixmap(QPixmap::fromImage(image1));
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
@@ -253,7 +239,22 @@ void MainWindow::initializeSidebar() {
     m_imageLayout->addWidget(m_image3Label);
     m_imageLayout->setSpacing(10);
 
-    m_imageLayout->setContentsMargins(0,0,0,10);
+    QMargins spacingMargin(0,0,0,10);
+    m_titleLabel->setContentsMargins(spacingMargin);
+    m_classLabel->setContentsMargins(spacingMargin);
+    m_familyLabel->setContentsMargins(spacingMargin);
+    m_genusLabel->setContentsMargins(spacingMargin);
+    m_speciesLabel->setContentsMargins(spacingMargin);
+    m_scientificNameLabel->setContentsMargins(spacingMargin);
+    m_localityLabel->setContentsMargins(spacingMargin);
+    m_dateLabel->setContentsMargins(spacingMargin);
+    m_areaLabel->setContentsMargins(spacingMargin);
+    m_provinceLabel->setContentsMargins(spacingMargin);
+    m_countryLabel->setContentsMargins(spacingMargin);
+    m_subContinentLabel->setContentsMargins(spacingMargin);
+    m_continentLabel->setContentsMargins(spacingMargin);
+    m_descriptionLabel->setContentsMargins(spacingMargin);
+    m_imageLayout->setContentsMargins(spacingMargin);
 
     m_layout->addWidget(m_titleLabel);
     m_layout->addLayout(m_imageLayout);
