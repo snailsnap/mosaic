@@ -73,7 +73,7 @@ BoundingBox calculateBoundingBox(const jcv_site* site)
         auto rotatedBackX = centerX * std::cos(-angle) - centerY * std::sin(-angle);
         auto rotatedBackY = centerX * std::sin(-angle) + centerY * std::cos(-angle);
 
-        box = BoundingBox{ rotatedBackX, rotatedBackY, maxX - minX, maxY - minY, angle };
+        box = BoundingBox{ (int)std::round(rotatedBackX), (int)std::round(rotatedBackY), (int)std::round(maxX - minX), (int)std::round(maxY - minY), angle };
         minArea = width * height;
     }
 

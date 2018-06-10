@@ -63,12 +63,12 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
             continue;
         }
 
-        positions->push_back(new MolluscPosition{ (int)std::round(box.centerX), (int)std::round(box.centerY), (int)box.width, (int)box.height, box.rotation });
+        positions->push_back(new MolluscPosition{ box.centerX, box.centerY, box.width, box.height, box.rotation });
 
 #ifdef VORONOI_USE_FLOODFILL
         getSiteColor(site, input, floodFillCanvas, width, height, &(positions->back()->color));
 #else
-        positions->back()->color = toVec3(input.pixel((int)std::round(box.centerX), (int)std::round(box.centerY)));
+        positions->back()->color = toVec3(input.pixel(box.centerX, box.centerY));
 #endif // VORONOI_USE_FLOODFILL
     }
 
