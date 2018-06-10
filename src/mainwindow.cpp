@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_scene(new QGraphicsScene())
     , m_pixmapItem(new QGraphicsPixmapItem())
     , m_cameraButton(new QPushButton())
+    , m_backButton(new QPushButton())
     , m_countdownLabel(new QLabel("text"))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
@@ -72,6 +73,14 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     m_countdownLabel->setFont(font);
     m_countdownLabel->setStyleSheet("QLabel { background-color : black; color : white; font}");
     m_scene->addWidget(m_countdownLabel);
+
+    m_backButton->setIcon(QIcon(m_data + "/back.png"));
+    m_backButton->setIconSize(QSize(100, 100));
+    m_backButton->setStyleSheet("text-align:center; background: black; border: none");
+    m_backButton->move(0, 0);
+    m_backButton->setVisible(false);
+    m_scene->addWidget(m_backButton);
+    connect(m_backButton, SIGNAL(released()), this, SLOT(showDia()));
 
     this->showCameraButton();
     this->showDia();
@@ -227,6 +236,8 @@ void MainWindow::showCameraButton() {
     m_cameraButton->setIcon(QIcon(m_data + "/camera.png"));
     m_cameraButton->setIconSize(QSize(100, 100));
     m_cameraButton->setStyleSheet("text-align:center; background: black; border: none");
+    auto display = QApplication::desktop()->screenGeometry();
+    m_cameraButton->move(display.width() - m_cameraButton->iconSize().width(), display.height() - m_cameraButton->iconSize().height());
     m_scene->addWidget(m_cameraButton);
     connect(m_cameraButton, SIGNAL(released()), this, SLOT(takeSelfie()));
 }
@@ -266,6 +277,7 @@ void MainWindow::takePicture() {
         auto image = QImage(fileName);
         processAndShowPicture(std::make_shared<QImage>(image));
     }
+    m_backButton->setVisible(true);
 }
 
 void MainWindow::takeSelfie()
@@ -278,7 +290,7 @@ void MainWindow::takeSelfie()
 
 void MainWindow::countdownChange() {
     if (m_countdown > -1) {
-        m_countdownLabel->setText(QStringLiteral("lächeln in: ") + QString::number(m_countdown--));
+        m_countdownLabel->setText(QStringLiteral("Foto in: ") + QString::number(m_countdown--));
         m_countdownLabel->adjustSize();
 
         auto display = QApplication::desktop()->screenGeometry();
@@ -303,11 +315,14 @@ void MainWindow::diaChange() {
         m_dia1 = !m_dia1;
         this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia2.png")));
     }
+    m_backButton->setVisible(false);
+    m_imageCaptureInProgress = false;
     m_diaTimer->start(c_diaTime);
 }
 
 void MainWindow::showDia()
 {
+    m_imageCaptureInProgress = true;
     m_diaTimer->start(0);
 }
 
@@ -340,10 +355,8 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
-    auto offset = (display.width() - m_result->width()) / 2;
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));
 
-    m_cameraButton->move(display.width() - m_cameraButton->iconSize().width() - offset, display.height() - m_cameraButton->iconSize().height());
     m_imageCaptureInProgress = false;
 }

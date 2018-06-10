@@ -70,6 +70,7 @@ private:
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
     QPushButton *m_cameraButton;
+    QPushButton *m_backButton;
     QLabel *m_resultLabel;
     QLabel *m_countdownLabel;
 
@@ -100,11 +101,11 @@ private:
     QTimer *m_countdownTimer;
 
     void takePicture();
-    void showDia();
     void stopDia();
     void processAndShowPicture(std::shared_ptr<QImage> image);
 
 public slots:
+    void showDia();
     void diaChange();
     void takeSelfie();
     void countdownChange();
