@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
     , m_layout(new QGridLayout())
+    , m_imageLayout(new QGridLayout())
     , m_scrollArea(new QScrollArea())
     , m_infoWidget(new QWidget())
     , m_dWidget(new QDockWidget(this))
@@ -157,22 +158,25 @@ void MainWindow::showSidebar(
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setWidget(m_infoWidget);
 
-    m_layout->addWidget(m_classLabel);
-    m_layout->addWidget(m_familyLabel);
-    m_layout->addWidget(m_genusLabel);
-    m_layout->addWidget(m_speciesLabel);
-    m_layout->addWidget(m_scientificNameLabel);
-    m_layout->addWidget(m_localityLabel);
-    m_layout->addWidget(m_dateLabel);
-    m_layout->addWidget(m_areaLabel);
-    m_layout->addWidget(m_provinceLabel);
-    m_layout->addWidget(m_countryLabel);
-    m_layout->addWidget(m_subContinentLabel);
-    m_layout->addWidget(m_continentLabel);
+    // position images side by side
+    m_imageLayout->addWidget(m_image1Label, 0, 0);
+    m_imageLayout->addWidget(m_image2Label, 0, 1);
+    m_imageLayout->addWidget(m_image3Label, 0, 2);
 
-    m_layout->addWidget(m_image1Label);
-    m_layout->addWidget(m_image2Label);
-    m_layout->addWidget(m_image3Label);
+    m_layout->addWidget(m_classLabel, 0, 0);
+    m_layout->addWidget(m_familyLabel, 1, 0);
+    m_layout->addWidget(m_genusLabel, 2, 0);
+    m_layout->addWidget(m_speciesLabel, 3, 0);
+    m_layout->addWidget(m_scientificNameLabel, 4, 0);
+    m_layout->addWidget(m_localityLabel, 5, 0);
+    m_layout->addWidget(m_dateLabel, 6, 0);
+    m_layout->addWidget(m_areaLabel, 7, 0);
+    m_layout->addWidget(m_provinceLabel, 8, 0);
+    m_layout->addWidget(m_countryLabel, 9, 0);
+    m_layout->addWidget(m_subContinentLabel, 10, 0);
+    m_layout->addWidget(m_continentLabel, 11, 0);
+
+    m_layout->addLayout(m_imageLayout, 12, 0);
 
     m_dWidget->setWindowTitle("Informationen");
     m_dWidget->setWidget(m_scrollArea);

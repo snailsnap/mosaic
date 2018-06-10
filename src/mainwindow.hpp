@@ -55,6 +55,7 @@ private:
     int m_selectedMolluscIndex;
 
     QGridLayout *m_layout;
+    QGridLayout *m_imageLayout;
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
