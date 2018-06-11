@@ -95,6 +95,7 @@ private:
 
     QGraphicsView *m_view;
     QGraphicsScene *m_scene;
+    QGridLayout* m_mainLayout;
     QGraphicsPixmapItem *m_pixmapItem;
 
     MailClient m_mailClient;

@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_countdownTimer(new QTimer(this))
     , m_dia1(true)
     , m_scene(new QGraphicsScene())
+    , m_mainLayout(new QGridLayout())
     , m_pixmapItem(new QGraphicsPixmapItem())
     , m_cameraButton(new QPushButton())
     , m_backButton(new QPushButton())
@@ -63,7 +64,12 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     this->setCentralWidget(m_view);
     m_view->setScene(m_scene);
 
-    m_scene->addWidget(m_resultLabel);
+    m_view->setLayout(m_mainLayout);
+    m_mainLayout->setSpacing(3);
+    m_mainLayout->setMargin(0);
+    m_mainLayout->addWidget(m_resultLabel, 0, 0, 4, 3);
+
+    //m_scene->addWidget(m_resultLabel);
 
     QObject::connect(m_diaTimer, SIGNAL(timeout()), this, SLOT(diaChange()));
     
@@ -73,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     font.setBold(true);
     m_countdownLabel->setFont(font);
     m_countdownLabel->setStyleSheet("QLabel { background-color : black; color : white; font}");
-    m_scene->addWidget(m_countdownLabel);
+    m_mainLayout->addWidget(m_countdownLabel, 0, 0, 4, 3, Qt::AlignCenter);
 
     this->showCameraButton();
     this->showDia();
@@ -233,26 +239,29 @@ void MainWindow::showCameraButton() {
 
     m_backButton->setIcon(QIcon(m_data + "/back.png"));
     m_backButton->setIconSize(QSize(iconSize, iconSize));
+    m_backButton->setMaximumSize(iconSize, iconSize);
     m_backButton->setStyleSheet("text-align:center; background: black; border: none");
     m_backButton->move(0, 0);
     m_backButton->setVisible(false);
-    m_scene->addWidget(m_backButton);
+    m_mainLayout->addWidget(m_backButton, 0, 0);
     connect(m_backButton, SIGNAL(released()), this, SLOT(showDia()));
 
     m_cameraButton->setIcon(QIcon(m_data + "/camera.png"));
     m_cameraButton->setIconSize(QSize(iconSize, iconSize));
+    m_cameraButton->setMaximumSize(iconSize, iconSize);
     m_cameraButton->setStyleSheet("text-align:center; background: black; border: none");
     m_cameraButton->move(right, bottom);
     m_shareButton->setVisible(true);
-    m_scene->addWidget(m_cameraButton);
+    m_mainLayout->addWidget(m_cameraButton, 3, 2);
     connect(m_cameraButton, SIGNAL(released()), this, SLOT(takeSelfie()));
 
     m_shareButton->setIcon(QIcon(m_data + "/share.png"));
     m_shareButton->setIconSize(QSize(iconSize, iconSize));
+    m_shareButton->setMaximumSize(iconSize, iconSize);
     m_shareButton->setStyleSheet("text-align:center; background: black; border: none");
     m_shareButton->move(right - 9, bottom - iconSize - 40);
     m_shareButton->setVisible(true);
-    m_scene->addWidget(m_shareButton);
+    m_mainLayout->addWidget(m_shareButton, 2, 2);
     connect(m_shareButton, SIGNAL(released()), this, SLOT(shareButtonClick()));
 }
 
