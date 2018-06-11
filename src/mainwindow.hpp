@@ -71,6 +71,7 @@ private:
     QDockWidget *m_dWidget;
     QPushButton *m_cameraButton;
     QPushButton *m_backButton;
+    QPushButton *m_shareButton;
     QLabel *m_resultLabel;
     QLabel *m_countdownLabel;
 
@@ -105,6 +106,7 @@ private:
     void processAndShowPicture(std::shared_ptr<QImage> image);
 
 public slots:
+    void shareButtonClick();
     void showDia();
     void diaChange();
     void takeSelfie();

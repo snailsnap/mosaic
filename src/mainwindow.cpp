@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_pixmapItem(new QGraphicsPixmapItem())
     , m_cameraButton(new QPushButton())
     , m_backButton(new QPushButton())
+    , m_shareButton(new QPushButton())
     , m_countdownLabel(new QLabel("text"))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
@@ -73,14 +74,6 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     m_countdownLabel->setFont(font);
     m_countdownLabel->setStyleSheet("QLabel { background-color : black; color : white; font}");
     m_scene->addWidget(m_countdownLabel);
-
-    m_backButton->setIcon(QIcon(m_data + "/back.png"));
-    m_backButton->setIconSize(QSize(100, 100));
-    m_backButton->setStyleSheet("text-align:center; background: black; border: none");
-    m_backButton->move(0, 0);
-    m_backButton->setVisible(false);
-    m_scene->addWidget(m_backButton);
-    connect(m_backButton, SIGNAL(released()), this, SLOT(showDia()));
 
     this->showCameraButton();
     this->showDia();
@@ -233,13 +226,34 @@ void MainWindow::showSidebar(
 }
 
 void MainWindow::showCameraButton() {
-    m_cameraButton->setIcon(QIcon(m_data + "/camera.png"));
-    m_cameraButton->setIconSize(QSize(100, 100));
-    m_cameraButton->setStyleSheet("text-align:center; background: black; border: none");
     auto display = QApplication::desktop()->screenGeometry();
-    m_cameraButton->move(display.width() - m_cameraButton->iconSize().width(), display.height() - m_cameraButton->iconSize().height());
+    const auto iconSize = 100;
+    auto right = display.width() - iconSize;
+    auto bottom = display.height() - iconSize;
+
+    m_backButton->setIcon(QIcon(m_data + "/back.png"));
+    m_backButton->setIconSize(QSize(iconSize, iconSize));
+    m_backButton->setStyleSheet("text-align:center; background: black; border: none");
+    m_backButton->move(0, 0);
+    m_backButton->setVisible(false);
+    m_scene->addWidget(m_backButton);
+    connect(m_backButton, SIGNAL(released()), this, SLOT(showDia()));
+
+    m_cameraButton->setIcon(QIcon(m_data + "/camera.png"));
+    m_cameraButton->setIconSize(QSize(iconSize, iconSize));
+    m_cameraButton->setStyleSheet("text-align:center; background: black; border: none");
+    m_cameraButton->move(right, bottom);
+    m_shareButton->setVisible(true);
     m_scene->addWidget(m_cameraButton);
     connect(m_cameraButton, SIGNAL(released()), this, SLOT(takeSelfie()));
+
+    m_shareButton->setIcon(QIcon(m_data + "/share.png"));
+    m_shareButton->setIconSize(QSize(iconSize, iconSize));
+    m_shareButton->setStyleSheet("text-align:center; background: black; border: none");
+    m_shareButton->move(right - 9, bottom - iconSize - 40);
+    m_shareButton->setVisible(true);
+    m_scene->addWidget(m_shareButton);
+    connect(m_shareButton, SIGNAL(released()), this, SLOT(shareButtonClick()));
 }
 
 void MainWindow::onClick(QMouseEvent * event)
@@ -330,6 +344,20 @@ void MainWindow::stopDia()
 {
     if (!m_diaTimer->isActive()) return;
     m_diaTimer->stop();
+}
+
+void MainWindow::shareButtonClick() {
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Schneckenpost"),
+        tr("Sende dir das Bild an deine Mailadresse:"), QLineEdit::Normal,
+        QDir::home().dirName(), &ok);
+    if (ok && !text.isEmpty()) {
+        if (!text.contains("@") || !text.contains(".")) {
+            //TODO: show user?
+            return;
+        }
+        m_mailClient.sendImage(text, *m_result);
+    }
 }
 
 void MainWindow::sendMail()
