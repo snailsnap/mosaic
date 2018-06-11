@@ -232,7 +232,7 @@ void MainWindow::showSidebar(
 
 void MainWindow::initButton(QPushButton* button, std::string icon, int row, int column, bool visible) {
     const int iconSize = 100;
-    button->setIcon(QIcon(m_data + "/" + icon.c_str()));
+    button->setIcon(QIcon("resources/" + QString::fromStdString(icon)));
     button->setIconSize(QSize(iconSize, iconSize));
     button->setFixedSize(iconSize, iconSize);
     button->setStyleSheet("text-align:center; background: black; border: none");
@@ -319,11 +319,11 @@ void MainWindow::countdownChange() {
 void MainWindow::diaChange() {
     if (m_dia1) {
         m_dia1 = !m_dia1;
-        this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia1.png")));
+        this->processAndShowPicture(std::make_shared<QImage>("resources/dia1.png"));
     }
     else {
         m_dia1 = !m_dia1;
-        this->processAndShowPicture(std::make_shared<QImage>(QString::fromStdString(m_data.toStdString() + "/dia2.png")));
+        this->processAndShowPicture(std::make_shared<QImage>("resources/dia2.png"));
     }
     m_backButton->setVisible(false);
     m_shareButton->setVisible(false);
