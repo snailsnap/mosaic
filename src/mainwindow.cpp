@@ -3,6 +3,7 @@
 #include "mail.hpp"
 #include "helpers/painter.hpp"
 #include "molluscview.hpp"
+#include "molluscimage.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
@@ -17,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_selectedMolluscIndex(0)
     , m_layout(new QGridLayout())
     , m_scrollArea(new QScrollArea())
-    , m_resultLabel(new QLabel())
+    , m_resultLabel(new MolluscImage(this))
     , m_infoWidget(new QWidget())
     , m_dWidget(new QDockWidget(this))
     , m_classLabel(new QLabel())
