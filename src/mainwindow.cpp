@@ -354,7 +354,8 @@ void MainWindow::shareButtonClick() {
     bool ok;
     QString text = QInputDialog::getText(this, tr("Schneckenpost"),
         tr("Sende dir das Bild an deine Mailadresse:"), QLineEdit::Normal,
-        QDir::home().dirName(), &ok);
+        "", &ok);
+    std::string adr = text.toStdString();
     if (ok && !text.isEmpty()) {
         if (!text.contains("@") || !text.contains(".")) {
             //TODO: show user?
