@@ -49,7 +49,7 @@ void MailClient::sendImage(const QString& recipient, const QImage& image)
     MimeMessage mail;
 
     mail.setSender(m_sender);
-    mail.addRecipient(new EmailAddress(recipient));
+    mail.addRecipient(new EmailAddress(recipient.toLower()));
     mail.addRecipient(m_sender, MimeMessage::Bcc);
     mail.setSubject(m_subject);
 
