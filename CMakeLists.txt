@@ -105,3 +105,18 @@ option(VORONOI_USE_FLOODFILL "Use floodfill to detect cell colors during voronoi
 if (${VORONOI_USE_FLOODFILL})
 	add_definitions(-DVORONOI_USE_FLOODFILL)
 endif()
+
+# copy resources to output dir
+
+set(resource_dir resources)
+file(GLOB resources ${CMAKE_SOURCE_DIR}/${resource_dir}/*.*)
+foreach(resource ${resources})
+	get_filename_component(filename ${resource} NAME)
+	configure_file(${resource} ${CMAKE_BINARY_DIR}/${output_dir}/${resource_dir}/${filename} COPYONLY)
+endforeach()
+
+# set VS debugger working dir to output dir - this is necessary to properly load the resources while debugging
+
+if (NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0")
+	set_target_properties(${target} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${output_dir})
+endif()
