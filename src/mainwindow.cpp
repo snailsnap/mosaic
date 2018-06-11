@@ -37,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image1Label(new QLabel("image1Label"))
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
-    , m_data(data)
     , m_useCam(useCam)
     , m_view(new MolluscView(this))
     , m_diaTimer(new QTimer(this))
