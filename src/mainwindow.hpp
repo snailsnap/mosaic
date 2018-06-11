@@ -26,7 +26,6 @@ public:
     void sendMail();
     void keyPressEvent(QKeyEvent* event);
     void showSnailInfo();
-    void showCameraButton();
     void showSidebar(const QString &classContent,
                      const QString &familyContent,
                      const QString &genusContent,
@@ -104,6 +103,8 @@ private:
 
     void takePicture();
     void stopDia();
+    void initButton(QPushButton* button, std::string icon, int row, int column, bool visible = true);
+    void initButtons();
     void processAndShowPicture(std::shared_ptr<QImage> image);
 
 public slots:
