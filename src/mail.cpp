@@ -1,15 +1,23 @@
 #include <string>
 #include <fstream>
+#include <iostream>
 
 #include <QString>
 #include <QBuffer>
 #include <QImage>
+#include <QFile>
 
 #include "mail.hpp"
 #include "../dependencies/smtpclient/src/SmtpMime"
 
 MailClient::MailClient(const std::string& credentials)
 {
+    if (!QFile(QString::fromStdString(credentials)).exists())
+    {
+        std::cerr << "Could not open credentials file. Mailing the result image will not work. Please provide credentials here: " << credentials << std::endl;
+        return;
+    }
+
     std::ifstream stream(credentials);
     std::vector<std::string> strings;
     std::string string;
@@ -28,6 +36,8 @@ MailClient::MailClient(const std::string& credentials)
     m_message = QString::fromStdString(strings[4]).replace("\\n", "\n");
 
     m_defaultRecipient = QString(strings.size() > 5 ? QString::fromStdString(strings[5]) : "");
+
+    m_setup = true;
 }
 
 MailClient::MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient)
@@ -46,10 +56,16 @@ MailClient::~MailClient()
 
 void MailClient::sendImage(const QString& recipient, const QImage& image)
 {
+    if (!m_setup)
+    {
+        std::cerr << "Mail client isn't set up, problably because the credentials are missing. Could not send image." << std::endl;
+        return;
+    }
+
     MimeMessage mail;
 
     mail.setSender(m_sender);
-    mail.addRecipient(new EmailAddress(recipient));
+    mail.addRecipient(new EmailAddress(recipient.toLower()));
     mail.addRecipient(m_sender, MimeMessage::Bcc);
     mail.setSubject(m_subject);
 
