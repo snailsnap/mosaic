@@ -114,3 +114,7 @@ foreach(resource ${resources})
 	get_filename_component(filename ${resource} NAME)
 	configure_file(${resource} ${CMAKE_BINARY_DIR}/${output_dir}/${resource_dir}/${filename} COPYONLY)
 endforeach()
+
+if (NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0")
+	set_target_properties(${target} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${output_dir})
+endif()
