@@ -105,3 +105,12 @@ option(VORONOI_USE_FLOODFILL "Use floodfill to detect cell colors during voronoi
 if (${VORONOI_USE_FLOODFILL})
 	add_definitions(-DVORONOI_USE_FLOODFILL)
 endif()
+
+# copy resources to output dir
+
+set(resource_dir resources)
+file(GLOB resources ${CMAKE_SOURCE_DIR}/${resource_dir}/*.*)
+foreach(resource ${resources})
+	get_filename_component(filename ${resource} NAME)
+	configure_file(${resource} ${CMAKE_BINARY_DIR}/${output_dir}/${resource_dir}/${filename} COPYONLY)
+endforeach()
