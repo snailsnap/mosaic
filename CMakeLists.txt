@@ -33,7 +33,7 @@ endif()
 
 file(GLOB smtp_sources "dependencies/smtpclient/src/*")
 add_definitions(-DSMTP_BUILD)
-add_library(SmtpClient ${smtp_sources})
+add_library(SmtpClient STATIC ${smtp_sources})
 target_link_libraries(SmtpClient Qt5::Widgets Qt5::Network)
 if(APPLE)
 	set_target_properties(SmtpClient PROPERTIES FRAMEWORK TRUE)
