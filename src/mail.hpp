@@ -9,7 +9,7 @@
 class MailClient
 {
 private:
-    EmailAddress* m_sender;
+    QString m_sender;
     QString m_defaultRecipient;
     SmtpClient* m_client;
     QString m_subject;
