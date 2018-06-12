@@ -57,9 +57,9 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscP
     , m_data(data)
     , m_mailClient(MailClient::fromCredentials("resources/credentials.txt"))
 {
-    if(useCam) {
-        m_webcam = new Webcam();
-        QObject::connect(m_webcam, &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
+    if (useCam) {
+        m_webcam = std::make_unique<Webcam>();
+        QObject::connect(m_webcam.get(), &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
     }
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -360,8 +360,8 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto mosaic = Voronoi(*m_molluscPalette);
     auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
 
-    m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_result = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_idImage = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());

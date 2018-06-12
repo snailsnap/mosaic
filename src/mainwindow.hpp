@@ -53,10 +53,10 @@ private:
     bool m_useCam;
     bool m_dia1;
     int m_maxNumOfMolluscs;
-    QImage* m_result = nullptr;
-    QImage* m_idImage = nullptr;
+    std::shared_ptr<QImage> m_result;
+    std::shared_ptr<QImage> m_idImage;
     QString m_outputPath;
-    Webcam* m_webcam;
+    std::unique_ptr<Webcam> m_webcam;
     QString m_openImagePath = "C:/";
     QString m_data;
 
