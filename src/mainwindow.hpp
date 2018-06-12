@@ -13,8 +13,12 @@
 #include <QtWidgets>
 #include <QtGui>
 #include <QPixmap>
+#include <QObject>
+#include <QTimer>
+#include <QGraphicsProxyWidget>
 
 class MainWindow : public QMainWindow {
+    Q_OBJECT
 public:
     MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
@@ -41,7 +45,13 @@ public:
     void onClick(QMouseEvent * event);
 
 private:
+    const int c_diaTime = 5000;
+    const int c_photoTime = 30000;
+
+    bool m_imageCaptureInProgress = false;
+    int m_countdown = -1;
     bool m_useCam;
+    bool m_dia1;
     int m_maxNumOfMolluscs;
     QImage* m_result = nullptr;
     QImage* m_idImage = nullptr;
@@ -59,6 +69,11 @@ private:
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
+    QPushButton *m_cameraButton;
+    QPushButton *m_backButton;
+    QPushButton *m_shareButton;
+    QLabel *m_resultLabel;
+    QLabel *m_countdownLabel;
 
     QLabel *m_titleLabel;
     QLabel *m_classLabel;
@@ -80,11 +95,25 @@ private:
     QLabel *m_image3Label;
 
     QGraphicsView *m_view;
+    QGraphicsScene *m_scene;
+    QGridLayout* m_mainLayout;
+    QGraphicsPixmapItem *m_pixmapItem;
 
     MailClient m_mailClient;
+    QTimer *m_diaTimer;
+    QTimer *m_countdownTimer;
 
     void takePicture();
+    void stopDia();
+    void initButton(QPushButton* button, std::string icon, int row, int column, bool visible = true);
+    void initButtons();
     void processAndShowPicture(std::shared_ptr<QImage> image);
-
     void initializeSidebar();
+
+public slots:
+    void shareButtonClick();
+    void showDia();
+    void diaChange();
+    void takeSelfie();
+    void countdownChange();
 };

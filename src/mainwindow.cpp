@@ -3,10 +3,12 @@
 #include "mail.hpp"
 #include "helpers/painter.hpp"
 #include "molluscview.hpp"
+#include "molluscimage.hpp"
 
 #include <QFileDialog>
 #include <QCameraInfo>
 #include <QDesktopWidget>
+#include <QPointer>
 
 #include <iostream>
 
@@ -17,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_layout(new QVBoxLayout())
     , m_imageLayout(new QHBoxLayout())
     , m_scrollArea(new QScrollArea())
+    , m_resultLabel(new MolluscImage(this))
     , m_infoWidget(new QWidget())
     , m_dWidget(new QDockWidget(this))
     , m_titleLabel(new QLabel())
@@ -38,6 +41,16 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
     , m_view(new MolluscView(this))
+    , m_diaTimer(new QTimer(this))
+    , m_countdownTimer(new QTimer(this))
+    , m_dia1(true)
+    , m_scene(new QGraphicsScene())
+    , m_mainLayout(new QGridLayout())
+    , m_pixmapItem(new QGraphicsPixmapItem())
+    , m_cameraButton(new QPushButton())
+    , m_backButton(new QPushButton())
+    , m_shareButton(new QPushButton())
+    , m_countdownLabel(new QLabel("text"))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
@@ -50,7 +63,27 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     this->setCentralWidget(m_view);
+    m_view->setScene(m_scene);
+
+    m_view->setLayout(m_mainLayout);
+    m_mainLayout->setSpacing(3);
+    m_mainLayout->setMargin(0);
+    m_mainLayout->addWidget(m_resultLabel, 0, 0, 4, 3);
+
+    QObject::connect(m_diaTimer, SIGNAL(timeout()), this, SLOT(diaChange()));
+    
+    QObject::connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(countdownChange()));
+    auto font = m_countdownLabel->font();
+    font.setPointSize(70);
+    font.setBold(true);
+    m_countdownLabel->setFont(font);
+    m_countdownLabel->setStyleSheet("QLabel { background-color : black; color : white; font}");
+    m_mainLayout->addWidget(m_countdownLabel, 0, 0, 4, 3, Qt::AlignCenter);
+
+    this->initButtons();
+    this->showDia();
 
     initializeSidebar();
 }
@@ -78,17 +111,25 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         }
         case Qt::Key_P: {
-            this->takePicture();
+            if(m_countdown < 0) this->takeSelfie();
             break;
         }
         case Qt::Key_S: {
-            if(m_result != nullptr)
+            if (m_result != nullptr)
                 m_result->save(m_outputPath);
             break;
         }
         case Qt::Key_M: {
             if (m_result != nullptr)
                 this->sendMail();
+            break;
+        }
+        case Qt::Key_D: {
+            this->showDia();
+            break;
+        }
+        case Qt::Key_X: {
+            this->stopDia();
             break;
         }
     }
@@ -168,12 +209,34 @@ void MainWindow::showSidebar(
     m_dWidget->setWidget(m_scrollArea);
     newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
     m_scrollArea->setMinimumWidth(newWidth);
+    m_dWidget->setVisible(true);
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
+}
+
+void MainWindow::initButton(QPushButton* button, std::string icon, int row, int column, bool visible) {
+    const int iconSize = 100;
+    button->setIcon(QIcon("resources/" + QString::fromStdString(icon)));
+    button->setIconSize(QSize(iconSize, iconSize));
+    button->setFixedSize(iconSize, iconSize);
+    button->setStyleSheet("text-align:center; background: black; border: none");
+    button->setVisible(visible);
+    m_mainLayout->addWidget(button, row, column);
+}
+
+void MainWindow::initButtons() {
+    initButton(m_backButton, "back.png", 0, 0, false);
+    connect(m_backButton, SIGNAL(released()), this, SLOT(showDia()));
+
+    initButton(m_shareButton, "share.png", 2, 2, false);
+    connect(m_shareButton, SIGNAL(released()), this, SLOT(shareButtonClick()));
+
+    initButton(m_cameraButton, "camera.png", 3, 2);
+    connect(m_cameraButton, SIGNAL(released()), this, SLOT(takeSelfie()));
 }
 
 void MainWindow::onClick(QMouseEvent * event)
 {
-    if (m_idImage != nullptr) {
+    if (m_idImage != nullptr && !m_imageCaptureInProgress) {
         auto x = event->x();
         auto y = event->y();
         auto color = m_idImage->pixelColor(x, y);
@@ -194,13 +257,87 @@ void MainWindow::takePicture() {
             m_openImagePath,
             tr("Images (*.png *.jpg)"));
 
-        if (fileName == "") return;
+        if (fileName == "") {
+            m_diaTimer->setInterval(c_diaTime);
+            m_countdownLabel->setVisible(false);
+            m_imageCaptureInProgress = false;
+            return;
+        }
         m_openImagePath = fileName;
 
         // read input image
         auto image = QImage(fileName);
-
         processAndShowPicture(std::make_shared<QImage>(image));
+    }
+    m_backButton->setVisible(true);
+    m_shareButton->setVisible(true);
+}
+
+void MainWindow::takeSelfie()
+{
+    m_imageCaptureInProgress = true;
+    m_countdown = 3;
+    m_countdownTimer->start(1000);
+    m_diaTimer->stop();
+}
+
+void MainWindow::countdownChange() {
+    if (m_countdown > -1) {
+        m_countdownLabel->setText(QStringLiteral("Foto in: ") + QString::number(m_countdown--));
+        m_countdownLabel->adjustSize();
+
+        auto display = QApplication::desktop()->screenGeometry();
+        m_countdownLabel->move((display.width() - m_countdownLabel->width()) / 2, (display.height() - m_countdownLabel->height()) / 2);
+        m_countdownLabel->setVisible(true);
+        return;
+    }
+    
+    if (m_countdown == -1) {
+        takePicture();
+        m_countdownTimer->stop();
+        m_diaTimer->start(c_photoTime);
+    }
+}
+
+void MainWindow::diaChange() {
+    if (m_dia1) {
+        m_dia1 = !m_dia1;
+        this->processAndShowPicture(std::make_shared<QImage>("resources/dia1.png"));
+    }
+    else {
+        m_dia1 = !m_dia1;
+        this->processAndShowPicture(std::make_shared<QImage>("resources/dia2.png"));
+    }
+    m_backButton->setVisible(false);
+    m_shareButton->setVisible(false);
+    m_imageCaptureInProgress = false;
+    m_diaTimer->start(c_diaTime);
+}
+
+void MainWindow::showDia()
+{
+    m_imageCaptureInProgress = true;
+    m_diaTimer->start(0);
+}
+
+void MainWindow::stopDia()
+{
+    if (!m_diaTimer->isActive()) return;
+    m_diaTimer->stop();
+}
+
+void MainWindow::shareButtonClick() {
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Schneckenpost"),
+        tr("Sende dir das Bild an deine Mailadresse:"), QLineEdit::Normal,
+        "", &ok);
+    std::string adr = text.toStdString();
+    if (ok && !text.isEmpty()) {
+        if (!text.contains("@") || !text.contains(".")) {
+            //TODO: show user?
+            return;
+        }
+        m_mailClient.sendImage(text, *m_result);
     }
 }
 
@@ -211,9 +348,13 @@ void MainWindow::sendMail()
 
 void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
+
+    m_countdownLabel->setVisible(false);
+    m_dWidget->setVisible(false);
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
-    auto image = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    auto scaledImage = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
+    auto image = scaledImage.copy((scaledImage.width() - display.width()) / 2, (scaledImage.height() - display.height()) / 2, display.width(), display.height());
     
     // process image
     auto mosaic = Voronoi(*m_molluscPalette);
@@ -223,11 +364,10 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
-    auto imageSize = m_result->size();
-    auto scene = new QGraphicsScene(0, 0, imageSize.width(), imageSize.height(), this);
+    m_resultLabel->setFixedSize(display.width(), display.height());
+    m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));
 
-    scene->addPixmap(QPixmap::fromImage(*m_result));
-    m_view->setScene(scene);
+    m_imageCaptureInProgress = false;
 }
 
 void MainWindow::initializeSidebar() {

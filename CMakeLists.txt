@@ -60,6 +60,7 @@ set(sources
 	${source_dir}/Webcam.cpp
 	${source_dir}/molluscpalette.cpp
 	${source_dir}/molluscview.cpp
+	${source_dir}/molluscimage.cpp
 	${source_dir}/helpers/painter.cpp
 	${source_dir}/helpers/boundingbox.cpp
 	${source_dir}/helpers/positionGenerator.cpp
@@ -75,6 +76,7 @@ set(headers
 	${source_dir}/Webcam.hpp
 	${source_dir}/molluscpalette.hpp
 	${source_dir}/molluscview.hpp
+	${source_dir}/molluscimage.hpp
 	${source_dir}/helpers/painter.hpp
 	${source_dir}/helpers/boundingbox.hpp
 	${source_dir}/helpers/positionGenerator.hpp
