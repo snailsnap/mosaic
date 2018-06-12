@@ -54,11 +54,13 @@ private:
     std::vector<Mollusc*>* m_molluscs;
     int m_selectedMolluscIndex;
 
-    QGridLayout *m_layout;
+    QVBoxLayout *m_layout;
+    QHBoxLayout *m_imageLayout;
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
     QDockWidget *m_dWidget;
 
+    QLabel *m_titleLabel;
     QLabel *m_classLabel;
     QLabel *m_familyLabel;
     QLabel *m_genusLabel;
@@ -83,4 +85,6 @@ private:
 
     void takePicture();
     void processAndShowPicture(std::shared_ptr<QImage> image);
+
+    void initializeSidebar();
 };
