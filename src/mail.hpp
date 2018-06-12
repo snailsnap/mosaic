@@ -14,6 +14,7 @@ private:
     SmtpClient* m_client;
     QString m_subject;
     QString m_message;
+    bool m_setup = false;
 public:
     MailClient(const std::string& credentials);
     MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient = "");

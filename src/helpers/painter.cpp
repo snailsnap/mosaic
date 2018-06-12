@@ -12,6 +12,8 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
     idImage.fill(Qt::GlobalColor::white);
     QPainter idPainter(&idImage);
 
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
     std::random_device random;
     std::mt19937_64 generator(random());
     std::uniform_int_distribution<int> dist(0, 1);
@@ -21,11 +23,10 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
     for (auto pos : *molluscPositions) {
         auto mollusc = palette->getClosestColor(pos->color);
         
-        // todo: better drawing with save/translate/rotate/restore
         if (mollusc->m_imageName.compare("NONE") != 0) {
             molluscs->push_back(mollusc);
 
-            auto angle = pos->rotation + dist(generator) * M_PI; //-mollusc.m_rotation;
+            auto angle = pos->rotation + dist(generator) * M_PI + mollusc->m_rotation;
 
             auto imageWidth = mollusc->m_image.width();
             auto imageHeight = mollusc->m_image.height();
@@ -56,13 +57,6 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
             }
 
             const auto scale = 1.3;
-
-            /*painter.save();
-            painter.translate(pos.x, pos.y);
-            painter.rotate(-qRadiansToDegrees(pos.rotation));
-            painter.scale(scale, scale);
-            painter.drawRect(-pos.width / 2, -pos.height / 2, pos.width, pos.height);
-            painter.restore();*/
 
             painter.save();
             painter.translate(pos->x, pos->y);
