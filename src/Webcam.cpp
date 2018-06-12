@@ -31,7 +31,10 @@ Webcam::Webcam() {
     cam->start();
 
     imgCapture = std::make_shared<QCameraImageCapture>(cam.get());
-    std::cerr << std::boolalpha << imgCapture->isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer) << std::endl;
+    std::cerr << "Capture to buffer supported: "
+              << std::boolalpha
+              << imgCapture->isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer)
+              << std::endl;
 
     QObject::connect(imgCapture.get(), &QCameraImageCapture::imageSaved, this, &Webcam::emitImage);
 }
