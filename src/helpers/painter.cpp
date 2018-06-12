@@ -67,8 +67,8 @@ std::vector<std::shared_ptr<Mollusc>> Painter::paint(const std::vector<MolluscPo
             painter.restore();
 
             auto mask = mollusc->m_image.toImage().scaled(pos.width, pos.height);
-            auto tintPainter = new QPainter(&mask);
-            tintPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
+            QPainter tintPainter { &mask };
+            tintPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
             auto r = i & 0xff;
             auto g = (i >> 8) & 0xff;
             auto b = (i >> 16) & 0xff;
@@ -82,8 +82,8 @@ std::vector<std::shared_ptr<Mollusc>> Painter::paint(const std::vector<MolluscPo
                 }
             }
 
-            tintPainter->fillRect(mask.rect(), QColor(r, g, b));
-            tintPainter->end();
+            tintPainter.fillRect(mask.rect(), QColor(r, g, b));
+            tintPainter.end();
 
             idPainter.save();
             idPainter.translate(pos.x, pos.y);
