@@ -147,7 +147,7 @@ void MainWindow::showSidebar(
     m_familyLabel->setText("<b>Familie:</b> " + familyContent);
     m_genusLabel->setText("<b>Geschlecht:</b> " + genusContent);
     m_speciesLabel->setText("<b>Spezies:</b> " + speciesContent);
-    m_scientificNameLabel->setText("<b>Wissenschatflicher Begriff:</b> " + scientificNameContent);
+    m_scientificNameLabel->setText("<b>Wiss. Begr.:</b> " + scientificNameContent);
     m_localityLabel->setText("<b>Fundort:</b> " + localityContent);
     m_dateLabel->setText("<b>Datum:</b> " + dateContent);
     m_areaLabel->setText("<b>Gebiet:</b> " + areaContent);
@@ -160,6 +160,9 @@ void MainWindow::showSidebar(
     m_image1Label->setPixmap(QPixmap::fromImage(image1));
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
     m_image3Label->setPixmap(QPixmap::fromImage(image3));
+
+    int newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
+    m_scrollArea->setMinimumWidth(newWidth);
 
     m_dWidget->setWidget(m_scrollArea);
     m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
