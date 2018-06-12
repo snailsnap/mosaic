@@ -5,6 +5,8 @@
 #include <QColor>
 #include <QPixmap>
 #include <QString>
+#include <QFile>
+#include <iostream>
 
 #include "mollusc.hpp"
 
@@ -42,4 +44,23 @@ Mollusc::Mollusc(const std::string& data)
 Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)
 {
     m_image = QPixmap(dir + "/" + m_imageName.c_str());
+}
+
+std::string Mollusc::description(const std::string &dataDir) {
+    // prioritizes family over class. Only shows class if family info doesn't exist
+    std::string result = loadString("Family", m_family, dataDir);
+    if (result.empty()) {
+        result = loadString("Class", m_class, dataDir);
+    }
+    return result;
+}
+
+std::string Mollusc::loadString(const std::string &termType, const std::string &term, const std::string &dataDir) {
+    std::string p = dataDir + "/descriptions/" + termType + "_" + term + ".txt";
+    QString filepath = QString::fromStdString(p);
+    QFile file(filepath);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return "";
+    }
+    return file.readAll().toStdString();
 }

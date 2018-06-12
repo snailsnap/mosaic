@@ -3,16 +3,12 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
-#include <QImage>
 #include <QDir>
 #include <QString>
-#include <QWidget>
-#include <QDesktopWidget>
 
 #include "mainwindow.hpp"
-#include "mosaic.hpp"
 #include "mollusc.hpp"
-
+#include "molluscpalette.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -24,29 +20,18 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
 
     // set up inputs
-    QCommandLineOption inputImageOption({ "i", "input" }, "Use given input image instead of camera input.", "input image");
-    parser.addOption(inputImageOption);
     QCommandLineOption outputImageOption({ "o", "output" }, "Store the output image to this file.", "output image");
     parser.addOption(outputImageOption);
     QCommandLineOption dataDirOption({ "d", "data" }, "Location of the data files.", "data dir", "data");
     parser.addOption(dataDirOption);
-    QCommandLineOption scaleOption({ "s", "scale" }, "Scale for mosaic creation.", "scale", "32");
-    parser.addOption(scaleOption);
+    QCommandLineOption maxNumOfMolluscsOption({ "n", "maxNumOfMolluscs" }, "Maximum number of molluscs to use for the image.", "maxNumOfMolluscs", "1000");
+    parser.addOption(maxNumOfMolluscsOption);
+    QCommandLineOption useCamOption({ "c", "useCam" }, "Whether the cam or the image dialog is used.", "useCam", "true");
+    parser.addOption(useCamOption);
 
     parser.process(app);
 
     // check inputs
-    QString input;
-    if (parser.isSet(inputImageOption))
-    {
-        input = parser.value(inputImageOption);
-        std::cout << "Input image: " << input.toStdString() << std::endl;
-    }
-    else
-    {
-        std::cout << "No input image specified." << std::endl;
-        exit(-1);
-    }
 
     QString output;
     if (parser.isSet(outputImageOption))
@@ -56,8 +41,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        std::cout << "No output image specified." << std::endl;
-        exit(-1);
+        std::cout << "No output image specified. initializing to empty string" << std::endl;
+        output = "";
     }
 
     QString data("data");
@@ -72,42 +57,23 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    auto scale = 32;
-    if (parser.isSet(scaleOption))
+    auto maxNumOfMolluscs = 1000;
+    if (parser.isSet(maxNumOfMolluscsOption))
     {
-        scale = parser.value(scaleOption).toInt();
-        std::cout << "Scale: " << scale << std::endl;
+        maxNumOfMolluscs = parser.value(maxNumOfMolluscsOption).toInt();
+        std::cout << "Maximum number of molluscs: " << maxNumOfMolluscs << std::endl;
     }
 
-    // read input image
-    QRect display = QApplication::desktop()->screenGeometry();
-    QImage image = QImage(input).scaled(display.size(), Qt::KeepAspectRatio);
-
-    // read meta file
-    std::ifstream stream(data.toStdString() + "/meta_file.csv");
-    std::vector<std::string> strings;
-    std::string string;
-    while (std::getline(stream, string))
+    auto useCam = true;
+    if (parser.isSet(useCamOption))
     {
-        strings.push_back(string);
+        useCam = parser.value(useCamOption).toUpper() == "TRUE";
+        std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
     }
 
-    // generate molluscs
-    std::vector<Mollusc> molluscs;
-    for (auto i = 1u; i < strings.size(); ++i)
-    {
-        molluscs.push_back(Mollusc(strings[i], data));
-    }
+    auto molluscPalette = new MolluscPalette(data);
 
-    // white mollusc for background
-    molluscs.push_back(Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
-
-    QImage* result = createMosaic(image, molluscs, scale);
-
-    result->save(output);
-
-    QWidget *widget = new QWidget;
-    MainWindow mainWin(widget, result);
+    MainWindow mainWin(nullptr, molluscPalette, useCam, output, maxNumOfMolluscs, data);
     mainWin.showMaximized();
 
     return app.exec();
