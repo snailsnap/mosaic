@@ -15,6 +15,7 @@ Mollusc::Mollusc(const std::string& data)
     std::stringstream stream(data);
     std::vector<std::string> strings;
     std::string string;
+    string.reserve(18);
     while (std::getline(stream, string, ';'))
     {
         strings.push_back(string);
