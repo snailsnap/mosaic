@@ -107,7 +107,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         }
         case Qt::Key_P: {
-            this->takeSelfie();
+            if(m_countdown < 0) this->takeSelfie();
             break;
         }
         case Qt::Key_S: {
