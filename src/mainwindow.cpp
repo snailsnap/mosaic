@@ -161,13 +161,13 @@ void MainWindow::showSidebar(
     m_image2Label->setPixmap(QPixmap::fromImage(image2));
     m_image3Label->setPixmap(QPixmap::fromImage(image3));
 
+
     int newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
     m_scrollArea->setMinimumWidth(newWidth);
-
+    // I don't know why you have to do it like this, but this sets the sidebar to the right size immediately
     m_dWidget->setWidget(m_scrollArea);
-    m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
-    m_dWidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
+    newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
+    m_scrollArea->setMinimumWidth(newWidth);
     this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
 }
 
@@ -277,4 +277,9 @@ void MainWindow::initializeSidebar() {
     m_descriptionLabel->setWordWrap(true);
     // remove spaces
     m_layout->insertStretch( -1, 1 );
+
+    m_dWidget->setWidget(m_scrollArea);
+    m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
+    m_dWidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
 }
