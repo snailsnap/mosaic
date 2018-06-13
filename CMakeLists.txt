@@ -12,7 +12,8 @@ set(CMAKE_AUTOMOC ON)
 
 # dependencies
 
-find_package(Qt5 COMPONENTS Widgets Multimedia Network)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Multimedia Network)
+find_package(Threads REQUIRED)
 
 # output dir
 
@@ -85,7 +86,7 @@ set(headers
 # target and required libs
 
 add_executable(${target} ${sources} ${headers})
-target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia SmtpClient)
+target_link_libraries(${target} Qt5::Widgets Qt5::Multimedia SmtpClient ${CMAKE_THREAD_LIBS_INIT})
 
 # enable source file tree in VS if cmake supports it
 
