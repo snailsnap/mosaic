@@ -24,14 +24,15 @@ public:
 class MolluscPalette
 {
 public:
-    MolluscPalette(const QString& dataPath);
-    MolluscPalette() = delete;
+    MolluscPalette();
     ~MolluscPalette();
 
     static QVector3D toVec3(const QColor & color);
     Mollusc getClosestColor(const QVector3D& color);
 
     QPixmap& lookup(const std::string& name) const;
+
+    void loadData(const QString& dataPath);
 protected:
     std::mt19937_64 generator;
 
@@ -40,8 +41,5 @@ private:
     std::vector<std::pair<QColor, std::vector<Mollusc>>> m_buckets;
 
     std::unique_ptr<MolluscImages> m_images;
-
-    void loadData(const QString& dataPath);
-    void fillBuckets();
 };
 

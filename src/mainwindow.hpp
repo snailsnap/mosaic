@@ -23,7 +23,7 @@
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
+    MainWindow(QWidget *parent, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
 
     void sendMail();
@@ -102,7 +102,6 @@ private:
     QGraphicsView *m_view;
     QGraphicsScene *m_scene;
     QGridLayout* m_mainLayout;
-    QGraphicsPixmapItem *m_pixmapItem;
 
     MailClient m_mailClient;
     QTimer *m_diaTimer;
