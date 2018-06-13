@@ -3,9 +3,38 @@
 #include <fstream>
 #include <array>
 #include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <future>
 
 #include <QString>
 #include <QVector3D>
+#include <QFile>
+#include <QByteArray>
+
+QPixmap& MolluscImages::lookup(const std::string& name) const {
+    return images->at(name);
+}
+
+MolluscImages::MolluscImages(const QString dataPath, std::vector<QString>&& filenames) {
+    std::vector<std::future<QImage>> files;
+    files.reserve(filenames.size());
+    images = std::make_shared<std::unordered_map<std::string, QPixmap>>();
+    images->reserve(filenames.size());
+    for (int i = 0; i < filenames.size(); i++) {
+      files.push_back(std::async(std::launch::async, [=] {
+        return QImage { dataPath + "/" + filenames[i] };
+      }));
+    }
+    for (int i = 0; i < filenames.size(); i++) {
+        files[i].wait();
+        assert(files[i].valid());
+        QPixmap pm { QPixmap::fromImage(files[i].get())};
+        assert(!pm.isNull());
+        images->emplace(filenames[i].toStdString(), pm);
+    }
+}
+MolluscImages::~MolluscImages() {}
 
 MolluscPalette::MolluscPalette(const QString& dataPath)
 {
@@ -15,6 +44,8 @@ MolluscPalette::MolluscPalette(const QString& dataPath)
     this->loadData(dataPath);
     this->fillBuckets();
 }
+
+MolluscPalette::~MolluscPalette() {}
 
 QVector3D MolluscPalette::toVec3(const QColor& color)
 {
@@ -41,19 +72,31 @@ Mollusc MolluscPalette::getClosestColor(const QVector3D & color)
     auto idx = distribution(generator);
     return m_buckets[closestIndex].second.at(idx);
 }
+QPixmap& MolluscPalette::lookup(const std::string& name) const {
+    return m_images->lookup(name);
+}
 
 void MolluscPalette::loadData(const QString& dataPath) {
     // read meta file
     std::ifstream stream(dataPath.toStdString() + "/meta_file.csv");
     std::string string;
     std::getline(stream, string);
-    while (std::getline(stream, string))
-    {
-        m_molluscs.emplace_back(string, dataPath);
+    std::vector<QString> filenames;
+
+    // generate molluscs
+    while (std::getline(stream, string)) {
+        const Mollusc m { string };
+        QString imagefile { QString::fromStdString(m.m_imageName) };
+        if (QFile::exists(dataPath + "/" + imagefile)) {
+            m_molluscs.emplace_back(m);
+            filenames.emplace_back(imagefile);
+        }
     }
 
     // white mollusc for background
     m_molluscs.emplace_back("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE");
+
+    m_images = std::make_unique<MolluscImages>(dataPath, std::move(filenames));
 }
 
 void MolluscPalette::fillBuckets()

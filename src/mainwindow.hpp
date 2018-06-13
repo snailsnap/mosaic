@@ -17,6 +17,9 @@
 #include <QTimer>
 #include <QGraphicsProxyWidget>
 
+#include "helpers/painter.hpp"
+#include "algorithms/voronoi.hpp"
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
@@ -62,6 +65,8 @@ private:
 
     std::shared_ptr<MolluscPalette> m_molluscPalette;
     std::vector<Mollusc> m_molluscs;
+    Painter m_painter;
+    Voronoi m_mosaic;
     int m_selectedMolluscIndex;
 
     QVBoxLayout *m_layout;
