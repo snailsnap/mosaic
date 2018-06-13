@@ -71,8 +71,7 @@ int main(int argc, char *argv[])
         std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
     }
 
-    auto molluscPalette = new MolluscPalette(data);
-    MainWindow mainWin(nullptr, molluscPalette, useCam, output, maxNumOfMolluscs, data);
+    MainWindow mainWin(nullptr, useCam, output, maxNumOfMolluscs, data);
     mainWin.showMaximized();
 
     return app.exec();

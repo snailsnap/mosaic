@@ -37,8 +37,7 @@ public:
 class MolluscPalette
 {
 public:
-    MolluscPalette(const QString& dataPath);
-    MolluscPalette() = delete;
+    MolluscPalette();
     MolluscPalette(const MolluscPalette&) = delete;
     ~MolluscPalette();
 
@@ -47,6 +46,8 @@ public:
     std::shared_ptr<Mollusc> getClosestColor(const QVector3D& color);
 
     QPixmap& lookup(const std::string& name) const;
+
+    void loadData(const QString& dataPath);
 protected:
     const std::vector<Mollusc> getMolluscs() const;
     std::mt19937_64 random_gen;
@@ -56,8 +57,5 @@ private:
     std::unordered_multimap<QColor, Mollusc> m_mbuckets;
 
     std::unique_ptr<MolluscImages> m_images;
-
-    void loadData(const QString& dataPath);
-    void fillBuckets();
 };
 

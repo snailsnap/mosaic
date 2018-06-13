@@ -6,27 +6,32 @@
 #include <iterator>
 #include <algorithm>
 #include <future>
+#include <cassert>
 
 #include <QString>
 #include <QVector3D>
 #include <QFile>
 #include <QByteArray>
+#include <QProgressDialog>
 
 QPixmap& MolluscImages::lookup(const std::string& name) const {
     return images->at(name);
 }
 
-MolluscImages::MolluscImages(const QString dataPath, std::vector<QString>&& filenames) {
+MolluscImages::MolluscImages(const QString dataPath,
+                             std::vector<QString>&& filenames) {
+    const auto fcount = filenames.size();
+
     std::vector<std::future<QImage>> files;
-    files.reserve(filenames.size());
+    files.reserve(fcount);
     images = std::make_shared<std::unordered_map<std::string, QPixmap>>();
-    images->reserve(filenames.size());
-    for (int i = 0; i < filenames.size(); i++) {
+    images->reserve(fcount);
+    for (int i = 0; i < fcount; i++) {
       files.push_back(std::async(std::launch::async, [=] {
         return QImage { dataPath + "/" + filenames[i] };
       }));
     }
-    for (int i = 0; i < filenames.size(); i++) {
+    for (int i = 0; i < fcount; i++) {
         files[i].wait();
         assert(files[i].valid());
         QPixmap pm { QPixmap::fromImage(files[i].get())};
@@ -36,15 +41,12 @@ MolluscImages::MolluscImages(const QString dataPath, std::vector<QString>&& file
 }
 MolluscImages::~MolluscImages() {}
 
-MolluscPalette::MolluscPalette(const QString& dataPath)
+MolluscPalette::MolluscPalette()
 {
     std::random_device random;
     random_gen = std::mt19937_64 { random() };
 
     m_mbuckets.max_load_factor(1e6);
-
-    loadData(dataPath);
-    fillBuckets();
 }
 
 MolluscPalette::~MolluscPalette() {
@@ -111,9 +113,7 @@ void MolluscPalette::loadData(const QString& dataPath) {
     m_molluscs.emplace_back("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE");
 
     m_images = std::make_unique<MolluscImages>(dataPath, std::move(filenames));
-}
 
-void MolluscPalette::fillBuckets() {
     for (const auto& mollusc : m_molluscs) {
         m_mbuckets.emplace(mollusc.m_color, mollusc);
     }

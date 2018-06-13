@@ -12,10 +12,10 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscPalette,
-                       bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
+MainWindow::MainWindow(QWidget *parent, bool useCam, QString outputPath,
+                       int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
-    , m_molluscPalette(molluscPalette)
+    , m_molluscPalette(std::make_shared<MolluscPalette>())
     , m_painter(m_molluscPalette)
     , m_mosaic(*m_molluscPalette)
     , m_selectedMolluscIndex(0)
@@ -49,7 +49,6 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscP
     , m_dia1(true)
     , m_scene(new QGraphicsScene())
     , m_mainLayout(new QGridLayout())
-    , m_pixmapItem(new QGraphicsPixmapItem())
     , m_cameraButton(new QPushButton())
     , m_backButton(new QPushButton())
     , m_shareButton(new QPushButton())
@@ -59,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscP
     , m_data(data)
     , m_mailClient(MailClient::fromCredentials("resources/credentials.txt"))
 {
+    m_molluscPalette->loadData(data);
+
     if (useCam) {
         m_webcam = std::make_unique<Webcam>();
         QObject::connect(m_webcam.get(), &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
