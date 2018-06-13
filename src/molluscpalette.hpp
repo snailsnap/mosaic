@@ -8,6 +8,7 @@
 #include <functional>
 
 #include <QColor>
+#include <QFile>
 
 #include "mollusc.hpp"
 
@@ -23,16 +24,29 @@ struct hash<QColor> {
 };
 }
 
+class MolluscImages {
+    std::shared_ptr<std::unordered_map<std::string, QPixmap>> images;
+public:
+    QPixmap& lookup(const std::string& name) const;
+
+    MolluscImages() = delete;
+    MolluscImages(const QString datadir, std::vector<QString> &&filenames);
+    ~MolluscImages();
+};
+
 class MolluscPalette
 {
 public:
     MolluscPalette(const QString& dataPath);
+    MolluscPalette() = delete;
+    MolluscPalette(const MolluscPalette&) = delete;
     ~MolluscPalette();
 
     static QVector3D toVec3(const QColor & color);
     static QColor fromVec3(const QVector3D& vcolor);
     std::shared_ptr<Mollusc> getClosestColor(const QVector3D& color);
 
+    QPixmap& lookup(const std::string& name) const;
 protected:
     const std::vector<Mollusc> getMolluscs() const;
     std::mt19937_64 random_gen;
@@ -40,6 +54,8 @@ protected:
 private:
     std::vector<Mollusc> m_molluscs;
     std::unordered_multimap<QColor, Mollusc> m_mbuckets;
+
+    std::unique_ptr<MolluscImages> m_images;
 
     void loadData(const QString& dataPath);
     void fillBuckets();

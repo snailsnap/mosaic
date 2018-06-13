@@ -12,10 +12,12 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette>&& molluscPalette,
+MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscPalette,
                        bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
     , m_molluscPalette(molluscPalette)
+    , m_painter(m_molluscPalette)
+    , m_mosaic(*m_molluscPalette)
     , m_selectedMolluscIndex(0)
     , m_layout(new QVBoxLayout())
     , m_imageLayout(new QHBoxLayout())
@@ -357,12 +359,9 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto image = scaledImage.copy((scaledImage.width() - display.width()) / 2, (scaledImage.height() - display.height()) / 2, display.width(), display.height());
     
     // process image
-    auto mosaic = Voronoi(*m_molluscPalette);
-    auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
     m_result = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_idImage = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
+    m_molluscs = m_painter.paint(std::move(m_mosaic.createMosaic(image, m_maxNumOfMolluscs)), *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));

@@ -8,11 +8,9 @@
 
 struct Mollusc
 {
-    Mollusc(const std::string& data, const QString& dir);
     Mollusc(const std::string& data);
 
     std::string m_imageName;
-    QPixmap m_image;
     QColor m_color;
     float m_rotation;
     float m_ratio;

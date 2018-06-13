@@ -42,11 +42,6 @@ Mollusc::Mollusc(const std::string& data)
     m_continent = (strings.size() > i) ? strings[i++] : "";
 }
 
-Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)
-{
-    m_image = QPixmap(dir + "/" + m_imageName.c_str());
-}
-
 std::string Mollusc::description(const std::string &dataDir) {
     // prioritizes family over class. Only shows class if family info doesn't exist
     std::string result = loadString("Family", m_family, dataDir);
