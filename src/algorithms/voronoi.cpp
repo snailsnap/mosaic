@@ -40,8 +40,7 @@ std::vector<MolluscPosition> Voronoi::createMosaic(const QImage& input, int maxN
 
     // generate voronoi diagram
 
-    auto diagram = jcv_diagram();
-    memset(&diagram, 0, sizeof(jcv_diagram));
+    jcv_diagram diagram {0};
     jcv_diagram_generate(maxNumOfMolluscs, points, 0, &diagram);
 
     // get cells, calculate positions
