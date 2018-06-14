@@ -78,6 +78,11 @@ public:
     explicit BottomSidebar(QWidget *parent);
 
     Qt::DockWidgetArea dockArea() override;
+
+private:
+    QHBoxLayout *m_horizontalLayout;
+    QVBoxLayout *m_leftLayout;
+    QVBoxLayout *m_rightLayout;
 };
 
 

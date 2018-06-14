@@ -106,7 +106,8 @@ void Sidebar::updateContent(
 
 Sidebar *Sidebar::newSidebarForScreen(QRect screenSize, QWidget *parent) {
     if (screenSize.size().width() >= screenSize.size().height()) {
-        return new RightSidebar(parent);
+        //return new RightSidebar(parent);
+        return new BottomSidebar(parent); // testing only
     }
     else {
         return new BottomSidebar(parent);
@@ -150,7 +151,40 @@ Qt::DockWidgetArea RightSidebar::dockArea() {
 
 // ======== BottomSidebar ========
 
-BottomSidebar::BottomSidebar(QWidget *parent) : Sidebar(parent) {
+BottomSidebar::BottomSidebar(QWidget *parent)
+    : Sidebar(parent)
+    , m_horizontalLayout(new QHBoxLayout())
+    , m_leftLayout(new QVBoxLayout())
+    , m_rightLayout(new QVBoxLayout)
+{
+    // position images side by side
+    m_imageLayout->addWidget(m_image1Label);
+    m_imageLayout->addWidget(m_image2Label);
+    m_imageLayout->addWidget(m_image3Label);
+    m_imageLayout->setSpacing(10);
+
+    m_leftLayout->addWidget(m_titleLabel);
+    m_leftLayout->addWidget(m_classLabel);
+    m_leftLayout->addWidget(m_familyLabel);
+    m_leftLayout->addWidget(m_genusLabel);
+    m_leftLayout->addWidget(m_speciesLabel);
+    m_leftLayout->addWidget(m_scientificNameLabel);
+    m_leftLayout->addWidget(m_localityLabel);
+    m_rightLayout->addLayout(m_imageLayout);
+    m_rightLayout->addWidget(m_dateLabel);
+    m_rightLayout->addWidget(m_areaLabel);
+    m_rightLayout->addWidget(m_provinceLabel);
+    m_rightLayout->addWidget(m_countryLabel);
+    m_rightLayout->addWidget(m_subContinentLabel);
+    m_rightLayout->addWidget(m_continentLabel);
+    m_rightLayout->addWidget(m_descriptionLabel);
+    m_descriptionLabel->setWordWrap(true);
+    // remove spaces
+    m_layout->insertStretch( -1, 1 );
+
+    m_horizontalLayout->addLayout(m_leftLayout);
+    m_horizontalLayout->addLayout(m_rightLayout);
+    m_layout->addLayout(m_horizontalLayout);
 }
 
 Qt::DockWidgetArea BottomSidebar::dockArea() {
