@@ -12,7 +12,8 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
+MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> molluscPalette,
+                       bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
     , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
@@ -362,7 +363,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
+    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette.get(), *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));
