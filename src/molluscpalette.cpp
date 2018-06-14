@@ -18,7 +18,7 @@ QPixmap& MolluscImages::lookup(const std::string& name) const {
     return images->at(name);
 }
 
-MolluscImages::MolluscImages(const QString dataPath,
+MolluscImages::MolluscImages(const QString& dataPath,
                              std::vector<QString>&& filenames) {
     const auto fcount = filenames.size();
 
@@ -39,7 +39,7 @@ MolluscImages::MolluscImages(const QString dataPath,
         images->emplace(filenames[i].toStdString(), pm);
     }
 }
-MolluscImages::~MolluscImages() {}
+MolluscImages::~MolluscImages() = default;
 
 MolluscPalette::MolluscPalette()
 {
@@ -47,7 +47,7 @@ MolluscPalette::MolluscPalette()
     generator = std::mt19937_64 { random() };
 }
 
-MolluscPalette::~MolluscPalette() {}
+MolluscPalette::~MolluscPalette() = default;
 
 QVector3D MolluscPalette::toVec3(const QColor& color)
 {

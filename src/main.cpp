@@ -74,5 +74,5 @@ int main(int argc, char *argv[])
     MainWindow mainWin(nullptr, useCam, output, maxNumOfMolluscs, data);
     mainWin.showMaximized();
 
-    return app.exec();
+    return QApplication::exec();
 }

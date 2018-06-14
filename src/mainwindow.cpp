@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent, bool useCam, QString outputPath,
     initializeSidebar();
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() = default;
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
@@ -143,10 +143,10 @@ void MainWindow::showSnailInfo()
 {
     Mollusc selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
 
-    auto lastDotIndex = selectedMollusc.m_imageName.find_last_of(".");
+    auto lastDotIndex = selectedMollusc.m_imageName.find_last_of('.');
     auto imageName = selectedMollusc.m_imageName.substr(0, lastDotIndex);
-    
-    auto underscoreIdx1 = imageName.find_last_of("_");
+   
+    auto underscoreIdx1 = imageName.find_last_of('_');
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
 
     this->showSidebar(

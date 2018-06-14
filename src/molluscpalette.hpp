@@ -17,7 +17,7 @@ public:
     QPixmap& lookup(const std::string& name) const;
 
     MolluscImages() = delete;
-    MolluscImages(const QString datadir, std::vector<QString> &&filenames);
+    MolluscImages(const QString& dataPath, std::vector<QString> &&filenames);
     ~MolluscImages();
 };
 
