@@ -13,7 +13,10 @@
 
 class Sidebar : public QDockWidget {
 public:
-    explicit Sidebar(QWidget *parent = nullptr);
+    // use this to get a sidebar that fits the screen orientation
+    static Sidebar *newSidebarForScreen(QRect screenSize, QWidget *parent = nullptr);
+
+    virtual Qt::DockWidgetArea dockArea() = 0;
 
     void update(
             const QString &classContent,
@@ -33,7 +36,11 @@ public:
             const QImage &image3,
             const QString &descriptionContent);
 
-private:
+protected:
+    explicit Sidebar(QWidget *parent = nullptr);
+
+    virtual void initializeLayout();
+
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
 
@@ -58,6 +65,27 @@ private:
 
     QVBoxLayout *m_layout;
     QHBoxLayout *m_imageLayout;
+};
+
+
+class RightSidebar : public Sidebar {
+public:
+    explicit RightSidebar(QWidget *parent);
+
+    Qt::DockWidgetArea dockArea() override;
+
+protected:
+    void initializeLayout() override;
+};
+
+class BottomSidebar : public Sidebar {
+public:
+    explicit BottomSidebar(QWidget *parent);
+
+    Qt::DockWidgetArea dockArea() override;
+
+protected:
+    void initializeLayout() override;
 };
 
 

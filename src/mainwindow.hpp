@@ -71,7 +71,7 @@ private:
     QLabel *m_resultLabel;
     QLabel *m_countdownLabel;
 
-    Sidebar sidebar;
+    Sidebar *m_sidebar;
 
     QGraphicsView *m_view;
     QGraphicsScene *m_scene;

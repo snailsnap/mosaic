@@ -28,52 +28,7 @@ Sidebar::Sidebar(QWidget *parent)
         , m_image2Label(new QLabel("image2Label"))
         , m_image3Label(new QLabel("image3Label")) {
 
-    m_layout->setSpacing(0);
-    m_infoWidget->setLayout(m_layout);
-    m_scrollArea->setWidgetResizable(true);
-    m_scrollArea->setWidget(m_infoWidget);
-
-    // position images side by side
-    m_imageLayout->addWidget(m_image1Label);
-    m_imageLayout->addWidget(m_image2Label);
-    m_imageLayout->addWidget(m_image3Label);
-    m_imageLayout->setSpacing(10);
-
-    QMargins spacingMargin(0,0,0,10);
-    m_titleLabel->setContentsMargins(spacingMargin);
-    m_classLabel->setContentsMargins(spacingMargin);
-    m_familyLabel->setContentsMargins(spacingMargin);
-    m_genusLabel->setContentsMargins(spacingMargin);
-    m_speciesLabel->setContentsMargins(spacingMargin);
-    m_scientificNameLabel->setContentsMargins(spacingMargin);
-    m_localityLabel->setContentsMargins(spacingMargin);
-    m_dateLabel->setContentsMargins(spacingMargin);
-    m_areaLabel->setContentsMargins(spacingMargin);
-    m_provinceLabel->setContentsMargins(spacingMargin);
-    m_countryLabel->setContentsMargins(spacingMargin);
-    m_subContinentLabel->setContentsMargins(spacingMargin);
-    m_continentLabel->setContentsMargins(spacingMargin);
-    m_descriptionLabel->setContentsMargins(spacingMargin);
-    m_imageLayout->setContentsMargins(spacingMargin);
-
-    m_layout->addWidget(m_titleLabel);
-    m_layout->addLayout(m_imageLayout);
-    m_layout->addWidget(m_classLabel);
-    m_layout->addWidget(m_familyLabel);
-    m_layout->addWidget(m_genusLabel);
-    m_layout->addWidget(m_speciesLabel);
-    m_layout->addWidget(m_scientificNameLabel);
-    m_layout->addWidget(m_localityLabel);
-    m_layout->addWidget(m_dateLabel);
-    m_layout->addWidget(m_areaLabel);
-    m_layout->addWidget(m_provinceLabel);
-    m_layout->addWidget(m_countryLabel);
-    m_layout->addWidget(m_subContinentLabel);
-    m_layout->addWidget(m_continentLabel);
-    m_layout->addWidget(m_descriptionLabel);
-    m_descriptionLabel->setWordWrap(true);
-    // remove spaces
-    m_layout->insertStretch( -1, 1 );
+    initializeLayout();
 
     setWidget(m_scrollArea);
     setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -128,3 +83,90 @@ void Sidebar::update(
     m_scrollArea->setMinimumWidth(newWidth);
     setVisible(true);
 }
+
+Sidebar *Sidebar::newSidebarForScreen(QRect screenSize, QWidget *parent) {
+    if (screenSize.size().width() >= screenSize.size().height()) {
+        return new RightSidebar(parent);
+    }
+    else {
+        return new BottomSidebar(parent);
+    }
+}
+
+void Sidebar::initializeLayout() {}
+
+
+// ======== RightSidebar ========
+
+RightSidebar::RightSidebar(QWidget *parent) : Sidebar(parent) {
+    initializeLayout();
+}
+
+Qt::DockWidgetArea RightSidebar::dockArea() {
+    return Qt::RightDockWidgetArea;
+}
+
+void RightSidebar::initializeLayout() {
+    m_layout->setSpacing(0);
+    m_infoWidget->setLayout(m_layout);
+    m_scrollArea->setWidgetResizable(true);
+    m_scrollArea->setWidget(m_infoWidget);
+
+    // position images side by side
+    m_imageLayout->addWidget(m_image1Label);
+    m_imageLayout->addWidget(m_image2Label);
+    m_imageLayout->addWidget(m_image3Label);
+    m_imageLayout->setSpacing(10);
+
+    QMargins spacingMargin(0,0,0,10);
+    m_titleLabel->setContentsMargins(spacingMargin);
+    m_classLabel->setContentsMargins(spacingMargin);
+    m_familyLabel->setContentsMargins(spacingMargin);
+    m_genusLabel->setContentsMargins(spacingMargin);
+    m_speciesLabel->setContentsMargins(spacingMargin);
+    m_scientificNameLabel->setContentsMargins(spacingMargin);
+    m_localityLabel->setContentsMargins(spacingMargin);
+    m_dateLabel->setContentsMargins(spacingMargin);
+    m_areaLabel->setContentsMargins(spacingMargin);
+    m_provinceLabel->setContentsMargins(spacingMargin);
+    m_countryLabel->setContentsMargins(spacingMargin);
+    m_subContinentLabel->setContentsMargins(spacingMargin);
+    m_continentLabel->setContentsMargins(spacingMargin);
+    m_descriptionLabel->setContentsMargins(spacingMargin);
+    m_imageLayout->setContentsMargins(spacingMargin);
+
+    m_layout->addWidget(m_titleLabel);
+    m_layout->addLayout(m_imageLayout);
+    m_layout->addWidget(m_classLabel);
+    m_layout->addWidget(m_familyLabel);
+    m_layout->addWidget(m_genusLabel);
+    m_layout->addWidget(m_speciesLabel);
+    m_layout->addWidget(m_scientificNameLabel);
+    m_layout->addWidget(m_localityLabel);
+    m_layout->addWidget(m_dateLabel);
+    m_layout->addWidget(m_areaLabel);
+    m_layout->addWidget(m_provinceLabel);
+    m_layout->addWidget(m_countryLabel);
+    m_layout->addWidget(m_subContinentLabel);
+    m_layout->addWidget(m_continentLabel);
+    m_layout->addWidget(m_descriptionLabel);
+    m_descriptionLabel->setWordWrap(true);
+    // remove spaces
+    m_layout->insertStretch( -1, 1 );
+}
+
+
+// ======== BottomSidebar ========
+
+BottomSidebar::BottomSidebar(QWidget *parent) : Sidebar(parent) {
+
+}
+
+Qt::DockWidgetArea BottomSidebar::dockArea() {
+    return Qt::BottomDockWidgetArea;
+}
+
+void BottomSidebar::initializeLayout() {
+
+}
+

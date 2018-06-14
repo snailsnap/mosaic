@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
     , m_mailClient("resources/credentials.txt")
-    , sidebar(this)
 {
     if(useCam) {
         m_webcam = new Webcam();
@@ -50,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     m_mainLayout->setSpacing(3);
     m_mainLayout->setMargin(0);
     m_mainLayout->addWidget(m_resultLabel, 0, 0, 4, 3);
+
+    m_sidebar = Sidebar::newSidebarForScreen(QApplication::desktop()->screenGeometry());
 
     QObject::connect(m_diaTimer, SIGNAL(timeout()), this, SLOT(diaChange()));
     
@@ -162,7 +163,7 @@ void MainWindow::showSidebar(
         const QString &descriptionContent)
 {
 
-    sidebar.update(
+    m_sidebar->update(
             classContent,
             familyContent,
             genusContent,
@@ -179,7 +180,7 @@ void MainWindow::showSidebar(
             image2,
             image3,
             descriptionContent);
-    this->addDockWidget(Qt::RightDockWidgetArea, &sidebar);
+    this->addDockWidget(m_sidebar->dockArea(), m_sidebar);
 }
 
 void MainWindow::initButton(QPushButton* button, std::string icon, int row, int column, bool visible) {
@@ -319,7 +320,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
 
     m_countdownLabel->setVisible(false);
-    sidebar.setVisible(false);
+    m_sidebar->setVisible(false);
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
     auto scaledImage = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
