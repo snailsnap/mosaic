@@ -21,7 +21,7 @@
 #define JC_VORONOI_IMPLEMENTATION
 #include "../../dependencies/jc_voronoi/src/jc_voronoi.h"
 
-std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
+std::vector<MolluscPosition> Voronoi::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     auto width = input.width();
     auto height = input.height();
@@ -40,17 +40,17 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
 
     // generate voronoi diagram
 
-    auto diagram = jcv_diagram();
-    memset(&diagram, 0, sizeof(jcv_diagram));
+    jcv_diagram diagram {0};
     jcv_diagram_generate(maxNumOfMolluscs, points, 0, &diagram);
 
     // get cells, calculate positions
 
     auto sites = jcv_diagram_get_sites(&diagram);
 
-    auto positions = new std::vector<MolluscPosition*>();
+    std::vector<MolluscPosition> positions;
+    positions.reserve(diagram.numsites);
 
-    auto floodFillCanvas = std::vector<bool>(height * width, false);
+    std::vector<bool> floodFillCanvas(height * width, false);
 
     for (auto i = 0; i < diagram.numsites; ++i)
     {
@@ -64,12 +64,11 @@ std::vector<MolluscPosition*>* Voronoi::createMosaic(const QImage& input, int ma
             continue;
         }
 
-        positions->push_back(new MolluscPosition{ box.centerX, box.centerY, box.width, box.height, box.rotation });
-
 #ifdef VORONOI_USE_FLOODFILL
+        positions.push_back(box.centerX, box.centerY, box.width, box.height, box.rotation);
         getSiteColor(site, input, floodFillCanvas, width, height, &(positions->back()->color));
 #else
-        positions->back()->color = toVec3(input.pixel(box.centerX, box.centerY));
+        positions.push_back(MolluscPosition {box.centerX, box.centerY, box.width, box.height, box.rotation, toVec3(input.pixel(box.centerX, box.centerY))});
 #endif // VORONOI_USE_FLOODFILL
     }
 

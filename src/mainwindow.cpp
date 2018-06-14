@@ -12,30 +12,33 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
+MainWindow::MainWindow(QWidget *parent, bool useCam, QString outputPath,
+                       int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
-    , m_molluscPalette(molluscPalette)
+    , m_molluscPalette(std::make_shared<MolluscPalette>())
+    , m_painter(m_molluscPalette)
+    , m_mosaic(*m_molluscPalette)
     , m_selectedMolluscIndex(0)
-    , m_layout(new QVBoxLayout())
+    , m_layout(new QVBoxLayout(m_infoWidget))
     , m_imageLayout(new QHBoxLayout())
-    , m_scrollArea(new QScrollArea())
+    , m_scrollArea(new QScrollArea(m_dWidget))
     , m_resultLabel(new MolluscImage(this))
-    , m_infoWidget(new QWidget())
+    , m_infoWidget(new QWidget(m_dWidget))
     , m_dWidget(new QDockWidget(this))
-    , m_titleLabel(new QLabel())
-    , m_classLabel(new QLabel())
-    , m_familyLabel(new QLabel())
-    , m_genusLabel(new QLabel())
-    , m_speciesLabel(new QLabel())
-    , m_scientificNameLabel(new QLabel())
-    , m_localityLabel(new QLabel())
-    , m_dateLabel(new QLabel())
-    , m_areaLabel(new QLabel())
-    , m_provinceLabel(new QLabel())
-    , m_countryLabel(new QLabel())
-    , m_subContinentLabel(new QLabel())
-    , m_continentLabel(new QLabel())
-    , m_descriptionLabel(new QLabel())
+    , m_titleLabel(new QLabel(m_dWidget))
+    , m_classLabel(new QLabel(m_dWidget))
+    , m_familyLabel(new QLabel(m_dWidget))
+    , m_genusLabel(new QLabel(m_dWidget))
+    , m_speciesLabel(new QLabel(m_dWidget))
+    , m_scientificNameLabel(new QLabel(m_dWidget))
+    , m_localityLabel(new QLabel(m_dWidget))
+    , m_dateLabel(new QLabel(m_dWidget))
+    , m_areaLabel(new QLabel(m_dWidget))
+    , m_provinceLabel(new QLabel(m_dWidget))
+    , m_countryLabel(new QLabel(m_dWidget))
+    , m_subContinentLabel(new QLabel(m_dWidget))
+    , m_continentLabel(new QLabel(m_dWidget))
+    , m_descriptionLabel(new QLabel(m_dWidget))
     , m_image1Label(new QLabel("image1Label"))
     , m_image2Label(new QLabel("image2Label"))
     , m_image3Label(new QLabel("image3Label"))
@@ -44,21 +47,22 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_diaTimer(new QTimer(this))
     , m_countdownTimer(new QTimer(this))
     , m_dia1(true)
-    , m_scene(new QGraphicsScene())
-    , m_mainLayout(new QGridLayout())
-    , m_pixmapItem(new QGraphicsPixmapItem())
-    , m_cameraButton(new QPushButton())
-    , m_backButton(new QPushButton())
-    , m_shareButton(new QPushButton())
+    , m_scene(new QGraphicsScene(m_view))
+    , m_mainLayout(new QGridLayout(m_view))
+    , m_cameraButton(new QPushButton(this))
+    , m_backButton(new QPushButton(this))
+    , m_shareButton(new QPushButton(this))
     , m_countdownLabel(new QLabel("text"))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
-    , m_mailClient("resources/credentials.txt")
+    , m_mailClient(MailClient::fromCredentials("resources/credentials.txt"))
 {
-    if(useCam) {
-        m_webcam = new Webcam();
-        QObject::connect(m_webcam, &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
+    m_molluscPalette->loadData(data);
+
+    if (useCam) {
+        m_webcam = std::make_unique<Webcam>();
+        QObject::connect(m_webcam.get(), &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
     }
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -88,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     initializeSidebar();
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() = default;
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
@@ -137,13 +141,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    if (m_molluscs == nullptr) return;
-    Mollusc* selectedMollusc = m_molluscs->at(m_selectedMolluscIndex);
+    std::shared_ptr<Mollusc> selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
 
-    auto lastDotIndex = selectedMollusc->m_imageName.find_last_of(".");
+    auto lastDotIndex = selectedMollusc->m_imageName.find_last_of('.');
     auto imageName = selectedMollusc->m_imageName.substr(0, lastDotIndex);
     
-    auto underscoreIdx1 = imageName.find_last_of("_");
+    auto underscoreIdx1 = imageName.find_last_of('_');
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
 
     this->showSidebar(
@@ -248,7 +251,7 @@ void MainWindow::onClick(QMouseEvent * event)
 }
 
 void MainWindow::takePicture() {
-    if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
+    if (m_useCam && !QCameraInfo::availableCameras().empty()) {
         std::cout << "Capturing image..." << std::endl;
         m_webcam->captureImage();
     }
@@ -357,12 +360,9 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto image = scaledImage.copy((scaledImage.width() - display.width()) / 2, (scaledImage.height() - display.height()) / 2, display.width(), display.height());
     
     // process image
-    auto mosaic = Voronoi(*m_molluscPalette);
-    auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-    m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
+    m_result = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_idImage = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_molluscs = m_painter.paint(m_mosaic.createMosaic(image, m_maxNumOfMolluscs), *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));

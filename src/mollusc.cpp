@@ -15,6 +15,7 @@ Mollusc::Mollusc(const std::string& data)
     std::stringstream stream(data);
     std::vector<std::string> strings;
     std::string string;
+    string.reserve(18);
     while (std::getline(stream, string, ';'))
     {
         strings.push_back(string);
@@ -39,11 +40,6 @@ Mollusc::Mollusc(const std::string& data)
     m_country = strings[i++];
     m_subContinent = strings[i++];
     m_continent = (strings.size() > i) ? strings[i++] : "";
-}
-
-Mollusc::Mollusc(const std::string& data, const QString& dir) : Mollusc::Mollusc(data)
-{
-    m_image = QPixmap(dir + "/" + m_imageName.c_str());
 }
 
 std::string Mollusc::description(const std::string &dataDir) {

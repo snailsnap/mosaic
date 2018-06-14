@@ -3,25 +3,60 @@
 #include <vector>
 #include <tuple>
 #include <random>
+#include <memory>
+#include <unordered_map>
+#include <functional>
 
 #include <QColor>
+#include <QFile>
 
 #include "mollusc.hpp"
+
+namespace std {
+template<>
+struct hash<QColor> {
+  std::size_t operator()(const QColor& color) const {
+    auto idx = color.red() >> 5
+            | (color.green() >> 5) << 3
+            | (color.blue() >> 5) << 6;
+    return idx & 0x1ff;
+  }
+};
+}
+
+class MolluscImages {
+    std::shared_ptr<std::unordered_map<std::string, QPixmap>> images;
+public:
+    QPixmap& lookup(const std::string& name) const;
+
+    MolluscImages() = delete;
+    MolluscImages(const QString& dataPath, std::vector<QString> &&filenames);
+    ~MolluscImages();
+};
 
 class MolluscPalette
 {
 public:
-    MolluscPalette(const QString& dataPath);
+    MolluscPalette();
+    MolluscPalette(const MolluscPalette&) = delete;
+    ~MolluscPalette();
 
-    const std::vector<Mollusc*>* getMolluscs() const;
-    QVector3D toVec3(const QColor & color) const;
-    Mollusc* getClosestColor(const QVector3D& color) const;
+    static QVector3D toVec3(const QColor & color);
+    static QColor fromVec3(const QVector3D& vcolor);
+    std::shared_ptr<Mollusc> getClosestColor(const QVector3D& color);
 
-private:
-    std::vector<Mollusc*>* m_molluscs;
-    std::vector<std::pair<QColor, std::vector<Mollusc*>*>> m_buckets;
+    QPixmap& lookup(const std::string& name) const;
 
     void loadData(const QString& dataPath);
-    void fillBuckets();
+protected:
+    const std::vector<Mollusc> getMolluscs() const;
+    std::mt19937_64 random_gen;
+    using distribution_type = std::uniform_int_distribution<
+        std::unordered_multimap<QColor, Mollusc>::difference_type>;
+private:
+    std::vector<Mollusc> m_molluscs;
+    std::unordered_multimap<QColor, Mollusc> m_mbuckets;
+
+    std::unique_ptr<MolluscImages> m_images;
 };
 
