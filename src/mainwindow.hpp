@@ -20,7 +20,7 @@
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
+    MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette> &&molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
 
     void sendMail();
@@ -60,8 +60,8 @@ private:
     QString m_openImagePath = "C:/";
     QString m_data;
 
-    MolluscPalette* m_molluscPalette;
-    std::vector<Mollusc*>* m_molluscs;
+    std::shared_ptr<MolluscPalette> m_molluscPalette;
+    std::vector<std::shared_ptr<Mollusc>> m_molluscs;
     int m_selectedMolluscIndex;
 
     QVBoxLayout *m_layout;

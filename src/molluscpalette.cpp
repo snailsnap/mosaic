@@ -3,94 +3,80 @@
 #include <fstream>
 #include <array>
 #include <iostream>
+#include <iterator>
+#include <algorithm>
 
 #include <QString>
 #include <QVector3D>
 
 MolluscPalette::MolluscPalette(const QString& dataPath)
 {
-    this->loadData(dataPath);
-    this->fillBuckets();
+    std::random_device random;
+    random_gen = std::mt19937_64 { random() };
+
+    m_mbuckets.max_load_factor(1e6);
+
+    loadData(dataPath);
+    fillBuckets();
 }
 
-const std::vector<Mollusc*>* MolluscPalette::getMolluscs() const
+MolluscPalette::~MolluscPalette() {
+}
+
+const std::vector<Mollusc> MolluscPalette::getMolluscs() const
 {
     return m_molluscs;
 }
 
-QVector3D MolluscPalette::toVec3(const QColor& color) const
+QVector3D MolluscPalette::toVec3(const QColor& color)
 {
     return QVector3D(color.redF(), color.greenF(), color.blueF());
 }
+QColor MolluscPalette::fromVec3(const QVector3D& vcolor) {
+  QColor color;
+  color.setRedF(vcolor.x());
+  color.setGreenF(vcolor.y());
+  color.setBlueF(vcolor.z());
+  return color;
+}
 
-Mollusc* MolluscPalette::getClosestColor(const QVector3D & color) const
+std::shared_ptr<Mollusc> MolluscPalette::getClosestColor(const QVector3D & vcolor)
 {
-    auto closestIndex = 0;
-    auto minDist = std::numeric_limits<float>::max();
+    const auto color = fromVec3(vcolor);
 
-    for (auto i = 0u; i < m_buckets.size(); ++i)
-    {
-        auto dist = (color - toVec3(m_buckets[i].first)).length();
-        if (dist < minDist)
-        {
-            minDist = dist;
-            closestIndex = i;
-        }
+    assert(m_mbuckets.bucket_count() != 0);
+    const auto bucket = m_mbuckets.bucket(color);
+
+    auto distribution = std::uniform_int_distribution<std::unordered_multimap<QColor, Mollusc>::difference_type>(0, m_mbuckets.bucket_size(bucket)-1);
+    auto bucket_it = m_mbuckets.begin(bucket);
+    if (bucket_it == m_mbuckets.end(bucket)) {
+        const auto comp = [&](auto& lhs, auto& rhs) {
+            return (vcolor - toVec3(lhs.first)).lengthSquared() < (vcolor - toVec3(rhs.first)).lengthSquared();
+        };
+        const auto closest_it = std::min_element(m_mbuckets.cbegin(), m_mbuckets.cend(), comp);
+        bucket_it = m_mbuckets.begin(m_mbuckets.bucket(closest_it->first));
     }
-
-    auto bucket = *(m_buckets[closestIndex].second);
-
-    std::random_device random;
-    std::mt19937_64 generator(random());
-    auto distribution = std::uniform_int_distribution<>(0, bucket.size()-1);
-    auto idx = distribution(generator);
-    return m_buckets[closestIndex].second->at(idx);
+    std::advance(bucket_it, distribution(random_gen));
+    return std::make_shared<Mollusc>(bucket_it->second);
 }
 
 void MolluscPalette::loadData(const QString& dataPath) {
     // read meta file
     std::ifstream stream(dataPath.toStdString() + "/meta_file.csv");
-    std::vector<std::string> strings;
     std::string string;
-    while (std::getline(stream, string))
-    {
-        strings.push_back(string);
-    }
+    std::getline(stream, string);
 
     // generate molluscs
-    m_molluscs = new std::vector<Mollusc*>();
-    for (auto i = 1u; i < strings.size(); ++i)
-    {
-        m_molluscs->push_back(new Mollusc(strings[i], dataPath));
+    while (std::getline(stream, string)) {
+        m_molluscs.emplace_back(string, dataPath);
     }
 
     // white mollusc for background
-    m_molluscs->push_back(new Mollusc("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE"));
+    m_molluscs.emplace_back("NONE;#FFFFFF;0.0;1.0;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE;NONE");
 }
 
-void MolluscPalette::fillBuckets()
-{
-    auto buckets = std::array<std::vector<Mollusc*>*, 8*8*8>();
-    for (auto mollusc : *m_molluscs) {
-        auto color = mollusc->m_color;
-        auto idx = color.red() / 32
-            + (color.green() / 32) * 8
-            + (color.blue() / 32) * 8 * 8;
-        if (buckets[idx] == nullptr) buckets[idx] = new std::vector<Mollusc*>();
-        buckets[idx]->push_back(mollusc);
-    }
-    
-    auto i = 0;
-    for (auto bucket : buckets) {
-        if (bucket == nullptr) {
-            ++i;
-            continue;
-        }
-        auto r = (i & 0x7) * 32 + 15;
-        auto g = ((i >> 3) & 0x7) * 32 + 15;
-        auto b = ((i >> 6) & 0x7) * 32 + 15;
-        auto color = QColor(r,g,b);
-        m_buckets.push_back(std::make_pair(color, bucket));
-        ++i;
+void MolluscPalette::fillBuckets() {
+    for (const auto& mollusc : m_molluscs) {
+        m_mbuckets.emplace(mollusc.m_color, mollusc);
     }
 }

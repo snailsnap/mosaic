@@ -12,7 +12,8 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
+MainWindow::MainWindow(QWidget *parent, std::shared_ptr<MolluscPalette>&& molluscPalette,
+                       bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
     , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
@@ -137,8 +138,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    if (m_molluscs == nullptr) return;
-    Mollusc* selectedMollusc = m_molluscs->at(m_selectedMolluscIndex);
+    std::shared_ptr<Mollusc> selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
 
     auto lastDotIndex = selectedMollusc->m_imageName.find_last_of(".");
     auto imageName = selectedMollusc->m_imageName.substr(0, lastDotIndex);
