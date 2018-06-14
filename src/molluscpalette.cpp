@@ -76,7 +76,7 @@ std::shared_ptr<Mollusc> MolluscPalette::getClosestColor(const QVector3D & vcolo
     assert(m_mbuckets.bucket_count() != 0);
     const auto bucket = m_mbuckets.bucket(color);
 
-    auto distribution = std::uniform_int_distribution<std::unordered_multimap<QColor, Mollusc>::difference_type>(0, m_mbuckets.bucket_size(bucket)-1);
+    auto distribution = distribution_type(0, m_mbuckets.bucket_size(bucket)-1);
     auto bucket_it = m_mbuckets.begin(bucket);
     if (bucket_it == m_mbuckets.end(bucket)) {
         const auto comp = [&](auto& lhs, auto& rhs) {

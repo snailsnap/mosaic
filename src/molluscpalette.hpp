@@ -51,7 +51,8 @@ public:
 protected:
     const std::vector<Mollusc> getMolluscs() const;
     std::mt19937_64 random_gen;
-
+    using distribution_type = std::uniform_int_distribution<
+        std::unordered_multimap<QColor, Mollusc>::difference_type>;
 private:
     std::vector<Mollusc> m_molluscs;
     std::unordered_multimap<QColor, Mollusc> m_mbuckets;
