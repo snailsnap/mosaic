@@ -53,9 +53,7 @@ MailClient::MailClient(MailClient&& rhs)
     , m_message{ rhs.m_message } {
 }
 
-MailClient::~MailClient()
-{
-}
+MailClient::~MailClient() = default;
 
 void MailClient::sendImage(const QString& recipient, const QImage& image)
 {
