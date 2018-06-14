@@ -35,6 +35,4 @@ private:
     QList<QCameraInfo> cams;
     std::shared_ptr<QCamera> cam;
     std::shared_ptr<QCameraImageCapture> imgCapture;
-
-    QString path; // qt seems to ignore this on windows for some reason
 };
