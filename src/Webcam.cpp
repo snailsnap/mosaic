@@ -58,8 +58,6 @@ void Webcam::emitImage(int id, const QString &savePath) {
 
     emit imageReady(image);
 
-    std::cerr << savePath.toStdString() << std::endl;
-
     // delete file
     if(!QFile::remove(savePath)) {
         std::cerr << "Warning: Failed to remove temporary webcam image at " << savePath.toStdString() << std::endl;
