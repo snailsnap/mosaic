@@ -61,7 +61,7 @@ private:
     QString m_data;
 
     std::shared_ptr<MolluscPalette> m_molluscPalette;
-    std::vector<Mollusc*>* m_molluscs;
+    std::vector<Mollusc> m_molluscs;
     int m_selectedMolluscIndex;
 
     QVBoxLayout *m_layout;

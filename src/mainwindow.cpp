@@ -138,31 +138,30 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    if (m_molluscs == nullptr) return;
-    Mollusc* selectedMollusc = m_molluscs->at(m_selectedMolluscIndex);
+    Mollusc selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
 
-    auto lastDotIndex = selectedMollusc->m_imageName.find_last_of(".");
-    auto imageName = selectedMollusc->m_imageName.substr(0, lastDotIndex);
+    auto lastDotIndex = selectedMollusc.m_imageName.find_last_of(".");
+    auto imageName = selectedMollusc.m_imageName.substr(0, lastDotIndex);
     
     auto underscoreIdx1 = imageName.find_last_of("_");
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
 
     this->showSidebar(
-            QString::fromStdString(selectedMollusc->m_class),
-            QString::fromStdString(selectedMollusc->m_family),
-            QString::fromStdString(selectedMollusc->m_genus),
-            QString::fromStdString(selectedMollusc->m_species),
-            QString::fromStdString(selectedMollusc->m_scientificName),
-            QString::fromStdString(selectedMollusc->m_locality),
-            QString::fromStdString(selectedMollusc->m_date), QString::fromStdString(selectedMollusc->m_area),
-            QString::fromStdString(selectedMollusc->m_province),
-            QString::fromStdString(selectedMollusc->m_country),
-            QString::fromStdString(selectedMollusc->m_subContinent),
-            QString::fromStdString(selectedMollusc->m_continent),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
-            QString::fromStdString(selectedMollusc->description(m_data.toStdString())));
+            QString::fromStdString(selectedMollusc.m_class),
+            QString::fromStdString(selectedMollusc.m_family),
+            QString::fromStdString(selectedMollusc.m_genus),
+            QString::fromStdString(selectedMollusc.m_species),
+            QString::fromStdString(selectedMollusc.m_scientificName),
+            QString::fromStdString(selectedMollusc.m_locality),
+            QString::fromStdString(selectedMollusc.m_date), QString::fromStdString(selectedMollusc.m_area),
+            QString::fromStdString(selectedMollusc.m_province),
+            QString::fromStdString(selectedMollusc.m_country),
+            QString::fromStdString(selectedMollusc.m_subContinent),
+            QString::fromStdString(selectedMollusc.m_continent),
+            QImage(m_data + "/" + QString::fromStdString(selectedMollusc.m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(selectedMollusc.m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(selectedMollusc.m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
+            QString::fromStdString(selectedMollusc.description(m_data.toStdString())));
 }
 
 void MainWindow::showSidebar(
@@ -363,11 +362,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    const auto v = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
-    m_molluscs = new std::vector<Mollusc*>;
-    for (const auto e:v) {
-        m_molluscs->push_back(e.get());
-    }
+    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));

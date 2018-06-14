@@ -51,9 +51,9 @@ std::vector<MolluscPosition> FloydSteinberg::createMosaic(const QImage& input, i
             auto oldVector = toVec3(oldColor) + errorStorage[x + 1 + y * width];
 
             auto mollusc = m_molluscPalette.getClosestColor(oldVector);
-            auto newVector = toVec3(mollusc->m_color);
+            auto newVector = toVec3(mollusc.m_color);
 
-            if (mollusc->m_imageName.compare("NONE") != 0) {
+            if (mollusc.m_imageName.compare("NONE") != 0) {
                 pos.color = newVector;
                 pos.x = x * molluscSize;
                 pos.y = y * molluscSize;
