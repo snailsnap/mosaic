@@ -363,7 +363,11 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 
     m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette.get(), *m_result, *m_idImage);
+    const auto v = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
+    m_molluscs = new std::vector<Mollusc*>;
+    for (const auto e:v) {
+        m_molluscs->push_back(e.get());
+    }
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));

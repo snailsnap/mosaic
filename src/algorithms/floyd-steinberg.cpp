@@ -11,7 +11,7 @@
 #include "../mollusc.hpp"
 #include "../mosaic.hpp"
 
-std::vector<MolluscPosition*>* FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
+std::vector<MolluscPosition> FloydSteinberg::createMosaic(const QImage& input, int maxNumOfMolluscs)
 {
     auto sizeRatio = (float)input.width() / input.height();
     auto horizontal = sizeRatio >= 1;
@@ -38,7 +38,11 @@ std::vector<MolluscPosition*>* FloydSteinberg::createMosaic(const QImage& input,
     idTexture->fill(Qt::GlobalColor::black);
     QPainter idPainter(idTexture);
 
-    auto positions = new std::vector<MolluscPosition*>();
+    std::vector<MolluscPosition> positions;
+    MolluscPosition pos;
+    pos.rotation = 0.0;
+    pos.width = pos.height = molluscSize;
+
     for (auto y = 0; y < scaled.height(); ++y)
     {
         for (auto x = 0; x < scaled.width(); ++x)
@@ -50,7 +54,10 @@ std::vector<MolluscPosition*>* FloydSteinberg::createMosaic(const QImage& input,
             auto newVector = toVec3(mollusc->m_color);
 
             if (mollusc->m_imageName.compare("NONE") != 0) {
-                positions->push_back(new MolluscPosition{ x * molluscSize, y * molluscSize, molluscSize, molluscSize, 0, newVector});
+                pos.color = newVector;
+                pos.x = x * molluscSize;
+                pos.y = y * molluscSize;
+                positions.push_back(pos);
             }
 
             auto error = oldVector - newVector;

@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QtMath>
 
-std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* molluscPositions, MolluscPalette* palette, QImage & colorImage, QImage & idImage)
+std::vector<std::shared_ptr<Mollusc>> Painter::paint(const std::vector<MolluscPosition> molluscPositions, std::shared_ptr<MolluscPalette> palette, QImage & colorImage, QImage & idImage)
 {
     colorImage.fill(Qt::GlobalColor::white);
     QPainter painter(&colorImage);
@@ -19,21 +19,21 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
     std::uniform_int_distribution<int> dist(0, 1);
 
     auto i = 0;
-    auto molluscs = new std::vector<Mollusc*>();
-    for (auto pos : *molluscPositions) {
-        auto mollusc = palette->getClosestColor(pos->color);
+    std::vector<std::shared_ptr<Mollusc>> molluscs;
+    for (auto pos: molluscPositions) {
+        auto mollusc = palette->getClosestColor(pos.color);
         
         if (mollusc->m_imageName.compare("NONE") != 0) {
-            molluscs->push_back(mollusc);
+            molluscs.push_back(std::make_shared<Mollusc>(*mollusc));
 
-            auto angle = pos->rotation + dist(generator) * M_PI + mollusc->m_rotation;
+            auto angle = pos.rotation + dist(generator) * M_PI + mollusc->m_rotation;
 
             auto imageWidth = mollusc->m_image.width();
             auto imageHeight = mollusc->m_image.height();
             auto imageSizeRatio = (float)imageHeight / imageWidth;
 
-            auto boxWidth = pos->width;
-            auto boxHeight = pos->height;
+            auto boxWidth = pos.width;
+            auto boxHeight = pos.height;
             if (boxHeight > boxWidth)
             {
                 auto temp = boxWidth;
@@ -59,14 +59,14 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
             const auto scale = 1.3;
 
             painter.save();
-            painter.translate(pos->x, pos->y);
+            painter.translate(pos.x, pos.y);
             painter.rotate(-qRadiansToDegrees(angle));
             painter.scale(scale, scale);
             painter.translate(-targetWidth / 2, -targetHeight / 2);
             painter.drawPixmap(0, 0, targetWidth, targetHeight, mollusc->m_image);
             painter.restore();
 
-            auto mask = mollusc->m_image.toImage().scaled(pos->width, pos->height);
+            auto mask = mollusc->m_image.toImage().scaled(pos.width, pos.height);
             auto tintPainter = new QPainter(&mask);
             tintPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
             auto r = i & 0xff;
@@ -86,7 +86,7 @@ std::vector<Mollusc*>* Painter::paint(const std::vector<MolluscPosition*>* mollu
             tintPainter->end();
 
             idPainter.save();
-            idPainter.translate(pos->x, pos->y);
+            idPainter.translate(pos.x, pos.y);
             idPainter.rotate(-qRadiansToDegrees(angle));
             idPainter.scale(scale, scale);
             idPainter.translate(-targetWidth / 2, -targetHeight / 2);
