@@ -33,6 +33,7 @@ public:
     QPixmap& lookup(const std::string& name) const;
 
     void loadData(const QString& dataPath);
+
 protected:
     std::mt19937_64 generator;
 

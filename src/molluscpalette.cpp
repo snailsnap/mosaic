@@ -74,6 +74,7 @@ Mollusc MolluscPalette::getClosestColor(const QVector3D & color)
     auto idx = distribution(generator);
     return m_buckets[closestIndex].second.at(idx);
 }
+
 QPixmap& MolluscPalette::lookup(const std::string& name) const {
     return m_images->lookup(name);
 }
