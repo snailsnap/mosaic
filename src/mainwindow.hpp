@@ -69,11 +69,11 @@ private:
     Voronoi m_mosaic;
     int m_selectedMolluscIndex;
 
+    QDockWidget *m_dWidget;
+    QWidget *m_infoWidget;
     QVBoxLayout *m_layout;
     QHBoxLayout *m_imageLayout;
     QScrollArea *m_scrollArea;
-    QWidget *m_infoWidget;
-    QDockWidget *m_dWidget;
     QPushButton *m_cameraButton;
     QPushButton *m_backButton;
     QPushButton *m_shareButton;
