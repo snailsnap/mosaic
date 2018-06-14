@@ -362,7 +362,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     // process image
     m_result = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
     m_idImage = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_molluscs = m_painter.paint(std::move(m_mosaic.createMosaic(image, m_maxNumOfMolluscs)), *m_result, *m_idImage);
+    m_molluscs = m_painter.paint(m_mosaic.createMosaic(image, m_maxNumOfMolluscs), *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));
