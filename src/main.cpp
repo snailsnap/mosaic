@@ -64,11 +64,11 @@ int main(int argc, char *argv[])
         std::cout << "Maximum number of molluscs: " << maxNumOfMolluscs << std::endl;
     }
 
-    auto useCam = true;
+    bool useCam;
     if (parser.isSet(useCamOption))
     {
         useCam = parser.value(useCamOption).toUpper() == "TRUE";
-        std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
+        std::cout << std::boolalpha << "Use Cam: " << useCam << std::endl;
     }
 
     auto molluscPalette = new MolluscPalette(data);
