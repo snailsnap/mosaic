@@ -163,7 +163,7 @@ void MainWindow::showSidebar(
         const QString &descriptionContent)
 {
 
-    m_sidebar->update(
+    m_sidebar->updateContent(
             classContent,
             familyContent,
             genusContent,

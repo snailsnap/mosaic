@@ -18,7 +18,7 @@ public:
 
     virtual Qt::DockWidgetArea dockArea() = 0;
 
-    void update(
+    void updateContent(
             const QString &classContent,
             const QString &familyContent,
             const QString &genusContent,
@@ -38,8 +38,6 @@ public:
 
 protected:
     explicit Sidebar(QWidget *parent = nullptr);
-
-    virtual void initializeLayout();
 
     QScrollArea *m_scrollArea;
     QWidget *m_infoWidget;
@@ -73,9 +71,6 @@ public:
     explicit RightSidebar(QWidget *parent);
 
     Qt::DockWidgetArea dockArea() override;
-
-protected:
-    void initializeLayout() override;
 };
 
 class BottomSidebar : public Sidebar {
@@ -83,9 +78,6 @@ public:
     explicit BottomSidebar(QWidget *parent);
 
     Qt::DockWidgetArea dockArea() override;
-
-protected:
-    void initializeLayout() override;
 };
 
 
