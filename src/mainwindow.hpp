@@ -4,6 +4,7 @@
 #include "molluscpalette.hpp"
 #include "Webcam.hpp"
 #include "mail.hpp"
+#include "sidebar.hpp"
 
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -64,35 +65,13 @@ private:
     std::vector<Mollusc*>* m_molluscs;
     int m_selectedMolluscIndex;
 
-    QVBoxLayout *m_layout;
-    QHBoxLayout *m_imageLayout;
-    QScrollArea *m_scrollArea;
-    QWidget *m_infoWidget;
-    QDockWidget *m_dWidget;
     QPushButton *m_cameraButton;
     QPushButton *m_backButton;
     QPushButton *m_shareButton;
     QLabel *m_resultLabel;
     QLabel *m_countdownLabel;
 
-    QLabel *m_titleLabel;
-    QLabel *m_classLabel;
-    QLabel *m_familyLabel;
-    QLabel *m_genusLabel;
-    QLabel *m_speciesLabel;
-    QLabel *m_scientificNameLabel;
-    QLabel *m_localityLabel;
-    QLabel *m_dateLabel;
-    QLabel *m_areaLabel;
-    QLabel *m_provinceLabel;
-    QLabel *m_countryLabel;
-    QLabel *m_subContinentLabel;
-    QLabel *m_continentLabel;
-    QLabel *m_descriptionLabel;
-
-    QLabel *m_image1Label;
-    QLabel *m_image2Label;
-    QLabel *m_image3Label;
+    Sidebar sidebar;
 
     QGraphicsView *m_view;
     QGraphicsScene *m_scene;
