@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         std::cout << "Maximum number of molluscs: " << maxNumOfMolluscs << std::endl;
     }
 
-    bool useCam = true;
+    auto useCam = true;
     if (parser.isSet(useCamOption))
     {
         useCam = parser.value(useCamOption).toUpper() == "TRUE";
