@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
-    , m_mailClient("resources/credentials.txt")
+    , m_mailClient(MailClient::fromCredentials("resources/credentials.txt"))
 {
     if(useCam) {
         m_webcam = new Webcam();
