@@ -87,23 +87,23 @@ public:
             const QImage &image1,
             const QImage &image2,
             const QImage &image3,
-            const QString &descriptionContent);
+            const QString &descriptionContent) override;
 
 private:
     QVBoxLayout *m_layout;
 };
 
-//class BottomSidebar : public Sidebar {
-//public:
-//    explicit BottomSidebar(QWidget *parent);
-//
-//    Qt::DockWidgetArea dockArea() override;
-//
-//private:
-//    QHBoxLayout *m_horizontalLayout;
-//    QVBoxLayout *m_leftLayout;
-//    QVBoxLayout *m_rightLayout;
-//};
+class BottomSidebar : public Sidebar {
+public:
+    explicit BottomSidebar(QWidget *parent);
+
+    Qt::DockWidgetArea dockArea() override;
+
+private:
+    QHBoxLayout *m_layout;
+    QVBoxLayout *m_leftLayout;
+    QVBoxLayout *m_rightLayout;
+};
 
 
 #endif //SNAILSNAP_SIDEBAR_H
