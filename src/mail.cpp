@@ -38,7 +38,7 @@ void MailClient::setContents(const QString &subject, const QString &message) {
 
 MailClient::MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient)
     : m_sender{ user }
-    , m_client{ std::make_unique<SmtpClient>(server, 587, SmtpClient::SslConnection) }
+    , m_client{ std::make_unique<SmtpClient>(server, 465, SmtpClient::SslConnection) }
     , m_defaultRecipient{ defaultRecipient }
 {
     m_client->setUser(user);
