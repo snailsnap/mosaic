@@ -18,7 +18,7 @@ public:
 
     virtual Qt::DockWidgetArea dockArea() = 0;
 
-    void updateContent(
+    virtual void updateContent(
             const QString &classContent,
             const QString &familyContent,
             const QString &genusContent,
@@ -61,7 +61,6 @@ protected:
     QLabel *m_image2Label;
     QLabel *m_image3Label;
 
-    QVBoxLayout *m_layout;
     QHBoxLayout *m_imageLayout;
 };
 
@@ -71,19 +70,40 @@ public:
     explicit RightSidebar(QWidget *parent);
 
     Qt::DockWidgetArea dockArea() override;
-};
 
-class BottomSidebar : public Sidebar {
-public:
-    explicit BottomSidebar(QWidget *parent);
-
-    Qt::DockWidgetArea dockArea() override;
+    void updateContent(
+            const QString &classContent,
+            const QString &familyContent,
+            const QString &genusContent,
+            const QString &speciesContent,
+            const QString &scientificNameContent,
+            const QString &localityContent,
+            const QString &dateContent,
+            const QString &areaContent,
+            const QString &provinceContent,
+            const QString &countryContent,
+            const QString &subContinentContent,
+            const QString &continentContent,
+            const QImage &image1,
+            const QImage &image2,
+            const QImage &image3,
+            const QString &descriptionContent);
 
 private:
-    QHBoxLayout *m_horizontalLayout;
-    QVBoxLayout *m_leftLayout;
-    QVBoxLayout *m_rightLayout;
+    QVBoxLayout *m_layout;
 };
+
+//class BottomSidebar : public Sidebar {
+//public:
+//    explicit BottomSidebar(QWidget *parent);
+//
+//    Qt::DockWidgetArea dockArea() override;
+//
+//private:
+//    QHBoxLayout *m_horizontalLayout;
+//    QVBoxLayout *m_leftLayout;
+//    QVBoxLayout *m_rightLayout;
+//};
 
 
 #endif //SNAILSNAP_SIDEBAR_H
