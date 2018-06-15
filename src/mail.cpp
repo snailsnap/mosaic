@@ -38,7 +38,7 @@ void MailClient::setContents(const QString &subject, const QString &message) {
 
 MailClient::MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient)
     : m_sender{ user }
-    , m_client{ std::make_unique<SmtpClient>(server, 465, SmtpClient::SslConnection) }
+    , m_client{ std::make_unique<SmtpClient>(server, 587, SmtpClient::SslConnection) }
     , m_defaultRecipient{ defaultRecipient }
 {
     m_client->setUser(user);
@@ -64,14 +64,14 @@ void MailClient::sendImage(const QString& recipient, const QImage& image)
     mail.addRecipient(new EmailAddress(m_sender), MimeMessage::Bcc);
     mail.setSubject(m_subject);
 
-    MimeText text;
-    text.setText(m_message);
-    mail.addPart(&text);
+    auto text = new MimeText { m_message };
+    mail.addPart(text);
 
     image.save("SnailSnap.png");
     auto file = new QFile { "SnailSnap.png" };
+    auto attachment = new MimeAttachment(file);
 
-    mail.addPart(new MimeAttachment(file));
+    mail.addPart(attachment);
 
     m_client->connectToHost();
     m_client->login();
@@ -79,4 +79,7 @@ void MailClient::sendImage(const QString& recipient, const QImage& image)
     m_client->quit();
 
     file->remove();
+
+    delete attachment;
+    delete text;
 }
