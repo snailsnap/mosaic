@@ -34,7 +34,7 @@ BoundingBox calculateBoundingBox(const jcv_site* site)
 
         auto deltaX = p0.first - p1.first;
         auto deltaY = p0.second - p1.second;
-        auto angle = -std::atan(deltaY / deltaX);
+        auto angle = -std::atan2(deltaY, deltaX);
 
         // rotate points so that edge segment is parallel to x axis
         auto rotated = std::vector<std::pair<float, float>>();

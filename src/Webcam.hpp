@@ -20,6 +20,7 @@ class Webcam : public QObject {
 public:
     Webcam();
     ~Webcam() override;
+    bool supported() const;
 
 signals:
     void imageReady(std::shared_ptr<QImage> img);
@@ -31,8 +32,7 @@ private slots:
     void emitImage(int id, const QString &savePath);
 
 private:
-    QCamera* cam;
-    QCameraImageCapture* imgCapture;
-
-    QString path; // qt seems to ignore this on windows for some reason
+    QList<QCameraInfo> cams;
+    std::shared_ptr<QCamera> cam;
+    std::shared_ptr<QCameraImageCapture> imgCapture;
 };

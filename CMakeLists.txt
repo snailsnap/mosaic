@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 # project settings
 
 set(target SnailSnap)
-project(${target})
+project(${target} CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -64,7 +64,7 @@ set(sources
 	${source_dir}/helpers/painter.cpp
 	${source_dir}/helpers/boundingbox.cpp
 	${source_dir}/helpers/positionGenerator.cpp
-)
+	${source_dir}/sidebar.cpp)
 
 set(headers
 	${source_dir}/mosaic.hpp
@@ -80,7 +80,7 @@ set(headers
 	${source_dir}/helpers/painter.hpp
 	${source_dir}/helpers/boundingbox.hpp
 	${source_dir}/helpers/positionGenerator.hpp
-)
+	${source_dir}/sidebar.hpp)
 
 # target and required libs
 

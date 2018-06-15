@@ -16,29 +16,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     : QMainWindow(parent)
     , m_molluscPalette(molluscPalette)
     , m_selectedMolluscIndex(0)
-    , m_layout(new QVBoxLayout())
-    , m_imageLayout(new QHBoxLayout())
-    , m_scrollArea(new QScrollArea())
     , m_resultLabel(new MolluscImage(this))
-    , m_infoWidget(new QWidget())
-    , m_dWidget(new QDockWidget(this))
-    , m_titleLabel(new QLabel())
-    , m_classLabel(new QLabel())
-    , m_familyLabel(new QLabel())
-    , m_genusLabel(new QLabel())
-    , m_speciesLabel(new QLabel())
-    , m_scientificNameLabel(new QLabel())
-    , m_localityLabel(new QLabel())
-    , m_dateLabel(new QLabel())
-    , m_areaLabel(new QLabel())
-    , m_provinceLabel(new QLabel())
-    , m_countryLabel(new QLabel())
-    , m_subContinentLabel(new QLabel())
-    , m_continentLabel(new QLabel())
-    , m_descriptionLabel(new QLabel())
-    , m_image1Label(new QLabel("image1Label"))
-    , m_image2Label(new QLabel("image2Label"))
-    , m_image3Label(new QLabel("image3Label"))
     , m_useCam(useCam)
     , m_view(new MolluscView(this))
     , m_diaTimer(new QTimer(this))
@@ -71,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     m_mainLayout->setSpacing(3);
     m_mainLayout->setMargin(0);
     m_mainLayout->addWidget(m_resultLabel, 0, 0, 4, 3);
+
+    m_sidebar = Sidebar::newSidebarForScreen(QApplication::desktop()->screenGeometry());
 
     QObject::connect(m_diaTimer, SIGNAL(timeout()), this, SLOT(diaChange()));
     
@@ -183,34 +163,24 @@ void MainWindow::showSidebar(
         const QString &descriptionContent)
 {
 
-    m_titleLabel->setText("<b><font size=\"6\">" + scientificNameContent + "</font></b>");
-    m_classLabel->setText("<b>Klasse:</b> " + classContent);
-    m_familyLabel->setText("<b>Familie:</b> " + familyContent);
-    m_genusLabel->setText("<b>Geschlecht:</b> " + genusContent);
-    m_speciesLabel->setText("<b>Spezies:</b> " + speciesContent);
-    m_scientificNameLabel->setText("<b>Wiss. Begr.:</b> " + scientificNameContent);
-    m_localityLabel->setText("<b>Fundort:</b> " + localityContent);
-    m_dateLabel->setText("<b>Datum:</b> " + dateContent);
-    m_areaLabel->setText("<b>Gebiet:</b> " + areaContent);
-    m_provinceLabel->setText("<b>Provinz:</b> " + provinceContent);
-    m_countryLabel->setText("<b>Land:</b> " + countryContent);
-    m_subContinentLabel->setText("<b>Teilkontinent:</b> " + subContinentContent);
-    m_continentLabel->setText("<b>Kontinent:</b> " + continentContent);
-    m_descriptionLabel->setText("<b>Zusätzliche Informationen:</b> " + descriptionContent);
-
-    m_image1Label->setPixmap(QPixmap::fromImage(image1));
-    m_image2Label->setPixmap(QPixmap::fromImage(image2));
-    m_image3Label->setPixmap(QPixmap::fromImage(image3));
-
-
-    auto newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
-    m_scrollArea->setMinimumWidth(newWidth);
-    // I don't know why you have to do it like this, but this sets the sidebar to the right size immediately
-    m_dWidget->setWidget(m_scrollArea);
-    newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
-    m_scrollArea->setMinimumWidth(newWidth);
-    m_dWidget->setVisible(true);
-    this->addDockWidget(Qt::RightDockWidgetArea, m_dWidget);
+    m_sidebar->updateContent(
+            classContent,
+            familyContent,
+            genusContent,
+            speciesContent,
+            scientificNameContent,
+            localityContent,
+            dateContent,
+            areaContent,
+            provinceContent,
+            countryContent,
+            subContinentContent,
+            continentContent,
+            image1,
+            image2,
+            image3,
+            descriptionContent);
+    this->addDockWidget(m_sidebar->dockArea(), m_sidebar);
 }
 
 void MainWindow::initButton(QPushButton* button, std::string icon, int row, int column, bool visible) {
@@ -248,7 +218,7 @@ void MainWindow::onClick(QMouseEvent * event)
 }
 
 void MainWindow::takePicture() {
-    if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
+    if (m_useCam && m_webcam->supported()) {
         std::cout << "Capturing image..." << std::endl;
         m_webcam->captureImage();
     }
@@ -350,7 +320,7 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     std::cout << "Showing image..." << std::endl;
 
     m_countdownLabel->setVisible(false);
-    m_dWidget->setVisible(false);
+    m_sidebar->setVisible(false);
     // scale image to screen size
     auto display = QApplication::desktop()->screenGeometry();
     auto scaledImage = inputImage->scaled(display.size(), Qt::KeepAspectRatioByExpanding);
@@ -371,55 +341,5 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
 }
 
 void MainWindow::initializeSidebar() {
-    m_layout->setSpacing(0);
-    m_infoWidget->setLayout(m_layout);
-    m_scrollArea->setWidgetResizable(true);
-    m_scrollArea->setWidget(m_infoWidget);
 
-    // position images side by side
-    m_imageLayout->addWidget(m_image1Label);
-    m_imageLayout->addWidget(m_image2Label);
-    m_imageLayout->addWidget(m_image3Label);
-    m_imageLayout->setSpacing(10);
-
-    QMargins spacingMargin(0,0,0,10);
-    m_titleLabel->setContentsMargins(spacingMargin);
-    m_classLabel->setContentsMargins(spacingMargin);
-    m_familyLabel->setContentsMargins(spacingMargin);
-    m_genusLabel->setContentsMargins(spacingMargin);
-    m_speciesLabel->setContentsMargins(spacingMargin);
-    m_scientificNameLabel->setContentsMargins(spacingMargin);
-    m_localityLabel->setContentsMargins(spacingMargin);
-    m_dateLabel->setContentsMargins(spacingMargin);
-    m_areaLabel->setContentsMargins(spacingMargin);
-    m_provinceLabel->setContentsMargins(spacingMargin);
-    m_countryLabel->setContentsMargins(spacingMargin);
-    m_subContinentLabel->setContentsMargins(spacingMargin);
-    m_continentLabel->setContentsMargins(spacingMargin);
-    m_descriptionLabel->setContentsMargins(spacingMargin);
-    m_imageLayout->setContentsMargins(spacingMargin);
-
-    m_layout->addWidget(m_titleLabel);
-    m_layout->addLayout(m_imageLayout);
-    m_layout->addWidget(m_classLabel);
-    m_layout->addWidget(m_familyLabel);
-    m_layout->addWidget(m_genusLabel);
-    m_layout->addWidget(m_speciesLabel);
-    m_layout->addWidget(m_scientificNameLabel);
-    m_layout->addWidget(m_localityLabel);
-    m_layout->addWidget(m_dateLabel);
-    m_layout->addWidget(m_areaLabel);
-    m_layout->addWidget(m_provinceLabel);
-    m_layout->addWidget(m_countryLabel);
-    m_layout->addWidget(m_subContinentLabel);
-    m_layout->addWidget(m_continentLabel);
-    m_layout->addWidget(m_descriptionLabel);
-    m_descriptionLabel->setWordWrap(true);
-    // remove spaces
-    m_layout->insertStretch( -1, 1 );
-
-    m_dWidget->setWidget(m_scrollArea);
-    m_dWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    m_dWidget->setFeatures(QDockWidget::DockWidgetClosable);
-    m_dWidget->setStyleSheet("QDockWidget::title { text-align: left; background: white;}");
 }
