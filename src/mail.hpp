@@ -14,7 +14,6 @@ class MailClient
     QString m_defaultRecipient;
     QString m_subject;
     QString m_message;
-    bool m_setup = false;
 public:
     MailClient() = delete;
     MailClient(const MailClient&) = delete;

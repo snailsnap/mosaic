@@ -57,12 +57,6 @@ MailClient::~MailClient() = default;
 
 void MailClient::sendImage(const QString& recipient, const QImage& image)
 {
-    if (!m_setup)
-    {
-        std::cerr << "Mail client isn't set up, problably because the credentials are missing. Could not send image." << std::endl;
-        return;
-    }
-
     MimeMessage mail;
 
     mail.setSender(new EmailAddress(m_sender));
