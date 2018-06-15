@@ -14,7 +14,7 @@ MailDialog::MailDialog()
         , m_layout() {
 
     QObject::connect(&m_buttonOk, &QPushButton::clicked, [=](){
-        emit enteredMail(this->m_input.text().toStdString());
+        emit enteredMail(this->m_input.text());
         this->done(0);
     });
     QObject::connect(&m_buttonOk, &QPushButton::clicked, [=](){

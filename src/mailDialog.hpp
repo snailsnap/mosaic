@@ -28,7 +28,7 @@ private:
     QGridLayout m_layout;
 
 signals:
-     void enteredMail(std::string address);
+     void enteredMail(QString address);
 };
 
 

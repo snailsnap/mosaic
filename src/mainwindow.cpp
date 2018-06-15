@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent, bool useCam, QString outputPath,
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
     , m_mailClient(MailClient::fromCredentials("resources/credentials.txt"))
+    , m_mailDialog()
 {
     m_molluscPalette->loadData(data);
 
@@ -70,6 +71,17 @@ MainWindow::MainWindow(QWidget *parent, bool useCam, QString outputPath,
     this->showDia();
 
     initializeSidebar();
+
+    QObject::connect(&m_mailDialog, &MailDialog::enteredMail, [=](QString text){
+        std::cout << "sdfsdf\n";
+        if (!text.isEmpty()) {
+            if (!text.contains("@") || !text.contains(".")) {
+                //TODO: show user?
+                return;
+            }
+            m_mailClient.sendImage(text, *m_result);
+        }
+    });
 }
 
 MainWindow::~MainWindow() = default;
@@ -302,18 +314,19 @@ void MainWindow::stopDia()
 }
 
 void MainWindow::shareButtonClick() {
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("Schneckenpost"),
-        tr("Sende dir das Bild an deine Mailadresse:"), QLineEdit::Normal,
-        "", &ok);
-    std::string adr = text.toStdString();
-    if (ok && !text.isEmpty()) {
-        if (!text.contains("@") || !text.contains(".")) {
-            //TODO: show user?
-            return;
-        }
-        m_mailClient.sendImage(text, *m_result);
-    }
+//    bool ok;
+    m_mailDialog.exec();
+//    QString text = QInputDialog::getText(this, tr("Schneckenpost"),
+//        tr("Sende dir das Bild an deine Mailadresse:"), QLineEdit::Normal,
+//        "", &ok);
+//    std::string adr = text.toStdString();
+//    if (ok && !text.isEmpty()) {
+//        if (!text.contains("@") || !text.contains(".")) {
+//            //TODO: show user?
+//            return;
+//        }
+//        m_mailClient.sendImage(text, *m_result);
+//    }
 }
 
 void MainWindow::sendMail()
