@@ -11,7 +11,7 @@
 class FloydSteinberg : MosaicGenerator
 {
 public:
-    FloydSteinberg(const MolluscPalette& molluscPalette) : MosaicGenerator(molluscPalette) { };
+    FloydSteinberg(MolluscPalette& molluscPalette) : MosaicGenerator(molluscPalette) { };
 
-    std::vector<MolluscPosition*>* createMosaic(const QImage& input, int maxNumOfMolluscs);
+    std::vector<MolluscPosition> createMosaic(const QImage& input, int maxNumOfMolluscs);
 };

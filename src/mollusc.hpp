@@ -1,21 +1,17 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <memory>
 
 #include <QColor>
 #include <QPixmap>
 #include <QString>
 
-struct Mollusc
+struct MolluscDescription
 {
-    Mollusc(const std::string& data, const QString& dir);
-    Mollusc(const std::string& data);
+    MolluscDescription(const std::vector<std::string> &data);
 
-    std::string m_imageName;
-    QPixmap m_image;
-    QColor m_color;
-    float m_rotation;
-    float m_ratio;
     std::string m_originalImage;
     std::string m_inventoryNumber;
     std::string m_class;
@@ -32,9 +28,26 @@ struct Mollusc
     std::string m_country;
     std::string m_subContinent;
     std::string m_continent;
+};
 
-    std::string description(const std::string &dataDir);
+
+struct Mollusc
+{
+    Mollusc() = delete;
+    Mollusc(const std::string& data);
+    Mollusc(const Mollusc& rhs);
+    ~Mollusc();
+
+    std::string m_imageName;
+    QColor m_color;
+    float m_rotation;
+    float m_ratio;
+
+    std::shared_ptr<MolluscDescription> descr() const;
+
+    std::string description(const std::string &dataDir) const;
 
 private:
-    std::string loadString(const std::string &termType, const std::string &term, const std::string &dataDir);
+    std::shared_ptr<MolluscDescription> m_description;
+    std::string loadString(const std::string &termType, const std::string &term, const std::string &dataDir) const;
 };

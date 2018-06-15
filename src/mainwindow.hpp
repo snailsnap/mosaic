@@ -18,10 +18,13 @@
 #include <QTimer>
 #include <QGraphicsProxyWidget>
 
+#include "helpers/painter.hpp"
+#include "algorithms/voronoi.hpp"
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
+    MainWindow(QWidget *parent, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data);
     ~MainWindow();
 
     void sendMail();
@@ -54,15 +57,17 @@ private:
     bool m_useCam;
     bool m_dia1;
     int m_maxNumOfMolluscs;
-    QImage* m_result = nullptr;
-    QImage* m_idImage = nullptr;
+    std::shared_ptr<QImage> m_result;
+    std::shared_ptr<QImage> m_idImage;
     QString m_outputPath;
-    Webcam* m_webcam;
+    std::unique_ptr<Webcam> m_webcam;
     QString m_openImagePath = "C:/";
     QString m_data;
 
-    MolluscPalette* m_molluscPalette;
-    std::vector<Mollusc*>* m_molluscs;
+    std::shared_ptr<MolluscPalette> m_molluscPalette;
+    std::vector<Mollusc> m_molluscs;
+    Painter m_painter;
+    Voronoi m_mosaic;
     int m_selectedMolluscIndex;
 
     QPushButton *m_cameraButton;
@@ -76,7 +81,6 @@ private:
     QGraphicsView *m_view;
     QGraphicsScene *m_scene;
     QGridLayout* m_mainLayout;
-    QGraphicsPixmapItem *m_pixmapItem;
 
     MailClient m_mailClient;
     QTimer *m_diaTimer;

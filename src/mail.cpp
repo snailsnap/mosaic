@@ -10,58 +10,53 @@
 #include "mail.hpp"
 #include "../dependencies/smtpclient/src/SmtpMime"
 
-MailClient::MailClient(const std::string& credentials)
+MailClient MailClient::fromCredentials(const std::string& credentials)
 {
     if (!QFile(QString::fromStdString(credentials)).exists())
     {
         std::cerr << "Could not open credentials file. Mailing the result image will not work. Please provide credentials here: " << credentials << std::endl;
-        return;
+        throw std::runtime_error { "could not open credentials" };
     }
 
     std::ifstream stream(credentials);
-    std::vector<std::string> strings;
+    std::vector<QString> strings;
     std::string string;
     while (std::getline(stream, string))
     {
-        strings.push_back(string);
+        strings.push_back(QString::fromStdString(string));
     }
 
-    m_client = new SmtpClient(QString::fromStdString(strings[0]), 465, SmtpClient::SslConnection);
-    m_client->setUser(QString::fromStdString(strings[1]));
-    m_client->setPassword(QString::fromStdString(strings[2]));
+    MailClient client { strings[0], strings[1], strings[2], strings.size() > 5 ? strings[5] : "" };
+    client.setContents(strings[3], strings[4].replace("\\n", "\n"));
+    return client;
+}
 
-    m_sender = QString::fromStdString(strings[1]);
-
-    m_subject = QString::fromStdString(strings[3]);
-    m_message = QString::fromStdString(strings[4]).replace("\\n", "\n");
-
-    m_defaultRecipient = QString(strings.size() > 5 ? QString::fromStdString(strings[5]) : "");
-
-    m_setup = true;
+void MailClient::setContents(const QString &subject, const QString &message) {
+    m_subject = subject;
+    m_message = message;
 }
 
 MailClient::MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient)
     : m_sender{ user }
-    , m_client{ new SmtpClient(server, 465, SmtpClient::SslConnection) }
-    , m_defaultRecipient{ QString(defaultRecipient) }
+    , m_client{ std::make_unique<SmtpClient>(server, 465, SmtpClient::SslConnection) }
+    , m_defaultRecipient{ defaultRecipient }
 {
     m_client->setUser(user);
     m_client->setPassword(password);
 }
 
-MailClient::~MailClient()
-{
-    delete m_client;
+MailClient::MailClient(MailClient&& rhs)
+    : m_sender{ std::move(rhs.m_sender) }
+    , m_client{ std::move(rhs.m_client) }
+    , m_defaultRecipient{ rhs.m_defaultRecipient }
+    , m_subject{ rhs.m_subject }
+    , m_message{ rhs.m_message } {
 }
+
+MailClient::~MailClient() = default;
 
 void MailClient::sendImage(const QString& recipient, const QImage& image)
 {
-    if (!m_setup)
-    {
-        std::cerr << "Mail client isn't set up, problably because the credentials are missing. Could not send image." << std::endl;
-        return;
-    }
-
     MimeMessage mail;
 
     mail.setSender(new EmailAddress(m_sender));
@@ -69,14 +64,14 @@ void MailClient::sendImage(const QString& recipient, const QImage& image)
     mail.addRecipient(new EmailAddress(m_sender), MimeMessage::Bcc);
     mail.setSubject(m_subject);
 
-    MimeText text;
-    text.setText(m_message);
-    mail.addPart(&text);
+    auto text = new MimeText { m_message };
+    mail.addPart(text);
 
     image.save("SnailSnap.png");
-    auto file = new QFile("SnailSnap.png");
+    auto file = new QFile { "SnailSnap.png" };
+    auto attachment = new MimeAttachment(file);
 
-    mail.addPart(new MimeAttachment(file));
+    mail.addPart(attachment);
 
     m_client->connectToHost();
     m_client->login();
@@ -84,5 +79,7 @@ void MailClient::sendImage(const QString& recipient, const QImage& image)
     m_client->quit();
 
     file->remove();
-    delete file;
+
+    delete attachment;
+    delete text;
 }

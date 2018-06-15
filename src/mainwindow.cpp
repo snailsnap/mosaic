@@ -12,9 +12,12 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool useCam, QString outputPath, int maxNumOfMolluscs, QString data)
+MainWindow::MainWindow(QWidget *parent, bool useCam, QString outputPath,
+                       int maxNumOfMolluscs, QString data)
     : QMainWindow(parent)
-    , m_molluscPalette(molluscPalette)
+    , m_molluscPalette(std::make_shared<MolluscPalette>())
+    , m_painter(m_molluscPalette)
+    , m_mosaic(*m_molluscPalette)
     , m_selectedMolluscIndex(0)
     , m_resultLabel(new MolluscImage(this))
     , m_useCam(useCam)
@@ -22,21 +25,22 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     , m_diaTimer(new QTimer(this))
     , m_countdownTimer(new QTimer(this))
     , m_dia1(true)
-    , m_scene(new QGraphicsScene())
-    , m_mainLayout(new QGridLayout())
-    , m_pixmapItem(new QGraphicsPixmapItem())
-    , m_cameraButton(new QPushButton())
-    , m_backButton(new QPushButton())
-    , m_shareButton(new QPushButton())
+    , m_scene(new QGraphicsScene(m_view))
+    , m_mainLayout(new QGridLayout(m_view))
+    , m_cameraButton(new QPushButton(this))
+    , m_backButton(new QPushButton(this))
+    , m_shareButton(new QPushButton(this))
     , m_countdownLabel(new QLabel("text"))
     , m_outputPath(outputPath)
     , m_maxNumOfMolluscs(maxNumOfMolluscs)
     , m_data(data)
-    , m_mailClient("resources/credentials.txt")
+    , m_mailClient(MailClient::fromCredentials("resources/credentials.txt"))
 {
-    if(useCam) {
-        m_webcam = new Webcam();
-        QObject::connect(m_webcam, &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
+    m_molluscPalette->loadData(data);
+
+    if (useCam) {
+        m_webcam = std::make_unique<Webcam>();
+        QObject::connect(m_webcam.get(), &Webcam::imageReady, this, &MainWindow::processAndShowPicture);
     }
 
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -68,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent, MolluscPalette* molluscPalette, bool use
     initializeSidebar();
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() = default;
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
@@ -117,31 +121,32 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    if (m_molluscs == nullptr) return;
-    Mollusc* selectedMollusc = m_molluscs->at(m_selectedMolluscIndex);
+    const auto selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
+    const auto description = selectedMollusc.descr();
 
-    auto lastDotIndex = selectedMollusc->m_imageName.find_last_of(".");
-    auto imageName = selectedMollusc->m_imageName.substr(0, lastDotIndex);
-    
-    auto underscoreIdx1 = imageName.find_last_of("_");
+    auto lastDotIndex = selectedMollusc.m_imageName.find_last_of('.');
+    auto imageName = selectedMollusc.m_imageName.substr(0, lastDotIndex);
+   
+    auto underscoreIdx1 = imageName.find_last_of('_');
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
 
     this->showSidebar(
-            QString::fromStdString(selectedMollusc->m_class),
-            QString::fromStdString(selectedMollusc->m_family),
-            QString::fromStdString(selectedMollusc->m_genus),
-            QString::fromStdString(selectedMollusc->m_species),
-            QString::fromStdString(selectedMollusc->m_scientificName),
-            QString::fromStdString(selectedMollusc->m_locality),
-            QString::fromStdString(selectedMollusc->m_date), QString::fromStdString(selectedMollusc->m_area),
-            QString::fromStdString(selectedMollusc->m_province),
-            QString::fromStdString(selectedMollusc->m_country),
-            QString::fromStdString(selectedMollusc->m_subContinent),
-            QString::fromStdString(selectedMollusc->m_continent),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
-            QString::fromStdString(selectedMollusc->description(m_data.toStdString())));
+            QString::fromStdString(description->m_class),
+            QString::fromStdString(description->m_family),
+            QString::fromStdString(description->m_genus),
+            QString::fromStdString(description->m_species),
+            QString::fromStdString(description->m_scientificName),
+            QString::fromStdString(description->m_locality),
+            QString::fromStdString(description->m_date),
+            QString::fromStdString(description->m_area),
+            QString::fromStdString(description->m_province),
+            QString::fromStdString(description->m_country),
+            QString::fromStdString(description->m_subContinent),
+            QString::fromStdString(description->m_continent),
+            QImage(m_data + "/" + QString::fromStdString(description->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(description->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(description->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
+            QString::fromStdString(selectedMollusc.description(m_data.toStdString())));
 }
 
 void MainWindow::showSidebar(
@@ -327,12 +332,9 @@ void MainWindow::processAndShowPicture(std::shared_ptr<QImage> inputImage) {
     auto image = scaledImage.copy((scaledImage.width() - display.width()) / 2, (scaledImage.height() - display.height()) / 2, display.width(), display.height());
     
     // process image
-    auto mosaic = Voronoi(*m_molluscPalette);
-    auto molluscPositions = mosaic.createMosaic(image, m_maxNumOfMolluscs);
-
-    m_result = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_idImage = new QImage(image.width(), image.height(), QImage::Format::Format_RGB32);
-    m_molluscs = Painter::paint(molluscPositions, m_molluscPalette, *m_result, *m_idImage);
+    m_result = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_idImage = std::make_unique<QImage>(image.width(), image.height(), QImage::Format::Format_RGB32);
+    m_molluscs = m_painter.paint(m_mosaic.createMosaic(image, m_maxNumOfMolluscs), *m_result, *m_idImage);
 
     m_resultLabel->setFixedSize(display.width(), display.height());
     m_resultLabel->setPixmap(QPixmap::fromImage(*m_result));

@@ -179,7 +179,7 @@ void RightSidebar::updateContent(
             descriptionContent);
 
     // resize sidebar to fit content
-    int newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
+    auto newWidth = std::max(m_layout->minimumSize().width(), m_imageLayout->minimumSize().width());
     m_scrollArea->setMinimumWidth(newWidth);
     // I don't know why you have to do it like this, but this sets the sidebar to the right size immediately
     setWidget(m_scrollArea);

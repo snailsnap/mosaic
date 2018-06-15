@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include <QString>
 
@@ -8,17 +9,21 @@
 
 class MailClient
 {
-private:
+    std::unique_ptr<SmtpClient> m_client;
     QString m_sender;
     QString m_defaultRecipient;
-    SmtpClient* m_client;
     QString m_subject;
     QString m_message;
-    bool m_setup = false;
 public:
-    MailClient(const std::string& credentials);
+    MailClient() = delete;
+    MailClient(const MailClient&) = delete;
+    MailClient(MailClient&& rhs);
     MailClient(const QString& server, const QString& user, const QString& password, const QString& defaultRecipient = "");
     ~MailClient();
+
+    static MailClient fromCredentials(const std::string& credentials);
+
+    void setContents(const QString& subject, const QString& message);
     void sendImage(const QString& recipient, const QImage& image);
     void sendImageToDefaultRecipient(const QImage& image)
     {

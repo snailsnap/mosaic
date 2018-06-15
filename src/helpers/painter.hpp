@@ -6,10 +6,15 @@
 
 #include <vector>
 #include <tuple>
+#include <memory>
 
 #include <QImage>
 
 class Painter {
+    std::shared_ptr<MolluscPalette> m_palette;
 public:
-    static std::vector<Mollusc*>* paint(const std::vector<MolluscPosition*>* molluscs, MolluscPalette* palette , QImage& colorImage, QImage& idImage);
+    Painter(std::shared_ptr<MolluscPalette> palette);
+    std::vector<Mollusc> paint(
+        std::vector<MolluscPosition>&& molluscs,
+        QImage& colorImage, QImage& idImage);
 };
