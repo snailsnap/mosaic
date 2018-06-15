@@ -141,7 +141,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::showSnailInfo()
 {
-    Mollusc selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
+    const auto selectedMollusc = m_molluscs.at(m_selectedMolluscIndex);
+    const auto description = selectedMollusc.descr();
 
     auto lastDotIndex = selectedMollusc.m_imageName.find_last_of('.');
     auto imageName = selectedMollusc.m_imageName.substr(0, lastDotIndex);
@@ -150,20 +151,21 @@ void MainWindow::showSnailInfo()
     auto imageNumber = QString::fromStdString(imageName.substr(underscoreIdx1));
 
     this->showSidebar(
-            QString::fromStdString(selectedMollusc.m_class),
-            QString::fromStdString(selectedMollusc.m_family),
-            QString::fromStdString(selectedMollusc.m_genus),
-            QString::fromStdString(selectedMollusc.m_species),
-            QString::fromStdString(selectedMollusc.m_scientificName),
-            QString::fromStdString(selectedMollusc.m_locality),
-            QString::fromStdString(selectedMollusc.m_date), QString::fromStdString(selectedMollusc.m_area),
-            QString::fromStdString(selectedMollusc.m_province),
-            QString::fromStdString(selectedMollusc.m_country),
-            QString::fromStdString(selectedMollusc.m_subContinent),
-            QString::fromStdString(selectedMollusc.m_continent),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc.m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc.m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
-            QImage(m_data + "/" + QString::fromStdString(selectedMollusc.m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
+            QString::fromStdString(description->m_class),
+            QString::fromStdString(description->m_family),
+            QString::fromStdString(description->m_genus),
+            QString::fromStdString(description->m_species),
+            QString::fromStdString(description->m_scientificName),
+            QString::fromStdString(description->m_locality),
+            QString::fromStdString(description->m_date),
+            QString::fromStdString(description->m_area),
+            QString::fromStdString(description->m_province),
+            QString::fromStdString(description->m_country),
+            QString::fromStdString(description->m_subContinent),
+            QString::fromStdString(description->m_continent),
+            QImage(m_data + "/" + QString::fromStdString(description->m_inventoryNumber) + "_1" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(description->m_inventoryNumber) + "_2" + imageNumber + ".png").scaledToHeight(100),
+            QImage(m_data + "/" + QString::fromStdString(description->m_inventoryNumber) + "_3" + imageNumber + ".png").scaledToHeight(100),
             QString::fromStdString(selectedMollusc.description(m_data.toStdString())));
 }
 
