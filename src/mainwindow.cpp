@@ -218,7 +218,7 @@ void MainWindow::onClick(QMouseEvent * event)
 }
 
 void MainWindow::takePicture() {
-    if (m_useCam && QCameraInfo::availableCameras().size() > 0) {
+    if (m_useCam && m_webcam->supported()) {
         std::cout << "Capturing image..." << std::endl;
         m_webcam->captureImage();
     }
