@@ -102,7 +102,7 @@ public:
 
 private:
     QHBoxLayout *m_layout;
-    QVBoxLayout *m_imageLayout;
+    QHBoxLayout *m_imageLayout;
     QVBoxLayout *m_leftLayout;
     QVBoxLayout *m_rightLayout;
 };

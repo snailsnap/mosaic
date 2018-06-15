@@ -93,8 +93,7 @@ void Sidebar::updateContent(
 
 Sidebar *Sidebar::newSidebarForScreen(QRect screenSize, QWidget *parent) {
     if (screenSize.size().width() >= screenSize.size().height()) {
-//        return new RightSidebar(parent);
-        return new BottomSidebar(parent); // testing only
+        return new RightSidebar(parent);
     }
     else {
         return new BottomSidebar(parent);
@@ -196,9 +195,10 @@ BottomSidebar::BottomSidebar(QWidget *parent)
     , m_layout(new QHBoxLayout())
     , m_leftLayout(new QVBoxLayout())
     , m_rightLayout(new QVBoxLayout)
-    , m_imageLayout(new QVBoxLayout())
+    , m_imageLayout(new QHBoxLayout())
 {
     m_layout->setSpacing(0);
+
     m_infoWidget->setLayout(m_layout);
 
     // position images side by side
@@ -206,6 +206,7 @@ BottomSidebar::BottomSidebar(QWidget *parent)
     m_imageLayout->addWidget(m_image2Label);
     m_imageLayout->addWidget(m_image3Label);
     m_imageLayout->setSpacing(10);
+    m_imageLayout->insertStretch( -1, 1 );
     m_imageLayout->setContentsMargins(m_spacingMargin);
 
     m_leftLayout->addWidget(m_titleLabel);
@@ -215,13 +216,17 @@ BottomSidebar::BottomSidebar(QWidget *parent)
     m_leftLayout->addWidget(m_speciesLabel);
     m_leftLayout->addWidget(m_scientificNameLabel);
     m_leftLayout->addWidget(m_localityLabel);
+    m_leftLayout->addWidget(m_dateLabel);
+    m_leftLayout->addWidget(m_areaLabel);
+    m_leftLayout->addWidget(m_provinceLabel);
+    m_leftLayout->addWidget(m_countryLabel);
+    m_leftLayout->addWidget(m_subContinentLabel);
+    m_leftLayout->addWidget(m_continentLabel);
+    QString str = QString("<font size=\"6\" color=\"white\">invisible</font>");
+    QLabel *lab = new QLabel();
+    lab->setText(str);
+    m_rightLayout->addWidget(lab);
     m_rightLayout->addLayout(m_imageLayout);
-    m_rightLayout->addWidget(m_dateLabel);
-    m_rightLayout->addWidget(m_areaLabel);
-    m_rightLayout->addWidget(m_provinceLabel);
-    m_rightLayout->addWidget(m_countryLabel);
-    m_rightLayout->addWidget(m_subContinentLabel);
-    m_rightLayout->addWidget(m_continentLabel);
     m_rightLayout->addWidget(m_descriptionLabel);
     m_descriptionLabel->setWordWrap(true);
     // remove spaces
@@ -230,7 +235,6 @@ BottomSidebar::BottomSidebar(QWidget *parent)
 
     m_layout->addLayout(m_leftLayout);
     m_layout->addLayout(m_rightLayout);
-    m_layout->addLayout(m_layout);
 }
 
 Qt::DockWidgetArea BottomSidebar::dockArea() {
