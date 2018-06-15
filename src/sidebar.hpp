@@ -61,7 +61,7 @@ protected:
     QLabel *m_image2Label;
     QLabel *m_image3Label;
 
-    QHBoxLayout *m_imageLayout;
+    QMargins m_spacingMargin = QMargins(0,0,0,10);
 };
 
 
@@ -91,6 +91,7 @@ public:
 
 private:
     QVBoxLayout *m_layout;
+    QHBoxLayout *m_imageLayout;
 };
 
 class BottomSidebar : public Sidebar {
@@ -101,6 +102,7 @@ public:
 
 private:
     QHBoxLayout *m_layout;
+    QVBoxLayout *m_imageLayout;
     QVBoxLayout *m_leftLayout;
     QVBoxLayout *m_rightLayout;
 };

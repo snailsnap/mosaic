@@ -6,7 +6,6 @@
 
 Sidebar::Sidebar(QWidget *parent)
         : QDockWidget(parent)
-        , m_imageLayout(new QHBoxLayout())
         , m_scrollArea(new QScrollArea())
         , m_infoWidget(new QWidget())
         , m_titleLabel(new QLabel())
@@ -30,22 +29,20 @@ Sidebar::Sidebar(QWidget *parent)
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setWidget(m_infoWidget);
 
-    QMargins spacingMargin(0,0,0,10);
-    m_titleLabel->setContentsMargins(spacingMargin);
-    m_classLabel->setContentsMargins(spacingMargin);
-    m_familyLabel->setContentsMargins(spacingMargin);
-    m_genusLabel->setContentsMargins(spacingMargin);
-    m_speciesLabel->setContentsMargins(spacingMargin);
-    m_scientificNameLabel->setContentsMargins(spacingMargin);
-    m_localityLabel->setContentsMargins(spacingMargin);
-    m_dateLabel->setContentsMargins(spacingMargin);
-    m_areaLabel->setContentsMargins(spacingMargin);
-    m_provinceLabel->setContentsMargins(spacingMargin);
-    m_countryLabel->setContentsMargins(spacingMargin);
-    m_subContinentLabel->setContentsMargins(spacingMargin);
-    m_continentLabel->setContentsMargins(spacingMargin);
-    m_descriptionLabel->setContentsMargins(spacingMargin);
-    m_imageLayout->setContentsMargins(spacingMargin);
+    m_titleLabel->setContentsMargins(m_spacingMargin);
+    m_classLabel->setContentsMargins(m_spacingMargin);
+    m_familyLabel->setContentsMargins(m_spacingMargin);
+    m_genusLabel->setContentsMargins(m_spacingMargin);
+    m_speciesLabel->setContentsMargins(m_spacingMargin);
+    m_scientificNameLabel->setContentsMargins(m_spacingMargin);
+    m_localityLabel->setContentsMargins(m_spacingMargin);
+    m_dateLabel->setContentsMargins(m_spacingMargin);
+    m_areaLabel->setContentsMargins(m_spacingMargin);
+    m_provinceLabel->setContentsMargins(m_spacingMargin);
+    m_countryLabel->setContentsMargins(m_spacingMargin);
+    m_subContinentLabel->setContentsMargins(m_spacingMargin);
+    m_continentLabel->setContentsMargins(m_spacingMargin);
+    m_descriptionLabel->setContentsMargins(m_spacingMargin);
 
     setWidget(m_scrollArea);
     setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -110,6 +107,7 @@ Sidebar *Sidebar::newSidebarForScreen(QRect screenSize, QWidget *parent) {
 RightSidebar::RightSidebar(QWidget *parent)
         : Sidebar(parent)
         , m_layout(new QVBoxLayout())
+        , m_imageLayout(new QHBoxLayout())
 {
     m_layout->setSpacing(0);
     m_infoWidget->setLayout(m_layout);
@@ -119,6 +117,7 @@ RightSidebar::RightSidebar(QWidget *parent)
     m_imageLayout->addWidget(m_image2Label);
     m_imageLayout->addWidget(m_image3Label);
     m_imageLayout->setSpacing(10);
+    m_imageLayout->setContentsMargins(m_spacingMargin);
 
     m_layout->addWidget(m_titleLabel);
     m_layout->addLayout(m_imageLayout);
@@ -197,6 +196,7 @@ BottomSidebar::BottomSidebar(QWidget *parent)
     , m_layout(new QHBoxLayout())
     , m_leftLayout(new QVBoxLayout())
     , m_rightLayout(new QVBoxLayout)
+    , m_imageLayout(new QVBoxLayout())
 {
     m_layout->setSpacing(0);
     m_infoWidget->setLayout(m_layout);
@@ -206,6 +206,7 @@ BottomSidebar::BottomSidebar(QWidget *parent)
     m_imageLayout->addWidget(m_image2Label);
     m_imageLayout->addWidget(m_image3Label);
     m_imageLayout->setSpacing(10);
+    m_imageLayout->setContentsMargins(m_spacingMargin);
 
     m_leftLayout->addWidget(m_titleLabel);
     m_leftLayout->addWidget(m_classLabel);
