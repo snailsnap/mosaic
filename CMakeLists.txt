@@ -65,7 +65,8 @@ set(sources
 	${source_dir}/helpers/painter.cpp
 	${source_dir}/helpers/boundingbox.cpp
 	${source_dir}/helpers/positionGenerator.cpp
-	${source_dir}/sidebar.cpp)
+	${source_dir}/sidebar.cpp
+	${source_dir}/mailDialog.cpp)
 
 set(headers
 	${source_dir}/mosaic.hpp
@@ -81,7 +82,8 @@ set(headers
 	${source_dir}/helpers/painter.hpp
 	${source_dir}/helpers/boundingbox.hpp
 	${source_dir}/helpers/positionGenerator.hpp
-	${source_dir}/sidebar.hpp)
+	${source_dir}/sidebar.hpp
+	${source_dir}/mailDialog.hpp)
 
 # target and required libs
 
