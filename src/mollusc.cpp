@@ -43,7 +43,7 @@ Mollusc::Mollusc(const std::string& data)
     {
         strings.push_back(string);
     }
-    assert(strings.size() == 17 || strings.size() == 18);
+    assert(strings.size() > 16);
 
     auto i = 0u;
     m_imageName = strings[0];
