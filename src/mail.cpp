@@ -67,8 +67,8 @@ void MailClient::sendImage(const QString& recipient, const QImage& image)
     auto text = new MimeText { m_message };
     mail.addPart(text);
 
-    image.save("SnailSnap.png");
-    auto file = new QFile { "SnailSnap.png" };
+    image.save("SnailSnap.jpg");
+    auto file = new QFile { "SnailSnap.jpg" };
     auto attachment = new MimeAttachment(file);
 
     mail.addPart(attachment);

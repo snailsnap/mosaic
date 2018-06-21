@@ -50,7 +50,7 @@ public:
 
 private:
     const int c_diaTime = 5000;
-    const int c_photoTime = 30000;
+    const int c_photoTime = 300000;
 
     bool m_imageCaptureInProgress = false;
     int m_countdown = -1;
