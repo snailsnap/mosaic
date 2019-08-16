@@ -42,7 +42,7 @@ Muscheln und Schnecken des Museums für Naturkunde Berlin freistellen und neue B
   - [SMTP client for Qt](https://github.com/bluetiger9/SmtpClient-for-Qt) - included as submodule
   - [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html) - only needs to be installed on Windows. Warning: Use a version < 1.1, since some needed libs are missing in version 1.1.
   
-          /^\    /^\
+            /^\    /^\
            {  O}  {  O}
             \ /    \ /
             //     //       _------_
