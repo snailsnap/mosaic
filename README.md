@@ -1,5 +1,5 @@
 # SnailSnap
-Mit [mollex](https://github.com/snailsnap/mollex) haben wir die Schneckengehäuse aus den Fotos des Museums für Naturkunde Berlin freigestellt und neue Bilder generiert. SnailSnap ist nun eine Erweiterung, so dass man ein Selfie von sich macht und dann ein Mosaik aus Schneckengehäusen entsteht. Durch Antippen der Schneckengehäuse erfährt man Meta-Informationen über die Schnecken.
+With [mollex](https://github.com/snailsnap/mollex) we have extracted the snail shells from the photos of the "Museum für Naturkunde Berlin" and generated new pictures. SnailSnap is now an extension, so that you can take a selfie of yourself and create a mosaic of snail shells. By tapping on the snail shell you can see meta information about the snails.
   
 ## How to Run
 1. Download the right version for your operating system from [SnailSnap Demo](https://github.com/snailsnap/mosaic/releases)
@@ -16,7 +16,7 @@ Mit [mollex](https://github.com/snailsnap/mollex) haben wir die Schneckengehäus
 |master      | [![Build Status](https://travis-ci.com/snailsnap/mosaic.svg?branch=master)](https://travis-ci.com/snailsnap/mosaic) | [![Build status](https://ci.appveyor.com/api/projects/status/5g1x1yk1wvlohao2/branch/master?svg=true)](https://ci.appveyor.com/project/lukaswagner/mosaic/branch/master) |
 |develop     | [![Build Status](https://travis-ci.com/snailsnap/mosaic.svg?branch=develop)](https://travis-ci.com/snailsnap/mosaic) | [![Build status](https://ci.appveyor.com/api/projects/status/5g1x1yk1wvlohao2/branch/develop?svg=true)](https://ci.appveyor.com/project/lukaswagner/mosaic/branch/develop) |
 
-### Daten
+### Data
 
   - [Coding da Vinci Daten Seite](https://codingdavinci.de/daten/#museum-f%C3%BCr-naturkunde-berlin)
   - [Metadaten](http://gbif.naturkundemuseum-berlin.de/CDV2018/Mollusken/Metadaten/)
