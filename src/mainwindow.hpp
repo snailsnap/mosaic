@@ -20,6 +20,7 @@
 
 #include "helpers/painter.hpp"
 #include "algorithms/voronoi.hpp"
+#include "mailDialog.hpp"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -92,6 +93,8 @@ private:
     void initButtons();
     void processAndShowPicture(std::shared_ptr<QImage> image);
     void initializeSidebar();
+
+    MailDialog m_mailDialog;
 
 public slots:
     void shareButtonClick();
