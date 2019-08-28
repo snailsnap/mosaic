@@ -189,7 +189,7 @@ void MainWindow::showSidebar(
 }
 
 void MainWindow::initButton(QPushButton* button, std::string icon, int row, int column, bool visible) {
-    const int iconSize = 100;
+    const auto iconSize = 100;
     button->setIcon(QIcon("resources/" + QString::fromStdString(icon)));
     button->setIconSize(QSize(iconSize, iconSize));
     button->setFixedSize(iconSize, iconSize);

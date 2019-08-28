@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     if (parser.isSet(useCamOption))
     {
         useCam = parser.value(useCamOption).toUpper() == "TRUE";
-        std::cout << "Use Cam: " << (useCam?"true":"false") << std::endl;
+        std::cout << std::boolalpha << "Use Cam: " << useCam << std::endl;
     }
 
     MainWindow mainWin(nullptr, useCam, output, maxNumOfMolluscs, data);
